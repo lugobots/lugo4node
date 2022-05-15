@@ -1,0 +1,21 @@
+{
+  "name": "lugo4node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.6.7",
+    "google-protobuf": "^3.20.1",
+    "grpc": "^1.24.11",
+    "process": "^0.11.10"
+  },
+  "devDependencies": {
+    "@grpc/proto-loader": "^0.6.12"
+  }
+}
