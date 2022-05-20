@@ -22,17 +22,14 @@ const GameSnapshotReader = require('../helpers').GameSnapshotReader
 //     randomIntFromInterval(1, field.MAX_X_COORDINATE / 2),
 // );
 
-let pos = new game_msg.Point({
-    X: randomIntFromInterval(1, field.MAX_Y_COORDINATE),
-    Y: randomIntFromInterval(1, field.MAX_X_COORDINATE / 2),
-})
-// pos.setX(randomIntFromInterval(1, field.MAX_Y_COORDINATE))
-// pos.setY(randomIntFromInterval(1, field.MAX_X_COORDINATE / 2))
+let pos = new proto.lugo.Point()
+pos.setX(randomIntFromInterval(1, field.MAX_Y_COORDINATE))
+pos.setY(randomIntFromInterval(1, field.MAX_X_COORDINATE / 2))
 
-const mySide = game_msg.Team.Side[process.env.PLAYER_SIDE.toUpperCase()]
+const mySide = proto.lugo.Team.Side[process.env.PLAYER_SIDE.toUpperCase()]
 const myNumber = parseInt(process.env.PLAYER_NUMBER)
 
-if (mySide === game_msg.Team.Side.AWAY) {
+if (mySide === proto.lugo.Team.Side.AWAY) {
     pos.setX(field.MAX_X_COORDINATE - pos.getX())
     pos.setY(field.MAX_Y_COORDINATE - pos.getY())
 }
@@ -51,8 +48,9 @@ console.log(mySide,
 /**
  * 
  * @param {proto.lugo.GameSnapshot} snapshot
+ * @param {Client} client
  */
-const myBot = (snapshot) => {
+const myBot = (snapshot, client) => {
     try {
         const reader = new GameSnapshotReader(snapshot,mySide)
         // const myTeam = reader.getMyTeam()
@@ -61,10 +59,18 @@ const myBot = (snapshot) => {
         if(reader.IsBallHolder(me)) {
             console.log(`I AM THE HOLDER`)
         }
+        const ballPos = snapshot.getBall().getPosition()
 
-        console.log(`Center, other side, other goal`,
-            reader.GetOpponentGoal().bottomPole.getX(),
-            )
+        const myOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), ballPos)
+
+        const orderSet = new proto.lugo.OrderSet()
+        orderSet.setTurn(snapshot.getTurn())
+        orderSet.setDebugMessage("mi mi mi")
+        orderSet.setOrdersList([myOrder])
+        client.orderSetSender(orderSet)
+        // console.log(`Center, other side, other goal`,
+        //     reader.GetOpponentGoal().bottomPole.getX(),
+        //     )
         // console.log(`my team`, myTeam)
     } catch (e) {
         console.log(e)

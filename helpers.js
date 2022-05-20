@@ -1,6 +1,7 @@
 'use strict';
 require('./pb/server_pb')
 const field = require('./field')
+const vectors = require('./vector')
 
 class Goal {
     constructor(place, center, topPole, bottomPole) {
@@ -94,7 +95,6 @@ class GameSnapshotReader {
         this.#snapshot = snapshot
         this.#my_side = mySide
 
-        console.log(this.#my_side, mySide, proto.lugo.Team.Side.HOME)
     }
 
     /**
@@ -144,7 +144,6 @@ class GameSnapshotReader {
      * @returns {Goal}
      */
     GetMyGoal() {
-        console.log(this.#my_side, proto.lugo.Team.Side.HOME)
         if (this.#my_side === proto.lugo.Team.Side.HOME) {
             return HomeGoal
         }
@@ -182,19 +181,35 @@ class GameSnapshotReader {
         return null
     }
 
-    // func MakeOrderMoveMaxSpeed(origin, target proto.Point) (*proto.Order_Move, error) {
-    //     return MakeOrderMove(origin, target, PlayerMaxSpeed)
-    // }
+    /**
+     *
+     * @param origin
+     * @param target
+     * @return {proto.lugo.Order}
+     */
+    makeOrderMoveMaxSpeed(origin, target) {
+        return this.makeOrderMove(origin, target, field.PLAYER_MAX_SPEED)
+    }
 
-    // func MakeOrderMove(origin, target proto.Point, speed float64) (*proto.Order_Move, error) {
-    //     vec, err := proto.NewVector(origin, target)
-    //     if err != nil {
-    //         return nil, err
-    //     }
-    //     vel := proto.NewZeroedVelocity(*vec.Normalize())
-    //     vel.Speed = speed
-    //     return &proto.Order_Move{Move: &proto.Move{Velocity: &vel}}, nil
-    // }
+    /**
+     *
+     * @param origin
+     * @param target
+     * @param speed
+     * @returns {proto.lugo.Order}
+     */
+    makeOrderMove(origin, target, speed) {
+        let direction = vectors.NewVector(origin, target)
+        direction = vectors.Normalize(direction)
+
+        const velocity = new proto.lugo.Velocity()
+        velocity.setDirection(direction)
+        velocity.setSpeed(speed)
+
+        const moveOrder = new proto.lugo.Move()
+        moveOrder.setVelocity(velocity)
+        return new proto.lugo.Order().setMove(moveOrder)
+    }
 
     // func MakeOrderJump(origin, target proto.Point, speed float64) (*proto.Order_Jump, error) {
     //     vec, err := proto.NewVector(origin, target)
