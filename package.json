@@ -2,9 +2,9 @@
   "name": "lugo4node",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "exemple/index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node exemple/index.js"
   },
   "keywords": [],
   "author": "",
