@@ -3,45 +3,46 @@ require('./pb/server_pb')
 const field = require('./field')
 const vectors = require('./vector')
 
+
 class Goal {
-    constructor(place, center, topPole, bottomPole) {
-        this._center = center;
-        this._place = place;
-        this._topPole = topPole;
-        this._bottomPole = bottomPole;
-    }
+  constructor(place, center, topPole, bottomPole) {
+    this._center = center;
+    this._place = place;
+    this._topPole = topPole;
+    this._bottomPole = bottomPole;
+  }
 
-    /**
-     *
-     * @return {proto.lugo.Point}
-     */
-    get center() {
-        return this._center;
-    }
+  /**
+   *
+   * @return {proto.lugo.Point}
+   */
+  get center() {
+    return this._center;
+  }
 
-    /**
-     *
-     * @return {proto.lugo.Point}
-     */
-    get place() {
-        return this._place;
-    }
+  /**
+   *
+   * @return {proto.lugo.Point}
+   */
+  get place() {
+    return this._place;
+  }
 
-    /**
-     *
-     * @return {proto.lugo.Point}
-     */
-    get topPole() {
-        return this._topPole;
-    }
+  /**
+   *
+   * @return {proto.lugo.Point}
+   */
+  get topPole() {
+    return this._topPole;
+  }
 
-    /**
-     *
-     * @return {proto.lugo.Point}
-     */
-    get bottomPole() {
-        return this._bottomPole;
-    }
+  /**
+   *
+   * @return {proto.lugo.Point}
+   */
+  get bottomPole() {
+    return this._bottomPole;
+  }
 }
 
 const homeGoalCenter = new proto.lugo.Point()
@@ -57,10 +58,10 @@ homeGoalBootomPole.setX(0)
 homeGoalBootomPole.setY(field.GOAL_MIN_Y)
 
 const HomeGoal = new Goal(
-    proto.lugo.Team.Side.HOME,
-    homeGoalCenter,
-    homeGoalTopPole,
-    homeGoalBootomPole
+  proto.lugo.Team.Side.HOME,
+  homeGoalCenter,
+  homeGoalTopPole,
+  homeGoalBootomPole
 )
 
 const awayGoalCenter = new proto.lugo.Point()
@@ -77,215 +78,215 @@ awayGoalBottomPole.setX(field.MAX_X_COORDINATE)
 awayGoalBottomPole.setY(field.GOAL_MIN_Y)
 
 const AwayGoal = new Goal(
-    proto.lugo.Team.Side.AWAY,
-    awayGoalCenter,
-    awayGoalTopPole,
-    awayGoalBottomPole
+  proto.lugo.Team.Side.AWAY,
+  awayGoalCenter,
+  awayGoalTopPole,
+  awayGoalBottomPole
 )
 
 
 class GameSnapshotReader {
-    #my_side;
-    /**
-     * @type {proto.lugo.GameSnapshot}
-     */
-    #snapshot;
+  #my_side;
+  /**
+   * @type {proto.lugo.GameSnapshot}
+   */
+  #snapshot;
 
-    constructor(snapshot, mySide) {
-        this.#snapshot = snapshot
-        this.#my_side = mySide
+  constructor(snapshot, mySide) {
+    this.#snapshot = snapshot
+    this.#my_side = mySide
 
+  }
+
+  /**
+   *
+   * @returns { proto.lugo.Team}
+   */
+  getMyTeam() {
+    return this.getTeam(this.#my_side)
+  }
+
+  /**
+   * @param { proto.lugo.Team.Side} side
+   * @returns
+   */
+  getTeam(side) {
+    if (side === proto.lugo.Team.Side.HOME) {
+      return this.#snapshot.getHomeTeam()
     }
+    return this.#snapshot.getAwayTeam()
+  }
 
-    /**
-     *
-     * @returns { proto.lugo.Team}
-     */
-    getMyTeam() {
-        return this.getTeam(this.#my_side)
+
+  /**
+   *
+   * @param { proto.lugo.Player} player
+   * @returns {boolean}
+   */
+  isBallHolder(player) {
+    const ball = this.#snapshot.getBall()
+
+    return ball.getHolder() != null && ball.getHolder().getTeamSide() === player.getTeamSide() && ball.getHolder().getNumber() === player.getNumber()
+  }
+
+  /**
+   *
+   * @returns {proto.lugo.Team.Side}
+   */
+  GetOpponentSide() {
+    if (this.#my_side === proto.lugo.Team.Side.HOME) {
+      return proto.lugo.Team.Side.AWAY
     }
+    return proto.lugo.Team.Side.HOME
+  }
 
-    /**
-     * @param { proto.lugo.Team.Side} side
-     * @returns
-     */
-    getTeam(side) {
-        if (side === proto.lugo.Team.Side.HOME) {
-            return this.#snapshot.getHomeTeam()
-        }
-        return this.#snapshot.getAwayTeam()
+  /**
+   *
+   * @returns {Goal}
+   */
+  getMyGoal() {
+    if (this.#my_side === proto.lugo.Team.Side.HOME) {
+      return HomeGoal
     }
+    return AwayGoal
+  }
 
-
-    /**
-     *
-     * @param { proto.lugo.Player} player
-     * @returns {boolean}
-     */
-    IsBallHolder(player) {
-        const ball = this.#snapshot.getBall()
-
-        return ball.getHolder() != null && ball.getHolder().getTeamSide() === player.getTeamSide() && ball.getHolder().getNumber() === player.getNumber()
+  /**
+   *
+   * @returns {Goal}
+   */
+  getOpponentGoal() {
+    console.log(`SIDE ${this.#my_side}, HOME: ${proto.lugo.Team.Side.HOME}`)
+    if (this.#my_side === proto.lugo.Team.Side.HOME) {
+      return AwayGoal
     }
+    return HomeGoal
+  }
 
-    /**
-     *
-     * @returns {proto.lugo.Team.Side}
-     */
-    GetOpponentSide() {
-        if (this.#my_side === proto.lugo.Team.Side.HOME) {
-            return proto.lugo.Team.Side.AWAY
-        }
-        return proto.lugo.Team.Side.HOME
+  /**
+   *
+   * @param {proto.lugo.Team.Side} side
+   * @param {number} number
+   * @returns {proto.lugo.Player}
+   */
+  getPlayer(side, number) {
+    const team = this.getTeam(side)
+    if (team == null) {
+      return null
     }
-
-    /**
-     *
-     * @returns {Goal}
-     */
-    GetMyGoal() {
-        if (this.#my_side === proto.lugo.Team.Side.HOME) {
-            return HomeGoal
-        }
-        return AwayGoal
+    for (const player of team.getPlayersList()) {
+      if (player.getNumber() === number) {
+        return player
+      }
     }
+    return null
+  }
 
-    /**
-     *
-     * @returns {Goal}
-     */
-    GetOpponentGoal() {
-        console.log(`SIDE ${this.#my_side}, HOME: ${proto.lugo.Team.Side.HOME}`)
-        if (this.#my_side === proto.lugo.Team.Side.HOME) {
-            return AwayGoal
-        }
-        return HomeGoal
-    }
+  /**
+   *
+   * @param origin
+   * @param target
+   * @return {proto.lugo.Order}
+   */
+  makeOrderMoveMaxSpeed(origin, target) {
+    return this.makeOrderMove(origin, target, field.PLAYER_MAX_SPEED)
+  }
 
-    /**
-     *
-     * @param {proto.lugo.Team.Side} side
-     * @param {number} number
-     * @returns {proto.lugo.Player}
-     */
-    GetPlayer(side, number) {
-        const team = this.getTeam(side)
-        if (team == null) {
-            return null
-        }
-        for (const player of team.getPlayersList()) {
-            if (player.getNumber() === number) {
-                return player
-            }
-        }
-        return null
-    }
+  /**
+   *
+   * @param origin
+   * @param target
+   * @param speed
+   * @returns {proto.lugo.Order}
+   */
+  makeOrderMove(origin, target, speed) {
+    let direction = vectors.NewVector(origin, target)
+    direction = vectors.Normalize(direction)
 
-    /**
-     *
-     * @param origin
-     * @param target
-     * @return {proto.lugo.Order}
-     */
-    makeOrderMoveMaxSpeed(origin, target) {
-        return this.makeOrderMove(origin, target, field.PLAYER_MAX_SPEED)
-    }
+    const velocity = new proto.lugo.Velocity()
+    velocity.setDirection(direction)
+    velocity.setSpeed(speed)
 
-    /**
-     *
-     * @param origin
-     * @param target
-     * @param speed
-     * @returns {proto.lugo.Order}
-     */
-    makeOrderMove(origin, target, speed) {
-        let direction = vectors.NewVector(origin, target)
-        direction = vectors.Normalize(direction)
+    const moveOrder = new proto.lugo.Move()
+    moveOrder.setVelocity(velocity)
+    return new proto.lugo.Order().setMove(moveOrder)
+  }
 
-        const velocity = new proto.lugo.Velocity()
-        velocity.setDirection(direction)
-        velocity.setSpeed(speed)
+  // func MakeOrderJump(origin, target proto.Point, speed float64) (*proto.Order_Jump, error) {
+  //     vec, err := proto.NewVector(origin, target)
+  //     if err != nil {
+  //         return nil, err
+  //     }
+  //     vel := proto.NewZeroedVelocity(*vec.Normalize())
+  //     vel.Speed = speed
+  //     return &proto.Order_Jump{Jump: &proto.Jump{Velocity: &vel}}, nil
+  // }
 
-        const moveOrder = new proto.lugo.Move()
-        moveOrder.setVelocity(velocity)
-        return new proto.lugo.Order().setMove(moveOrder)
-    }
+  // func MakeOrderKick(ball proto.Ball, target proto.Point, speed float64) (*proto.Order_Kick, error) {
+  //     ballExpectedDirection, err := proto.NewVector(*ball.Position, target)
+  //     if err != nil {
+  //         return nil, err
+  //     }
 
-    // func MakeOrderJump(origin, target proto.Point, speed float64) (*proto.Order_Jump, error) {
-    //     vec, err := proto.NewVector(origin, target)
-    //     if err != nil {
-    //         return nil, err
-    //     }
-    //     vel := proto.NewZeroedVelocity(*vec.Normalize())
-    //     vel.Speed = speed
-    //     return &proto.Order_Jump{Jump: &proto.Jump{Velocity: &vel}}, nil
-    // }
+  //     diffVector, err := ballExpectedDirection.Sub(ball.Velocity.Direction)
+  //     if err != nil {
+  //         return nil, err
+  //     }
+  //     vel := proto.NewZeroedVelocity(*diffVector)
+  //     vel.Direction.Normalize()
+  //     vel.Speed = speed
 
-    // func MakeOrderKick(ball proto.Ball, target proto.Point, speed float64) (*proto.Order_Kick, error) {
-    //     ballExpectedDirection, err := proto.NewVector(*ball.Position, target)
-    //     if err != nil {
-    //         return nil, err
-    //     }
+  //     return &proto.Order_Kick{Kick: &proto.Kick{Velocity: &vel}}, nil
+  // }
 
-    //     diffVector, err := ballExpectedDirection.Sub(ball.Velocity.Direction)
-    //     if err != nil {
-    //         return nil, err
-    //     }
-    //     vel := proto.NewZeroedVelocity(*diffVector)
-    //     vel.Direction.Normalize()
-    //     vel.Speed = speed
+  // func MakeOrderKickMaxSpeed(ball proto.Ball, target proto.Point) (*proto.Order_Kick, error) {
+  //     return MakeOrderKick(ball, target, BallMaxSpeed)
 
-    //     return &proto.Order_Kick{Kick: &proto.Kick{Velocity: &vel}}, nil
-    // }
+  // }
 
-    // func MakeOrderKickMaxSpeed(ball proto.Ball, target proto.Point) (*proto.Order_Kick, error) {
-    //     return MakeOrderKick(ball, target, BallMaxSpeed)
+  // func MakeOrderCatch() *proto.Order_Catch {
+  //     return &proto.Order_Catch{Catch: &proto.Catch{}}
+  // }
 
-    // }
+  // func GoForward(side proto.Team_Side) *proto.Order_Move {
+  //     forward := proto.East()
+  //     if side == proto.Team_AWAY {
+  //         forward = proto.West()
+  //     }
+  //     vel := proto.NewZeroedVelocity(forward)
+  //     vel.Speed = PlayerMaxSpeed
+  //     return &proto.Order_Move{Move: &proto.Move{Velocity: &vel}}
+  // }
 
-    // func MakeOrderCatch() *proto.Order_Catch {
-    //     return &proto.Order_Catch{Catch: &proto.Catch{}}
-    // }
+  // func GoBackward(side proto.Team_Side) *proto.Order_Move {
+  //     backward := proto.West()
+  //     if side == proto.Team_AWAY {
+  //         backward = proto.East()
+  //     }
+  //     vel := proto.NewZeroedVelocity(backward)
+  //     vel.Speed = PlayerMaxSpeed
+  //     return &proto.Order_Move{Move: &proto.Move{Velocity: &vel}}
+  // }
 
-    // func GoForward(side proto.Team_Side) *proto.Order_Move {
-    //     forward := proto.East()
-    //     if side == proto.Team_AWAY {
-    //         forward = proto.West()
-    //     }
-    //     vel := proto.NewZeroedVelocity(forward)
-    //     vel.Speed = PlayerMaxSpeed
-    //     return &proto.Order_Move{Move: &proto.Move{Velocity: &vel}}
-    // }
+  // func GoRight(side proto.Team_Side) *proto.Order_Move {
+  //     right := proto.South()
+  //     if side == proto.Team_AWAY {
+  //         right = proto.North()
+  //     }
+  //     vel := proto.NewZeroedVelocity(right)
+  //     vel.Speed = PlayerMaxSpeed
+  //     return &proto.Order_Move{Move: &proto.Move{Velocity: &vel}}
+  // }
 
-    // func GoBackward(side proto.Team_Side) *proto.Order_Move {
-    //     backward := proto.West()
-    //     if side == proto.Team_AWAY {
-    //         backward = proto.East()
-    //     }
-    //     vel := proto.NewZeroedVelocity(backward)
-    //     vel.Speed = PlayerMaxSpeed
-    //     return &proto.Order_Move{Move: &proto.Move{Velocity: &vel}}
-    // }
-
-    // func GoRight(side proto.Team_Side) *proto.Order_Move {
-    //     right := proto.South()
-    //     if side == proto.Team_AWAY {
-    //         right = proto.North()
-    //     }
-    //     vel := proto.NewZeroedVelocity(right)
-    //     vel.Speed = PlayerMaxSpeed
-    //     return &proto.Order_Move{Move: &proto.Move{Velocity: &vel}}
-    // }
-
-    // func GoLeft(side proto.Team_Side) *proto.Order_Move {
-    //     left := proto.North()
-    //     if side == proto.Team_AWAY {
-    //         left = proto.South()
-    //     }
-    //     vel := proto.NewZeroedVelocity(left)
-    //     vel.Speed = PlayerMaxSpeed
-    //     return &proto.Order_Move{Move: &proto.Move{Velocity: &vel}}
-    // }
+  // func GoLeft(side proto.Team_Side) *proto.Order_Move {
+  //     left := proto.North()
+  //     if side == proto.Team_AWAY {
+  //         left = proto.South()
+  //     }
+  //     vel := proto.NewZeroedVelocity(left)
+  //     vel.Speed = PlayerMaxSpeed
+  //     return &proto.Order_Move{Move: &proto.Move{Velocity: &vel}}
+  // }
 
 
 }
