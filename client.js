@@ -3,8 +3,24 @@ const grpc = require("grpc");
 const game_service = require("./pb/server_grpc_pb");
 require("./pb/server_pb")
 const {BotStub, defineState, PLAYER_STATE} = require('./stub')
-
 const PROTOCOL_VERSION = "1.0.0"
+
+/**
+ *
+ * @param {EnvVarLoader} config
+ * @param {proto.lugo.Point} initialPosition
+ * @returns {Client}
+ */
+function newClientFromConfig(config, initialPosition) {
+    return new Client(
+        config.grpcUrl,
+        config.grpcInsecure,
+        config.botToken,
+        config.botTeam,
+        config.botNumber,
+        initialPosition,
+    )
+}
 
 class Client {
     #serverAdd
@@ -151,4 +167,4 @@ class Client {
     }
 }
 
-module.exports.Client = Client
+module.exports = {Client, newClientFromConfig}

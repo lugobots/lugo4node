@@ -1,18 +1,19 @@
 'use strict';
 const reader = require('./snapshot_reader')
 module.exports = {
+    EnvVarLoader: require('./configurator'),
     Client: require('./client').Client,
     Goal: reader.Goal,
     GameSnapshotReader: reader.GameSnapshotReader,
     Mapper: require('./mapper').Map,
     Region: require('./mapper').Region,
     NewVector: require('./vector').NewVector,
-
     BotStub: require('./stub').BotStub,
     // defineState: require('./stub').defineState,
     PLAYER_STATE: require('./stub').PLAYER_STATE,
     FIELD: require("./field"),
 
+    newClientFromConfig: require('./client').newClientFromConfig,
     vectors: {
         normalize: require('./vector').normalize,
         getLength: require('./vector').getLength,

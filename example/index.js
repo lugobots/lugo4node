@@ -1,39 +1,16 @@
-const {Client, GameSnapshotReader, Mapper} = require('lugo4node')
-
-const process = require('process')
+const {EnvVarLoader, newClientFromConfig, GameSnapshotReader, Mapper} = require('lugo4node')
 const dummy = require('./my_bot')
-const {exit} = require("process");
 const {PLAYER_POSITIONS} = require("./strategy");
 
-if (!process.env.BOT_TEAM) {
-    console.error("missing BOT_TEAM env value")
-    exit(1)
-}
-
-if (!process.env.BOT_NUMBER) {
-    console.error("missing BOT_NUMBER env value")
-    exit(1)
-}
-
-// the server address
-const serer_address = process.env.BOT_GRPC_URL || 'localhost:5000'
-const grpc_insecure = Boolean((process.env.BOT_GRPC_INSECURE || "true").toLowerCase())
-
-// defining bot side
-const mySide = proto.lugo.Team.Side[process.env.BOT_TEAM.toUpperCase()]
-const myNumber = parseInt(process.env.BOT_NUMBER)
-// the token is mandatory in official matches, but you may ignore in local games
-const myToken = process.env.BOT_TOKEN || ""
-
-///*******************************
+// we must load the env vars following the standard defined by the game specs because all bots will receive the
+// arguments in the same format (env vars)
+const config = new EnvVarLoader()
 
 // the map will help us to see the field in quadrants (called regions) instead of working with coordinates
-const map = new Mapper(10, 6, mySide)
+const map = new Mapper(10, 6, config.botTeam)
 
-
-console.log(`PLayer #${myNumber}: ${PLAYER_POSITIONS[myNumber].Col}, ${PLAYER_POSITIONS[myNumber].Row}`)
 // our bot strategy defines our bot initial position based on its number
-const initialRegion = map.getRegion(PLAYER_POSITIONS[myNumber].Col, PLAYER_POSITIONS[myNumber].Row)
+const initialRegion = map.getRegion(PLAYER_POSITIONS[config.botNumber].Col, PLAYER_POSITIONS[config.botNumber].Row)
 
 // let pos = new proto.lugo.Point()
 // pos.setX()
@@ -44,17 +21,10 @@ const initialRegion = map.getRegion(PLAYER_POSITIONS[myNumber].Col, PLAYER_POSIT
 //     pos.setX(field.MAX_X_COORDINATE - pos.getX())
 //     pos.setY(field.MAX_Y_COORDINATE - pos.getY())
 // }
-console.log(`side ${mySide}`, initialRegion.getCenter())
 
-bot = new Client(
-    serer_address,
-    grpc_insecure,
-    myToken,
-    mySide,
-    myNumber,
-    initialRegion.getCenter(),
-)
-// const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+// now we can create the bot. We will use a shortcut to create the client from the config, but we could use the
+// client constructor as well
+const lugoClient = new newClientFromConfig(config, initialRegion.getCenter())
 
 /**
  *
@@ -83,9 +53,9 @@ const myBot = async (orderSet, snapshot) => {
 
 }
 
-bot.playAsBot(new dummy(
-    mySide,
-    myNumber,
+lugoClient.playAsBot(new dummy(
+    config.botTeam,
+    config.botNumber,
     initialRegion.getCenter(),
     map,
 )).then(() => {
