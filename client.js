@@ -16,7 +16,7 @@ function newClientFromConfig(config, initialPosition) {
         config.grpcUrl,
         config.grpcInsecure,
         config.botToken,
-        config.botTeam,
+        config.botTeamSide,
         config.botNumber,
         initialPosition,
     )

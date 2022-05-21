@@ -15,7 +15,7 @@ class EnvVarLoader {
     /**
      * @type {proto.lugo.Team.Side}
      */
-    #_botTeam
+    #_botTeamSide
 
     /**
      * @type {number}
@@ -41,7 +41,7 @@ class EnvVarLoader {
         this.#_grpcInsecure = Boolean((process.env.BOT_GRPC_INSECURE || "true").toLowerCase())
 
         // defining bot side
-        this.#_botTeam = proto.lugo.Team.Side[process.env.BOT_TEAM.toUpperCase()]
+        this.#_botTeamSide = proto.lugo.Team.Side[process.env.BOT_TEAM.toUpperCase()]
         this.#_botNumber = parseInt(process.env.BOT_NUMBER)
         if(this.#_botNumber < 1 || this.#_botNumber > field.MAX_PLAYERS) {
             throw new Error(`invalid bot number '${this.#_botNumber}', must be between 1 and ${field.MAX_PLAYERS}`)
@@ -71,8 +71,8 @@ class EnvVarLoader {
      *
      * @returns {proto.lugo.Team.Side}
      */
-    get botTeam() {
-        return this.#_botTeam;
+    get botTeamSide() {
+        return this.#_botTeamSide;
     }
 
     /**

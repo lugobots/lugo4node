@@ -184,8 +184,8 @@ class GameSnapshotReader {
 
     /**
      *
-     * @param origin
-     * @param target
+     * @param {proto.lugo.Point} origin
+     * @param {proto.lugo.Point} target
      * @return {proto.lugo.Order}
      */
     makeOrderMoveMaxSpeed(origin, target) {
@@ -194,8 +194,8 @@ class GameSnapshotReader {
 
     /**
      *
-     * @param origin
-     * @param target
+     * @param {proto.lugo.Point} origin
+     * @param {proto.lugo.Point} target
      * @param speed
      * @returns {proto.lugo.Order}
      */
@@ -206,33 +206,33 @@ class GameSnapshotReader {
     }
 
     goForward() {
-        let direction = East
+        let direction = east
         if (this.#my_side === proto.lugo.Team.Side.AWAY) {
-            direction = West
+            direction = west
         }
         return this._makeOrderMoveFromVector(direction, field.PLAYER_MAX_SPEED)
     }
 
     goBackward() {
-        let direction = West
+        let direction = west
         if (this.#my_side === proto.lugo.Team.Side.AWAY) {
-            direction = East
+            direction = east
         }
         return this._makeOrderMoveFromVector(direction, field.PLAYER_MAX_SPEED)
     }
 
     goLeft() {
-        let direction = North
+        let direction = north
         if (this.#my_side === proto.lugo.Team.Side.AWAY) {
-            direction = South
+            direction = south
         }
         return this._makeOrderMoveFromVector(direction, field.PLAYER_MAX_SPEED)
     }
 
     goRight() {
-        let direction = South
+        let direction = south
         if (this.#my_side === proto.lugo.Team.Side.AWAY) {
-            direction = North
+            direction = north
         }
         return this._makeOrderMoveFromVector(direction, field.PLAYER_MAX_SPEED)
     }
