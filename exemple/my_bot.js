@@ -1,6 +1,5 @@
 `use strict`;
-const {BotStub, PLAYER_STATE} = require('../stub')
-const {GameSnapshotReader} = require('../snapshot_reader')
+const {GameSnapshotReader, BotStub, PLAYER_STATE} = require('lugo4node')
 
 class Bot extends BotStub {
     /**

@@ -1,9 +1,7 @@
-const field = require("../field")
-const {Client} = require('../client')
+const {Client, GameSnapshotReader, Mapper} = require('lugo4node')
+
 const process = require('process')
-const GameSnapshotReader = require('../snapshot_reader').GameSnapshotReader
 const dummy = require('./my_bot')
-const mapper = require('../mapper')
 const {exit} = require("process");
 const {PLAYER_POSITIONS} = require("./strategy");
 
@@ -30,7 +28,7 @@ const myToken = process.env.BOT_TOKEN || ""
 ///*******************************
 
 // the map will help us to see the field in quadrants (called regions) instead of working with coordinates
-const map = new mapper.Map(10, 6, mySide)
+const map = new Mapper(10, 6, mySide)
 
 
 console.log(`PLayer #${myNumber}: ${PLAYER_POSITIONS[myNumber].Col}, ${PLAYER_POSITIONS[myNumber].Row}`)
@@ -90,14 +88,10 @@ bot.playAsBot(new dummy(
     myNumber,
     initialRegion.getCenter(),
     map,
-    )).then(() => {
+)).then(() => {
     console.log(`all done`)
 }).catch(e => {
     console.error(e)
 })
 
-
-function randomIntFromInterval(min, max) { // min and max included
-    return Math.floor(Math.random() * (max - min + 1) + min)
-}
 

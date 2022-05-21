@@ -57,7 +57,7 @@ const homeGoalBootomPole = new proto.lugo.Point()
 homeGoalBootomPole.setX(0)
 homeGoalBootomPole.setY(field.GOAL_MIN_Y)
 
-const HomeGoal = new Goal(
+const homeGoal = new Goal(
     proto.lugo.Team.Side.HOME,
     homeGoalCenter,
     homeGoalTopPole,
@@ -77,7 +77,7 @@ const awayGoalBottomPole = new proto.lugo.Point()
 awayGoalBottomPole.setX(field.MAX_X_COORDINATE)
 awayGoalBottomPole.setY(field.GOAL_MIN_Y)
 
-const AwayGoal = new Goal(
+const awayGoal = new Goal(
     proto.lugo.Team.Side.AWAY,
     awayGoalCenter,
     awayGoalTopPole,
@@ -146,9 +146,9 @@ class GameSnapshotReader {
      */
     getMyGoal() {
         if (this.#my_side === proto.lugo.Team.Side.HOME) {
-            return HomeGoal
+            return homeGoal
         }
-        return AwayGoal
+        return awayGoal
     }
 
     /**
@@ -158,9 +158,9 @@ class GameSnapshotReader {
     getOpponentGoal() {
         console.log(`SIDE ${this.#my_side}, HOME: ${proto.lugo.Team.Side.HOME}`)
         if (this.#my_side === proto.lugo.Team.Side.HOME) {
-            return AwayGoal
+            return awayGoal
         }
-        return HomeGoal
+        return homeGoal
     }
 
     /**
@@ -303,30 +303,30 @@ class GameSnapshotReader {
 
 }
 
-const East = vectors.normalize(new proto.lugo.Vector().setX(1))
-const West = vectors.normalize(new proto.lugo.Vector().setX(-1))
-const South = vectors.normalize(new proto.lugo.Vector().setY(-1))
-const North = vectors.normalize(new proto.lugo.Vector().setY(1))
+const east = vectors.normalize(new proto.lugo.Vector().setX(1))
+const west = vectors.normalize(new proto.lugo.Vector().setX(-1))
+const south = vectors.normalize(new proto.lugo.Vector().setY(-1))
+const north = vectors.normalize(new proto.lugo.Vector().setY(1))
 
-const NorthEast = vectors.normalize(new proto.lugo.Vector().setX(1).setY(1))
-const NorthWest = vectors.normalize(new proto.lugo.Vector().setX(-1).setY(1))
-const SouthEast = vectors.normalize(new proto.lugo.Vector().setX(1).setY(-1))
-const SouthWest = vectors.normalize(new proto.lugo.Vector().setX(-1).setY(-1))
+const northEast = vectors.normalize(new proto.lugo.Vector().setX(1).setY(1))
+const northWest = vectors.normalize(new proto.lugo.Vector().setX(-1).setY(1))
+const southEast = vectors.normalize(new proto.lugo.Vector().setX(1).setY(-1))
+const southWest = vectors.normalize(new proto.lugo.Vector().setX(-1).setY(-1))
 
 
 module.exports = {
     GameSnapshotReader,
     Goal,
-    HomeGoal,
-    AwayGoal,
+    homeGoal,
+    awayGoal,
     directions: {
-        East,
-        West,
-        South,
-        North,
-        NorthEast,
-        NorthWest,
-        SouthEast,
-        SouthWest,
+        east,
+        west,
+        south,
+        north,
+        northEast,
+        northWest,
+        southEast,
+        southWest,
     }
 }
