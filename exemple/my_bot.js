@@ -1,6 +1,6 @@
 `use strict`;
 const {BotStub, PLAYER_STATE} = require('../stub')
-const {GameSnapshotReader} = require('../helpers')
+const {GameSnapshotReader} = require('../snapshot_reader')
 
 class Bot extends BotStub {
     /**
@@ -19,15 +19,23 @@ class Bot extends BotStub {
     #initPosition;
 
     /**
+     * @type {Map}
+     */
+    #mapper;
+
+    /**
      *
      * @param {proto.lugo.Team.Side} side
      * @param {number} number
      * @param {proto.lugo.Point} initPosition
+     * @param {Map} mapper
      */
-    constructor(side, number, initPosition) {
+    constructor(side, number, initPosition, mapper) {
         super();
         this.#side = side
         this.#number = number
+        this.#mapper = mapper
+        this.#initPosition = initPosition
     }
 
     /**
@@ -48,7 +56,16 @@ class Bot extends BotStub {
         try {
             const {reader, me} = this._makeReader(snapshot)
             const ballPosition = snapshot.getBall().getPosition()
-            const moveOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), ballPosition)
+
+            const ballRegion = this.#mapper.getRegionFromPoint(ballPosition)
+            const myRegion = this.#mapper.getRegionFromPoint(this.#initPosition)
+
+            let moveDest = this.#initPosition
+            if (Math.abs(myRegion.getRow() - ballRegion.getRow()) <= 2 &&
+                Math.abs(myRegion.getCol() - ballRegion.getCol()) <= 2) {
+                moveDest = ballPosition
+            }
+            const moveOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), moveDest)
             // const catchOrder = reader.
             const orderSet = new proto.lugo.OrderSet()
             orderSet.setTurn(snapshot.getTurn())
@@ -63,13 +80,22 @@ class Bot extends BotStub {
     onDefending(orderSet, snapshot) {
         try {
             const {reader, me} = this._makeReader(snapshot)
+            const ballPosition = snapshot.getBall().getPosition()
+            const ballRegion = this.#mapper.getRegionFromPoint(ballPosition)
+            const myRegion = this.#mapper.getRegionFromPoint(this.#initPosition)
 
-            const myOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), this.#initPosition)
+            let moveDest = this.#initPosition
+            if (Math.abs(myRegion.getRow() - ballRegion.getRow()) <= 2 &&
+                Math.abs(myRegion.getCol() - ballRegion.getCol()) <= 2) {
+                moveDest = ballPosition
+            }
+            const moveOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), moveDest)
+            const catchOrder =  reader.makeOrderCatch()
 
             const orderSet = new proto.lugo.OrderSet()
             orderSet.setTurn(snapshot.getTurn())
-            orderSet.setDebugMessage("mi mi mi")
-            orderSet.setOrdersList([myOrder])
+            orderSet.setDebugMessage("trying to catch the ball")
+            orderSet.setOrdersList([moveOrder, catchOrder])
             return orderSet
         } catch (e) {
             console.log(`did not play this turn`, e)
@@ -80,11 +106,20 @@ class Bot extends BotStub {
         try {
             const {reader, me} = this._makeReader(snapshot)
 
-            const myOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), reader.getMyGoal().center)
+            const myGoalCenter = this.#mapper.getRegionFromPoint(reader.getOpponentGoal().center)
+            const currentRegion = this.#mapper.getRegionFromPoint(me.getPosition())
+
+            let myOrder;
+            if (Math.abs(currentRegion.getRow() - myGoalCenter.getRow()) <= 1 &&
+                Math.abs(currentRegion.getCol() - myGoalCenter.getCol()) <= 1) {
+                myOrder = reader.makeOrderKickMaxSpeed(snapshot.getBall(), reader.getOpponentGoal().center)
+            } else {
+                myOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), reader.getOpponentGoal().center)
+            }
 
             const orderSet = new proto.lugo.OrderSet()
             orderSet.setTurn(snapshot.getTurn())
-            orderSet.setDebugMessage("mi mi mi")
+            orderSet.setDebugMessage("attack!")
             orderSet.setOrdersList([myOrder])
             return orderSet
         } catch (e) {
@@ -121,13 +156,12 @@ class Bot extends BotStub {
             const orderSet = new proto.lugo.OrderSet()
             orderSet.setTurn(snapshot.getTurn())
             orderSet.setDebugMessage("supporting")
-            orderSet.setOrdersList([myOrder])
+            orderSet.setOrdersList([myOrder, reader.makeOrderCatch()])
             return orderSet
         } catch (e) {
             console.log(`did not play this turn`, e)
         }
     }
-
 }
 
 module.exports = Bot

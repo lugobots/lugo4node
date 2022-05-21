@@ -4,10 +4,10 @@ const field = require('../field')
 
 describe('Region', () => {
     it('should identify an equal region', () => {
-        const regionA = new mapper.Region(5, 10, field.SIDE.HOME, null, null)
-        const regionEq = new mapper.Region(5, 10, field.SIDE.HOME, null, null)
-        const regionDiffCoords = new mapper.Region(14, 10, field.SIDE.HOME, null, null)
-        const regionDiffSide = new mapper.Region(15, 10, field.SIDE.AWAY, null, null)
+        const regionA = new mapper.Region(5, 10, proto.lugo.Team.Side.HOME, null, null)
+        const regionEq = new mapper.Region(5, 10, proto.lugo.Team.Side.HOME, null, null)
+        const regionDiffCoords = new mapper.Region(14, 10, proto.lugo.Team.Side.HOME, null, null)
+        const regionDiffSide = new mapper.Region(15, 10, proto.lugo.Team.Side.AWAY, null, null)
 
         assert.deepStrictEqual(regionA.eq(regionEq), true)
         assert.deepStrictEqual(regionA.eq(regionDiffCoords), false)
@@ -15,7 +15,7 @@ describe('Region', () => {
     });
 
     it('should find regions around', () => {
-        const positioner = new mapper.Map(10, 10, field.SIDE.HOME)
+        const positioner = new mapper.Map(10, 10, proto.lugo.Team.Side.HOME)
         const region = positioner.getRegion(5, 8)
 
         assert.deepStrictEqual(region.getCol(), 5)
@@ -35,7 +35,7 @@ describe('Region', () => {
     })
 
     it('should should not fo over the limits', () => {
-        const positioner = new mapper.Map(10, 10, field.SIDE.HOME)
+        const positioner = new mapper.Map(10, 10, proto.lugo.Team.Side.HOME)
         const cornerDownRight = positioner.getRegion(0, 0)
 
         assert.deepStrictEqual(cornerDownRight.front().getRow(), 0)

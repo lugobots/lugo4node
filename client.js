@@ -2,43 +2,41 @@
 const grpc = require("grpc");
 const game_service = require("./pb/server_grpc_pb");
 require("./pb/server_pb")
-const game_msg = require("./pb/server_pb")
 const {BotStub, defineState, PLAYER_STATE} = require('./stub')
 
 const PROTOCOL_VERSION = "1.0.0"
 
 class Client {
     #serverAdd
+    #grpc_insecure;
     #token
     #teamSide
     #number
     /**
      * @type {proto.lugo.Point}
      */
-    #initPosition
+    #init_position
 
     #client;
 
-    /**
-     * @var {BotStub}
-     */
-    merda;
 
     /**
      *
-     * @param serverAdd {string}
+     * @param server_add {string}
+     * @param grpc_insecure {boolean}
      * @param token {string}
      * @param teamSide {number}
      * @param number {number}
-     * @param initPosition {proto.lugo.Point}
+     * @param init_position {proto.lugo.Point}
      * @return {Promise<void>}
      */
-    constructor(serverAdd, token, teamSide, number, initPosition) {
-        this.#serverAdd = serverAdd
+    constructor(server_add, grpc_insecure, token, teamSide, number, init_position) {
+        this.#serverAdd = server_add
+        this.#grpc_insecure = grpc_insecure
         this.#token = token
         this.#teamSide = teamSide
         this.#number = number
-        this.#initPosition = initPosition
+        this.#init_position = init_position
     }
 
 
@@ -71,10 +69,10 @@ class Client {
 
     /**
      *
-     * @param {function(proto.lugo.OrderSet, proto.lugo.GameSnapshot):proto.lugo.OrderSet} rawProcessor
+     * @param {function(proto.lugo.OrderSet, proto.lugo.GameSnapshot):proto.lugo.OrderSet} raw_processor
      */
-    async play(rawProcessor) {
-        return this._start(rawProcessor)
+    async play(raw_processor) {
+        return this._start(raw_processor)
     }
 
     /**
@@ -93,19 +91,17 @@ class Client {
                 }
                 console.log(`connect to the gRPC server`)
 
-                const req = new game_msg.JoinRequest()
+                const req = new proto.lugo.JoinRequest()
                 req.setToken(this.#token)
                 req.setProtocolVersion(PROTOCOL_VERSION)
                 req.setTeamSide(this.#teamSide)
                 req.setNumber(this.#number)
-                req.setInitPosition(this.#initPosition)
+                req.setInitPosition(this.#init_position)
                 const running = this.#client.joinATeam(req)
-
-                console.log(`Ini position: ${this.#initPosition.getX()}x${this.#initPosition.getY()}`)
 
                 running.on('data', async (snapshot) => {
                     try {
-                        if (snapshot.getState() === game_msg.GameSnapshot.State.LISTENING) {
+                        if (snapshot.getState() === proto.lugo.GameSnapshot.State.LISTENING) {
                             let orderSet = new proto.lugo.OrderSet()
                             orderSet.setTurn(snapshot.getTurn())
                             try {

@@ -1,6 +1,6 @@
 'use strict';
 const field = require("./field");
-const Point = require('./proto_wrapper').Point
+require(`./pb/server_pb`)
 
 // ErrMinCols defines an error for invalid number of cols
 const ErrMinCols = new Error("number of cols lower the minimum")
@@ -22,11 +22,21 @@ const MaxCols = 200
 const MaxRows = 100
 
 class Region {
+    /**
+     * @type {number}
+     */
     #col;
+    /**
+     * @type {number}
+     */
     #row;
+
+    /**
+     * @type {proto.lugo.Team.Side}
+     */
     #side;
     /**
-     * @var {Point}
+     * @var {proto.lugo.Point}
      */
     #center;
     /**
@@ -38,8 +48,8 @@ class Region {
      *
      * @param col {int}
      * @param row {int}
-     * @param side {int}
-     * @param center {Point}
+     * @param side {proto.lugo.Team.Side}
+     * @param center {proto.lugo.Point}
      * @param positioner  {Map}
      */
     constructor(col, row, side, center, positioner) {
@@ -58,21 +68,33 @@ class Region {
         return region.getCol() === this.#col && region.#side === this.#side && region.getRow() === this.#row
     }
 
+    /**
+     *
+     * @returns {number}
+     */
     getCol() {
         return this.#col
     }
 
+    /**
+     *
+     * @returns {number}
+     */
     getRow() {
         return this.#row
     }
 
     /**
-     * @return {Point}
+     * @return {proto.lugo.Point}
      */
     getCenter() {
         return this.#center
     }
 
+    /**
+     *
+     * @returns {string}
+     */
     toString() {
         return `{${this.#col},${this.#row}`
     }
@@ -112,16 +134,16 @@ class Region {
 
 class Map {
     /**
-     * @type {int}
+     * @type {number}
      */
     #cols;
 
     /**
-     * @type {int}
+     * @type {number}
      */
     #rows;
     /**
-     * @type {int}
+     * @type {proto.lugo.Team.Side}
      */
     #side;
 
@@ -130,9 +152,9 @@ class Map {
 
     /**
      *
-     * @param cols {int}
-     * @param rows {int}
-     * @param side {int}
+     * @param cols {number}
+     * @param rows {number}
+     * @param side {proto.lugo.Team.Side}
      */
     constructor(cols, rows, side) {
         if (cols < MinCols) {
@@ -156,8 +178,8 @@ class Map {
     }
 
     /**
-     * @param col {int}
-     * @param row {int}
+     * @param col {number}
+     * @param row {number}
      * @return Region
      */
     getRegion(col, row) {
@@ -167,12 +189,11 @@ class Map {
         row = Math.max(0, row)
         row = Math.min(this.#rows - 1, row)
 
-        let center = new Point(
-            (col * this.#regionWidth) + (this.#regionWidth / 2),
-            (col * this.#regionHeight) + (this.#regionHeight / 2),
-        )
+        let center = new proto.lugo.Point()
+         center.setX(Math.round((col * this.#regionWidth) + (this.#regionWidth / 2)))
+         center.setY(Math.round((row * this.#regionHeight) + (this.#regionHeight / 2)))
 
-        if (this.#side === field.SIDE.AWAY) {
+        if (this.#side === proto.lugo.Team.Side.AWAY) {
             center = mirrorCoordsToAway(center)
         }
 
@@ -186,15 +207,15 @@ class Map {
     }
 
     /**
-     * @var point  {Point}
+     * @var point  {proto.lugo.Point}
      * @return Region
      */
-    getPointRegion(point) {
-        if (this.#side === field.SIDE.AWAY) {
+    getRegionFromPoint(point) {
+        if (this.#side === proto.lugo.Team.Side.AWAY) {
             point = mirrorCoordsToAway(point)
         }
-        const cx = point.x / this.#regionWidth
-        const cy = point.y / this.#regionHeight
+        const cx = point.getX() / this.#regionWidth
+        const cy = point.getY() / this.#regionHeight
         const col = Math.min(cx, this.#cols - 1)
         const row = Math.min(cy, this.#rows - 1)
         return this.getRegion(col, row)
@@ -204,13 +225,13 @@ class Map {
 /**
  *
  * @param center
- * @return {Point}
+ * @return {proto.lugo.Point}
  */
 function mirrorCoordsToAway(center) {
-    return new Point(
-        field.MAX_X_COORDINATE - center.x,
-        field.MAX_Y_COORDINATE - center.y,
-    )
+    let mirrored = new proto.lugo.Point()
+    mirrored.setX(field.MAX_X_COORDINATE - center.getX())
+    mirrored.setY(field.MAX_Y_COORDINATE - center.getY())
+    return mirrored
 }
 
 module.exports = {

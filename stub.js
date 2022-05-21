@@ -1,7 +1,6 @@
 'use strict';
 
-
-const {GameSnapshotReader} = require("./helpers");
+const {GameSnapshotReader} = require("./snapshot_reader");
 const PLAYER_STATE = {
     SUPPORTING: "supporting",
     HOLDING_THE_BALL: "holding",
@@ -85,8 +84,7 @@ function defineState(snapshot, playerNumber, side) {
     }
 
     const ballHolder = snapshot.getBall().getHolder()
-
-    if (ballHolder) {
+    if (!ballHolder) {
         return PLAYER_STATE.DISPUTING_THE_BALL
     } else if (ballHolder.getTeamSide() === side) {
         if (ballHolder.getNumber() === playerNumber) {

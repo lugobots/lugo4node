@@ -22,9 +22,9 @@ function NewVector(from, to) {
  * @param {proto.lugo.Vector} v
  * @returns {proto.lugo.Vector} a new vector with same direction but normalized to 0-100
  */
-function Normalize(v) {
-    const length = GetLength(v)
-    return GetScaledVector(v, 100 / length)
+function normalize(v) {
+    const length = getLength(v)
+    return getScaledVector(v, 100 / length)
 }
 
 /**
@@ -32,7 +32,7 @@ function Normalize(v) {
  * @param {proto.lugo.Vector} v
  * @returns {number}
  */
-function GetLength(v) {
+function getLength(v) {
     return Math.hypot(v.getX(), v.getY())
 }
 
@@ -42,7 +42,7 @@ function GetLength(v) {
  * @param {number} scale
  * @returns {proto.lugo.Vector}
  */
-function GetScaledVector(v, scale) {
+function getScaledVector(v, scale) {
     if (scale <= 0) {
         throw new Error("vector can not have zero length")
     }
@@ -55,15 +55,37 @@ function GetScaledVector(v, scale) {
 
 /**
  *
+ * @param {proto.lugo.Vector} originalV
+ * @param {proto.lugo.Vector} subV
+ * @returns {proto.lugo.Vector}
+ */
+function sub(originalV, subV) {
+    const newX = originalV.getX() - subV.getX()
+    const newY = originalV.getY() - subV.getY()
+
+    const newVector = new proto.lugo.Vector()
+    newVector.setX(newX)
+    newVector.setY(newY)
+    if (!validateVector(newVector)) {
+        throw new Error("could not subtract vectors an vector cannot have zero length")
+    }
+    return newVector
+}
+
+/**
+ *
  * @param {proto.lugo.Vector} v
  */
 function validateVector(v) {
     return (v.getX() !== 0 && v.getY() !== 0)
 }
 
+
+
 module.exports = {
     NewVector,
-    Normalize,
-    GetLength,
-    GetScaledVector,
+    normalize,
+    getLength,
+    getScaledVector,
+    sub
 }

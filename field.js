@@ -89,10 +89,4 @@ module.exports = {
 
     // Number of turns each teams has on attack before losing the ball possession.
     SHOT_CLOCK_TIME: 300,
-
-    SIDE: {
-        HOME: 0,
-        AWAY: 1,
-    }
-
 }
