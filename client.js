@@ -35,6 +35,7 @@ class Client {
 
     #client;
 
+    #gettingReadyHandler = function () {}
 
     /**
      *
@@ -59,16 +60,20 @@ class Client {
     /**
      *
      * @param {BotStub} bot
+     @param {function()} onJoin
      * @returns {Promise<void>}
      */
-    async playAsBot(bot) {
+    async playAsBot(bot, onJoin = () => {
+    }) {
         if (!(bot instanceof BotStub)) {
             throw new Error("you must pass a BotStub child class")
         }
-        return this._start((ordersSet, snapshot) => {
+        return this.setGettingReadyHandler(s => {
+                bot.gettingReady(s)
+        })._start((ordersSet, snapshot) => {
             const playerState = defineState(snapshot, this.#number, this.#teamSide)
             if (this.#number === 1) {
-                return bot.asGoalkeeper(ordersSet, snapshot, playerState)
+                return bot.asGoalkeeper(ordersSet, snapshot, playerState);
             }
             switch (playerState) {
                 case PLAYER_STATE.DISPUTING_THE_BALL:
@@ -80,32 +85,48 @@ class Client {
                 case PLAYER_STATE.HOLDING_THE_BALL:
                     return bot.onHolding(ordersSet, snapshot)
             }
-        })
+        }, onJoin)
     }
 
     /**
      *
      * @param {function(proto.lugo.OrderSet, proto.lugo.GameSnapshot):proto.lugo.OrderSet} raw_processor
+     * @param {function()} onJoin
      */
-    async play(raw_processor) {
-        return this._start(raw_processor)
+    async play(raw_processor, onJoin = () => {
+    }) {
+        return this._start(raw_processor, onJoin)
+    }
+
+    /**
+     *
+     * @param {function(proto.lugo.GameSnapshot)} handler
+     *
+     * @returns {Client}
+     */
+    setGettingReadyHandler(handler) {
+        this.#gettingReadyHandler = handler
+        return this
     }
 
     /**
      *
      * @param {function(proto.lugo.OrderSet, proto.lugo.GameSnapshot):proto.lugo.OrderSet} bot
+     * @param {function()} onJoin
      */
-    async _start(bot) {
+    async _start(bot, onJoin = () => {
+    }) {
         await new Promise((resolve, reject) => {
             this.#client = new game_service.GameClient(this.#serverAdd, grpc.credentials.createInsecure())
             const deadline = new Date();
+
 
             deadline.setSeconds(deadline.getSeconds() + 5);
             this.#client.waitForReady(deadline, (err) => {
                 if (err) {
                     reject(new Error(`failed to connect to the Game Server: ${err}`))
                 }
-                console.log(`connect to the gRPC server`)
+                console.log(`connect to the gRPC server ${this.#teamSide}-${this.#number}`)
 
                 const req = new proto.lugo.JoinRequest()
                 req.setToken(this.#token)
@@ -114,22 +135,29 @@ class Client {
                 req.setNumber(this.#number)
                 req.setInitPosition(this.#init_position)
                 const running = this.#client.joinATeam(req)
+                onJoin()
 
                 running.on('data', async (snapshot) => {
                     try {
-                        if (snapshot.getState() === proto.lugo.GameSnapshot.State.LISTENING) {
-                            let orderSet = new proto.lugo.OrderSet()
-                            orderSet.setTurn(snapshot.getTurn())
-                            try {
-                                orderSet = await bot(orderSet, snapshot)
-                            } catch (e) {
-                                console.error(`bot error`, e)
-                            }
-                            if (orderSet) {
-                                this.orderSetSender(orderSet)
-                            } else {
-                                console.log(`[turne #${snapshot.getTurn()}] bot did not return orders`)
-                            }
+                        switch (snapshot.getState()) {
+                            case proto.lugo.GameSnapshot.State.LISTENING:
+                                let orderSet = new proto.lugo.OrderSet()
+                                orderSet.setTurn(snapshot.getTurn())
+                                try {
+                                    orderSet = await bot(orderSet, snapshot)
+                                } catch (e) {
+                                    console.error(`bot error`, e)
+                                }
+                                if (orderSet) {
+                                    this.orderSetSender(orderSet)
+                                } else {
+                                    console.log(`[turne #${snapshot.getTurn()}] bot did not return orders`)
+                                }
+                                break;
+                            case proto.lugo.GameSnapshot.State.GET_READY:
+                                this.#gettingReadyHandler(snapshot)
+                                break;
+
                         }
                     } catch (e) {
                         console.error(`internal error processing turn`, e)

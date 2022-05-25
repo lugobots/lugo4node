@@ -63,6 +63,7 @@ class BotStub {
         console.log(`Method AsGoalkeeper is not implemented`)
     }
 
+    gettingReady(snapshot) {}
 }
 
 /**
