@@ -117,7 +117,8 @@ class Client {
     async _start(bot, onJoin = () => {
     }) {
         await new Promise((resolve, reject) => {
-            this.#client = new game_service.GameClient(this.#serverAdd, grpc.credentials.createInsecure())
+            // the random guarantee that we will have multiple connections instead of using pool of connections
+            this.#client = new game_service.GameClient(`${this.#serverAdd}?random=${Math.random()}`, grpc.credentials.createInsecure())
             const deadline = new Date();
 
 
@@ -126,7 +127,7 @@ class Client {
                 if (err) {
                     reject(new Error(`failed to connect to the Game Server: ${err}`))
                 }
-                console.log(`connect to the gRPC server ${this.#teamSide}-${this.#number}`)
+                console.log(`connect to the gRPC server ${this.#teamSide === proto.lugo.Team.Side.HOME ? "HOME" : "AWAY"}-${this.#number}`)
 
                 const req = new proto.lugo.JoinRequest()
                 req.setToken(this.#token)
@@ -166,10 +167,11 @@ class Client {
                 });
                 running.on('status', function (status) {
                     // process status
-                    console.log('status', status);
+                    // console.log('status', status);
                 });
 
-                running.on('error', function (e) {
+                running.on('error', async (e) => {
+                    this.#client.close()
                     reject(new Error(`error on team connection: ${e}`))
                 });
                 running.on('end', function () {
