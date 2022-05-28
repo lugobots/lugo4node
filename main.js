@@ -13,6 +13,13 @@ module.exports = {
     PLAYER_STATE: require('./stub').PLAYER_STATE,
     FIELD: require("./field"),
 
+    deep_learning: {
+        RemoteControl: require('./deep_learning/remote_control').RemoteControl,
+        Gym: require('./deep_learning/gym').Gym,
+        CoachStub: require('./deep_learning/stubs').CoachStub,
+        TrainableBotStub: require('./deep_learning/stubs').TrainableBot
+    },
+
     newClientFromConfig: require('./client').newClientFromConfig,
     vectors: {
         normalize: require('./vector').normalize,

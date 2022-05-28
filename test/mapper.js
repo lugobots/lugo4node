@@ -1,6 +1,7 @@
 const assert = require('assert');
 const mapper = require('../mapper')
 const field = require('../field')
+const {FIELD} = require("../main");
 
 describe('Region', () => {
     it('should identify an equal region', () => {
@@ -64,4 +65,52 @@ describe('Region', () => {
         assert.deepStrictEqual(cornerUpLeft.right().getCol(), 9)
     })
 
+    it('should find the correct region from a point', () => {
+        const positioner = new mapper.Map(10, 10, proto.lugo.Team.Side.HOME)
+        const regionWidth = field.MAX_X_COORDINATE / 10
+        const regionHeight = field.MAX_Y_COORDINATE / 10
+
+        const bottomLeft = new proto.lugo.Point()
+        bottomLeft.setX(0)
+        bottomLeft.setY(0)
+        const cornerBottomLeft = positioner.getRegionFromPoint(bottomLeft)
+        assert.deepStrictEqual(0, cornerBottomLeft.getCol())
+        assert.deepStrictEqual(0, cornerBottomLeft.getRow())
+
+        const bottomRight = new proto.lugo.Point()
+        bottomRight.setX(FIELD.MAX_X_COORDINATE)
+        bottomRight.setY(1)
+        const cornerBottomRight = positioner.getRegionFromPoint(bottomRight)
+        assert.deepStrictEqual(9, cornerBottomRight.getCol())
+        assert.deepStrictEqual(0, cornerBottomRight.getRow())
+
+        const topRight = new proto.lugo.Point()
+        topRight.setX(FIELD.MAX_X_COORDINATE)
+        topRight.setY(FIELD.MAX_Y_COORDINATE)
+        const cornerTopRight = positioner.getRegionFromPoint(topRight)
+        assert.deepStrictEqual(9, cornerTopRight.getCol())
+        assert.deepStrictEqual(9, cornerTopRight.getRow())
+
+        const topLeft = new proto.lugo.Point()
+        topLeft.setX(0)
+        topLeft.setY(FIELD.MAX_Y_COORDINATE)
+        const cornerTopLeft = positioner.getRegionFromPoint(topLeft)
+        assert.deepStrictEqual(0, cornerTopLeft.getCol())
+        assert.deepStrictEqual(9, cornerTopLeft.getRow())
+
+        // imprecise coordinates
+        const southEastInRegion = new proto.lugo.Point()
+        southEastInRegion.setX(regionWidth + 5)
+        southEastInRegion.setY(regionHeight + 5)
+        const regionA = positioner.getRegionFromPoint(southEastInRegion)
+        assert.deepStrictEqual(1, regionA.getCol())
+        assert.deepStrictEqual(1, regionA.getRow())
+
+        const northWestInRegion = new proto.lugo.Point()
+        northWestInRegion.setX(regionWidth - 5)
+        northWestInRegion.setY(regionHeight - 5)
+        const regionB = positioner.getRegionFromPoint(northWestInRegion)
+        assert.deepStrictEqual(0, regionB.getCol())
+        assert.deepStrictEqual(0, regionB.getRow())
+    })
 });
