@@ -50,8 +50,9 @@ It may require that you know a bit more about the game steps, but still not too 
 If you are a **deep learning** enthusiastic and knows [Tensorflow JS](https://tensorflow.org/js), you may want to use
 the Lugo deep learning environment.
 
-**Lugo bots** is an asyncrhonous game, so you will need to use the **Lugo4Node Gym** library to create your:
+**Lugo bots** is an asynchronous game, so you will need to use the **Lugo4Node Gym** library to create your:
 
+See example in [Deep learning example project](example/deeplearning)
 
 #### 1. Create a Trainable bot
 
@@ -179,7 +180,7 @@ The remote control is already implemented in **Lugo4Node** package.:
 
 ```javascript
     const rc = new deep_learning.RemoteControl();
-await rc.connect(grpcAddress)
+    await rc.connect(grpcAddress)
 ```
 
 
