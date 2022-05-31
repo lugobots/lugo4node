@@ -13,21 +13,22 @@ support your strategy (see the project [exampe](./example/simple) folder).
 
 
 # Table of Contents
-0. [Requirements](###Requirements)
-1. [Usage](###Usage)
-2. How to create a bot
-   1. [First option: Implementing a Bot class (simpler and recommended)](###First-option:-Implementing-a-Bot-class-(simpler-and-recommended))
-   2. [Second option: Implementing the turn handler (a little more work)](###Second option: Implementing the turn handler (a little more work))
-   3. [Third option: Using Tensorflow training model](###Third option: Using Tensorflow training model)
-      1. [1. Create a Trainable bot](####1. Create a Trainable bot)
-      2. [2. Create a training function](####2. Create a training function)
-      3. [3. Run the game server in Dev Mode](####3. Run the game server in Dev Mode)
-      4. [4. Starting your trainable bot](####4. Starting your trainable bot)
-      5. [5. Adding more players to the game](####5. Adding more players to the game)
-3. [Snapshot reader](###Snapshot reader)
-4. [Mapper and Region classes](###Mapper and Region classes)
-5. [Deploying you bots](###Deploying you bots)
-
+* [Requirements](#requirements)
+* [Usage](#usage)
+* How to create a bot
+  * [First option: Implementing a Bot class (simpler and recommended)](#first-option--implementing-a-bot-class--simpler-and-recommended-)
+  * [Second option: Implementing the turn handler (a little more work)](#second-option--implementing-the-turn-handler--a-little-more-work-)
+  * [Third option: Using Tensorflow training model](#third-option--using-tensorflow-training-model)
+      + [1. Create a Trainable bot](#1-create-a-trainable-bot)
+      + [2. Create a training function](#2-create-a-training-function)
+      + [3. Run the game server in Dev Mode](#3-run-the-game-server-in-dev-mode)
+      + [4. Starting your trainable bot](#4-starting-your-trainable-bot)
+      + [5. Adding more players to the game](#5-adding-more-players-to-the-game)
+- [Helpers](#helpers)
+    * [Snapshot reader](#snapshot-reader)
+    * [Mapper and Region classes](#mapper-and-region-classes)
+- [Next steps](#next-steps)
+    * [Deploying you bots](#deploying-you-bots)
 
 ### Requirements
 
