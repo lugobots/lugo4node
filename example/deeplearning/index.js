@@ -1,7 +1,7 @@
 const tf = require("@tensorflow/tfjs-node");
 const {Mapper, Client, deep_learning} = require("lugo4node");
 
-const {GoalKeeperTrainable} = require("./my_bot");
+const {MyTrainableBot} = require("./my_bot");
 const {SaveablePolicyNetwork, asyncToSync, mean,sum} = require("./model");
 
 // training settings
@@ -40,7 +40,7 @@ const model_path = `file://${__dirname}/model_output`;
 
     const rc = new deep_learning.RemoteControl();
     await rc.connect(grpcAddress)
-    const bot = new GoalKeeperTrainable(rc)
+    const bot = new MyTrainableBot(rc)
 
     const gym = new deep_learning.Gym(rc, bot, myTrainingFunction, {debugging_log: false})
     await gym.withZombiePlayers(grpcAddress).start(lugoClient)

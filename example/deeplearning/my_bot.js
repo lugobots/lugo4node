@@ -2,7 +2,7 @@ const {homeGoal, FIELD, directions, vectors, GameSnapshotReader, deep_learning, 
 const tf = require("@tensorflow/tfjs-node");
 const {delay} = require("../../deep_learning/coach");
 
-class GoalKeeperTrainable extends deep_learning.TrainableBotStub {
+class MyTrainableBot extends deep_learning.TrainableBotStub {
     /**
      * @type {RemoteControl}
      */
@@ -231,4 +231,4 @@ function randomInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-module.exports = {GoalKeeperTrainable}
+module.exports = {MyTrainableBot}
