@@ -108,7 +108,7 @@ class GameSnapshotReader {
 
     /**
      * @param { proto.lugo.Team.Side} side
-     * @returns
+     * @returns {proto.lugo.Team}
      */
     getTeam(side) {
         if (side === proto.lugo.Team.Side.HOME) {
@@ -133,7 +133,7 @@ class GameSnapshotReader {
      *
      * @returns {proto.lugo.Team.Side}
      */
-    GetOpponentSide() {
+    getOpponentSide() {
         if (this.#my_side === proto.lugo.Team.Side.HOME) {
             return proto.lugo.Team.Side.AWAY
         }
@@ -156,7 +156,6 @@ class GameSnapshotReader {
      * @returns {Goal}
      */
     getOpponentGoal() {
-        console.log(`SIDE ${this.#my_side}, HOME: ${proto.lugo.Team.Side.HOME}`)
         if (this.#my_side === proto.lugo.Team.Side.HOME) {
             return awayGoal
         }
@@ -212,11 +211,41 @@ class GameSnapshotReader {
         }
         return this._makeOrderMoveFromVector(direction, field.PLAYER_MAX_SPEED)
     }
+    goForwardLeft() {
+        let direction = northEast
+        if (this.#my_side === proto.lugo.Team.Side.AWAY) {
+            direction = southWest
+        }
+        return this._makeOrderMoveFromVector(direction, field.PLAYER_MAX_SPEED)
+    }
+    goForwardRight() {
+        let direction = southEast
+        if (this.#my_side === proto.lugo.Team.Side.AWAY) {
+            direction = northWest
+        }
+        return this._makeOrderMoveFromVector(direction, field.PLAYER_MAX_SPEED)
+    }
 
     goBackward() {
         let direction = west
         if (this.#my_side === proto.lugo.Team.Side.AWAY) {
             direction = east
+        }
+        return this._makeOrderMoveFromVector(direction, field.PLAYER_MAX_SPEED)
+    }
+
+    goBackwardLeft() {
+        let direction = northWest
+        if (this.#my_side === proto.lugo.Team.Side.AWAY) {
+            direction = southEast
+        }
+        return this._makeOrderMoveFromVector(direction, field.PLAYER_MAX_SPEED)
+    }
+
+    goBackwardRight() {
+        let direction = southWest
+        if (this.#my_side === proto.lugo.Team.Side.AWAY) {
+            direction = northEast
         }
         return this._makeOrderMoveFromVector(direction, field.PLAYER_MAX_SPEED)
     }

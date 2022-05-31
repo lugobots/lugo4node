@@ -11,6 +11,6 @@
   "author": "Rubens Silva",
   "license": "ISC",
   "dependencies": {
-    "lugo4node": "file:../"
+    "lugo4node": "file:../../"
   }
 }

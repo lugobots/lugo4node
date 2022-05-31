@@ -1,0 +1,15 @@
+{
+  "name": "deeplearning",
+  "version": "1.0.0",
+  "description": "Example of using the Deep Learning helpers using Tensorflow",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Rubens Silva <rubens21@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "lugo4node": "file:../../",
+    "@tensorflow/tfjs-node": "^3.18.0"
+  }
+}

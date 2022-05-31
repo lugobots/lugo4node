@@ -11,7 +11,7 @@ function NewVector(from, to) {
     const v = new proto.lugo.Vector()
     v.setX(to.getX() - from.getX())
     v.setY(to.getY() - from.getY())
-    if (!validateVector(v)) {
+    if (isInValidateVector(v)) {
         throw new Error("an vector cannot have zero length")
     }
     return v
@@ -66,7 +66,7 @@ function sub(originalV, subV) {
     const newVector = new proto.lugo.Vector()
     newVector.setX(newX)
     newVector.setY(newY)
-    if (!validateVector(newVector)) {
+    if (isInValidateVector(newVector)) {
         throw new Error("could not subtract vectors an vector cannot have zero length")
     }
     return newVector
@@ -76,8 +76,8 @@ function sub(originalV, subV) {
  *
  * @param {proto.lugo.Vector} v
  */
-function validateVector(v) {
-    return (v.getX() !== 0 && v.getY() !== 0)
+function isInValidateVector(v) {
+    return (v.getX() === 0 && v.getY() === 0)
 }
 
 

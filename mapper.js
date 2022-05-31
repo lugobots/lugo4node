@@ -214,8 +214,8 @@ class Map {
         if (this.#side === proto.lugo.Team.Side.AWAY) {
             point = mirrorCoordsToAway(point)
         }
-        const cx = point.getX() / this.#regionWidth
-        const cy = point.getY() / this.#regionHeight
+        const cx = Math.floor(point.getX() / this.#regionWidth)
+        const cy = Math.floor(point.getY() / this.#regionHeight)
         const col = Math.min(cx, this.#cols - 1)
         const row = Math.min(cy, this.#rows - 1)
         return this.getRegion(col, row)
