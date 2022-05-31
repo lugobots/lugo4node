@@ -13,11 +13,13 @@ support your strategy (see the project [exampe](./example/simple) folder).
 
 ### Requirements
 
-* NMP >= 16
+* NPM >= 16
+
 
 ### Usage
 
 There are three ways to use **Lugo4Node** client:
+
 
 ### First option: Implementing a Bot class (simpler and recommended)
 
@@ -27,6 +29,7 @@ See [example](./example/simple/index-bot-handler.js)
 
 All you need to do is creating your bot by extending that class and implementing your bot behaviour. See an example
 at [example/simple/my_bot.js](example/simple/my_bot.js)
+
 
 ### Second option: Implementing the turn handler (a little more work)
 
@@ -41,12 +44,14 @@ message received from the game server.
 
 It may require that you know a bit more about the game steps, but still not too much.
 
+
 ### Third option: Using Tensorflow training model
 
 If you are a **deep learning** enthusiastic and knows [Tensorflow JS](https://tensorflow.org/js), you may want to use
 the Lugo deep learning environment.
 
 **Lugo bots** is an asyncrhonous game, so you will need to use the **Lugo4Node Gym** library to create your:
+
 
 #### 1. Create a Trainable bot
 
@@ -100,6 +105,7 @@ class TrainableBot {
 
 ```
 
+
 #### 2. Create a training function
 
 If you are familiar with deep learn and **Tensorflow**, you know what a training function does. The only particularity
@@ -144,6 +150,7 @@ async function myTrainingFunction(coach) {
 }
 ```
 
+
 #### 3. Run the game server in Dev Mode
 
 The **Game Server** must be started in _dev mode_ to run training sessions.
@@ -154,10 +161,12 @@ Run this command below or read the Game Server `--help` instructions to find mor
 docker run -p 8080:8080 -p 5000:5000 lugobots/server:v1.0.0-beta play --dev-mode --waiting-duration 1m
 ```
 
+
 #### 4. Starting your trainable bot
 
 Now, create a **Lugo4Node** client, but instead of using the client to play using your bot, you will start a game using
 the Gym class.
+
 
 ##### Remove control
 
@@ -172,6 +181,7 @@ The remote control is already implemented in **Lugo4Node** package.:
     const rc = new deep_learning.RemoteControl();
 await rc.connect(grpcAddress)
 ```
+
 
 ##### Everything together
 
@@ -192,6 +202,7 @@ await rc.connect(grpcAddress)
 const gym = new deep_learning.Gym(rc, bot, myTrainingFunction, {debugging_log: false})
 await gym.start(lugoClient)
 ```
+
 
 #### 5. Adding more players to the game
 
@@ -215,12 +226,6 @@ await gym.withZombiePlayers(grpcAddress).start(lugoClient)
 
 **Note** that the Gym will try to connect 11 players in each side, so at least one of the connections will fail because
 one position is already occupied by your trainable bot.
-
-### Next steps
-
-### Deploying you bots
-
-Coming soon
 
 ## Helpers
 
@@ -308,3 +313,10 @@ region.back()
 region.left()
 region.right()
 ```
+
+## Next steps
+
+
+### Deploying you bots
+
+Coming soon
