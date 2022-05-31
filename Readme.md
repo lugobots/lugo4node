@@ -288,14 +288,14 @@ reader.makeOrderCatch()
 And, last but not least, the Reader also helps our bot to see the game map based on directions instead of coordinates:
 
 ```javascript
-render.goForward()
-render.goForwardLeft()
-render.goForwardRight()
-render.goBackward()
-render.goBackwardLeft()
-render.goBackwardRight()
-render.goLeft()
-render.goRight()
+reader.goForward()
+reader.goForwardLeft()
+reader.goForwardRight()
+reader.goBackward()
+reader.goBackwardLeft()
+reader.goBackwardRight()
+reader.goLeft()
+reader.goRight()
 ```
 
 ### Mapper and Region classes
