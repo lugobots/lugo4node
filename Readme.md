@@ -1,4 +1,4 @@
-# Lugo4Node - A Lugo Bots Client (Deep learn ready :brain:)
+# Lugo4Node - A Lugo Bots Client (Deep learning ready :brain:)
 
 Lugo4Node is a [Go](http://golang.org/) implementation of a client player for [Lugo](https://lugobots.dev/) game.
 
