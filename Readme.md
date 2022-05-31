@@ -11,6 +11,24 @@ attributes, etc.
 Using this client, you just need to implement the Artificial Intelligence of your player and some other few methods to
 support your strategy (see the project [exampe](./example/simple) folder).
 
+
+# Table of Contents
+0. [Requirements](### Requirements)
+1. [Usage](### Usage)
+2. How to create a bot
+   1. [First option: Implementing a Bot class (simpler and recommended)](### First option: Implementing a Bot class (simpler and recommended))
+   2. [Second option: Implementing the turn handler (a little more work)](### Second option: Implementing the turn handler (a little more work))
+   3. [Third option: Using Tensorflow training model](### Third option: Using Tensorflow training model)
+      1. [1. Create a Trainable bot](#### 1. Create a Trainable bot)
+      2. [2. Create a training function](#### 2. Create a training function)
+      3. [3. Run the game server in Dev Mode](#### 3. Run the game server in Dev Mode)
+      4. [4. Starting your trainable bot](#### 4. Starting your trainable bot)
+      5. [5. Adding more players to the game](#### 5. Adding more players to the game)
+3. [Snapshot reader](### Snapshot reader)
+4. [Mapper and Region classes](### Mapper and Region classes)
+5. [Deploying you bots](### Deploying you bots)
+
+
 ### Requirements
 
 * NPM >= 16
@@ -169,7 +187,7 @@ Now, create a **Lugo4Node** client, but instead of using the client to play usin
 the Gym class.
 
 
-##### Remove control
+##### Remote control
 
 The Gym will require a trainable bot, a training function, and a Remove Control.
 
