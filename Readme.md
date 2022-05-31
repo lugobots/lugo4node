@@ -1,6 +1,6 @@
 # Lugo4Node - A Lugo Bots Client (Deep learning ready :brain:)
 
-Lugo4Node is a [Go](http://golang.org/) implementation of a client player for [Lugo](https://lugobots.dev/) game.
+Lugo4Node is a NodeJS implementation of a client player for [Lugo](https://lugobots.dev/) game.
 
 It **is not a bot** that plays the game, it is only the client for the game server.
 
