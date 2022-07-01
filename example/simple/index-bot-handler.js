@@ -1,4 +1,4 @@
-const {EnvVarLoader, newClientFromConfig, GameSnapshotReader, Mapper} = require('main')
+const {EnvVarLoader, newClientFromConfig, GameSnapshotReader, Mapper} = require('lugo4node')
 const dummy = require('./my_bot')
 const {PLAYER_POSITIONS} = require("./strategy");
 
