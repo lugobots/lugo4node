@@ -1,7 +1,7 @@
 const tf = require('@tensorflow/tfjs-node');
 
 const inputCount = 3
-const outputCount = 1
+const outputCount = 8
 
 class PolicyNetwork {
 
@@ -66,7 +66,19 @@ class PolicyNetwork {
         const allGradients = [];
         const allRewards = [];
         const gameScore = [];
+        // this.policyNet .summary()
+
+        // console.log(`Starting iteration=======================`)
+        // for(const i in this.policyNet.layers) {
+            // console.log(`Layer ${i}`)
+            // this.policyNet.layers[i].getWeights()[0].print()
+        // }
+        // console.log(`=======================`)
+
+
         for (let i = 0; i < numGames; ++i) {
+
+
             await coach.setRandomState();
             const gameRewards = [];
             const gameGradients = [];
@@ -80,7 +92,6 @@ class PolicyNetwork {
                     // console.log(`BLA BLA YYY`)
                     return this.getGradientsAndSaveActions(inputTensor).grads;
                 }));
-            // console.log(`BLA BLA 1`, gradients)
                 this.pushGradients(gameGradients, gradients);
                 // console.log(`BLA BLA 2`, this.currentActions_)
                 // const action = [0];
@@ -134,12 +145,16 @@ class PolicyNetwork {
     getGradientsAndSaveActions(inputTensor) {
         const f = () => tf.tidy(() => {
             const [logits, actions] = this.getLogitsAndActions(inputTensor);
-            // console.log(`YYYYYY 1`, actions.arraySync())
-            this.currentActions_ = actions.dataSync();
+             // console.log(`----------------------`)
+             // console.log(`TODOD`, actions.dataSync())
+             // console.log(`INDEX`, actions.argMax(-1).dataSync()[0])
+
+
+            this.currentActions_ = actions.argMax(-1).dataSync()[0];
             // // console.log(`YYYYYY2`, this.currentActions_)
             // // console.log(`YYYYYY2`, actions.dataSync())
             const labels =
-                tf.sub(1, tf.tensor2d(this.currentActions_, actions.shape));
+                tf.sub(1, tf.tensor2d(actions.dataSync(), actions.shape));
             // console.log(`YYYYYY 4`,this.currentActions_, actions.shape)
             return tf.losses.sigmoidCrossEntropy(labels, logits);
         });
@@ -162,7 +177,6 @@ class PolicyNetwork {
         return tf.tidy(() => {
             // console.log(`XXXX 1`, inputs.arraySync())
             const logits = this.policyNet.predict(inputs);
-            // console.log(`XXXX 2`, logits)
             // Get the probability of the leftward action.
             const probabilities = tf.sigmoid(logits);
             // // console.log(`XXXX 3`, )

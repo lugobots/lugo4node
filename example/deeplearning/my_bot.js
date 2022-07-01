@@ -2,6 +2,27 @@ const {homeGoal, FIELD, directions, vectors, GameSnapshotReader, deep_learning, 
 const tf = require("@tensorflow/tfjs-node");
 const {delay} = require("../../deep_learning/coach");
 
+
+const ALL_FORWARD = 0;
+const ALL_BACKWARD = 1;
+const ALL_LEFT = 2;
+const ALL_RIGHT = 3;
+const ALL_FORWARD_RIGHT = 4;
+const ALL_FORWARD_LEFT = 5;
+const ALL_BACKWARD_RIGHT = 6;
+const ALL_BACKWARD_LEFT = 7;
+
+const ACTIONS = [
+    ALL_FORWARD,
+    ALL_BACKWARD,
+    ALL_LEFT,
+    ALL_RIGHT,
+    ALL_FORWARD_RIGHT,
+    ALL_FORWARD_LEFT,
+    ALL_BACKWARD_RIGHT,
+    ALL_BACKWARD_LEFT,
+]
+
 class MyTrainableBot extends deep_learning.TrainableBotStub {
     /**
      * @type {RemoteControl}
@@ -99,35 +120,41 @@ class MyTrainableBot extends deep_learning.TrainableBotStub {
         if (!me) {
             throw new Error("did not find myself in the game")
         }
+            // .argMax(-1).dataSync()
 
-        const interval = 1/8
-        const mod = Math.round(action/interval)
-        // console.log(`action: `, action, mod, interval)
+        // console.log(action)
+        const interval = 1/8;
+        // action = action.argMax(-1).dataSync()
+        //  console.log(`action: `, action)
 
-        let dir = reader.goForward()
-        if(action < interval) {
-            dir = reader.goBackward()
-            // console.log(`goBackward (action: `, action, )
-        } else if(action[0] < interval * 2) {
-            dir = reader.goLeft()
-            // console.log(`goLeft (action: `, action, )
-        } else if(action[0] < interval * 3) {
-            dir = reader.goRight()
-            // console.log(`goRight (action: `, action, )
-        } else if(action[0] < interval * 4) {
-            dir = reader.goForwardRight()
-            // console.log(`goForwardRight (action: `, action, )
-        } else if(action[0] < interval * 5) {
-            dir = reader.goForwardLeft()
-            // console.log(`goForwardLeft (action: `, action, )
-        } else if(action[0] < interval * 6) {
-            dir = reader.goBackwardRight()
-            // console.log(`goBackwardRight (action: `, action, )
-        } else if(action[0] < interval * 7) {
-            dir = reader.goBackwardLeft()
-            // console.log(`goBackwardLeft (action: `, action, )
-        } else {
-            // console.log(`goForward (action: `, action, )
+        let dir;
+        switch (action) {
+            case ALL_FORWARD:
+                dir =  reader.goForward()
+                break;
+            case ALL_BACKWARD:
+                dir =  reader.goBackward()
+                break;
+            case ALL_LEFT:
+                dir =  reader.goLeft()
+                break;
+            case ALL_RIGHT:
+                dir =  reader.goRight()
+                break;
+            case ALL_FORWARD_RIGHT:
+                dir =  reader.goForwardRight()
+                break;
+            case ALL_FORWARD_LEFT:
+                dir =  reader.goForwardLeft()
+                break;
+            case ALL_BACKWARD_RIGHT:
+                dir =  reader.goBackwardRight()
+                break;
+            case ALL_BACKWARD_LEFT:
+                dir =  reader.goBackwardLeft()
+                break;
+            default:
+                throw new Error(`Unknown action ${action}`)
         }
         return orderSet.setOrdersList([dir])
     }
@@ -161,9 +188,9 @@ class MyTrainableBot extends deep_learning.TrainableBotStub {
 
         const myPosition = this.#mapper.getRegionFromPoint(me.getPosition())
         let reward = 0;
-        if ( actualDist < previousDist) {
+        // if ( actualDist < previousDist) {
             reward = (previousDist - actualDist) / FIELD.PLAYER_MAX_SPEED
-        }
+        // }
         let done = false
 
         if (this._hasOpponent(mappedOpponents, myPosition.left()) ||
@@ -171,7 +198,7 @@ class MyTrainableBot extends deep_learning.TrainableBotStub {
             this._hasOpponent(mappedOpponents, myPosition.front()) ||
             this._hasOpponent(mappedOpponents, myPosition)) {
             done = true
-            reward = -1
+            reward = -2
             // console.log(`Done because got to close to an opponent`)
         } else if (mePreviously.getPosition().getX() > FIELD.MAX_X_COORDINATE * 0.9) {
             done = true

@@ -2,15 +2,15 @@ const tf = require("@tensorflow/tfjs-node");
 const {Mapper, Client, deep_learning} = require("lugo4node");
 
 const {MyTrainableBot} = require("./my_bot");
-const {SaveablePolicyNetwork, asyncToSync, mean,sum} = require("./model");
+const {SaveablePolicyNetwork, asyncToSync, mean, sum} = require("./model");
 
 // training settings
-const trainIterations = 25;
-const gamesPerIteration = 10;
-const maxStepsPerGame = 80;
-const hiddenLayerSizes = [128]
+const trainIterations = 50;
+const gamesPerIteration = 20;
+const maxStepsPerGame = 30;
+const hiddenLayerSizes = [128, 256, 256, 64]
 const learningRate = 0.08
-const discountRate = 0.20;
+const discountRate = 0.95;
 const testingGames = 20
 
 const grpcAddress = "localhost:5000"
@@ -72,20 +72,24 @@ async function myTrainingFunction(coach) {
     let t0 = new Date().getTime();
     let stopRequested = false;
     for (let i = 0; i < trainIterations; ++i) {
-        const gameScores = await policyNet.train(
-            coach, optimizer, discountRate, gamesPerIteration,
-            maxStepsPerGame);
-        const t1 = new Date().getTime();
-        t0 = t1;
-        console.log(`iteration ${i}/${trainIterations} done, total score:`, gameScores)
-        iterationGamesMeans.push({iteration: i + 1, means: gameScores});
-        console.log(`# of tensors: ${tf.memory().numTensors}`);
+        try {
+            const gameScores = await policyNet.train(
+                coach, optimizer, discountRate, gamesPerIteration,
+                maxStepsPerGame);
+            const t1 = new Date().getTime();
+            t0 = t1;
+            console.log(`iteration ${i}/${trainIterations} done, total score:`, gameScores)
+            iterationGamesMeans.push({iteration: i + 1, means: gameScores});
+            console.log(`# of tensors: ${tf.memory().numTensors}`);
 
-        await tf.nextFrame();
-        await policyNet.saveModel(model_path);
-        if (stopRequested) {
-            console.log('Training stopped by user.');
-            break;
+            await tf.nextFrame();
+            await policyNet.saveModel(model_path);
+            if (stopRequested) {
+                console.log('Training stopped by user.');
+                break;
+            }
+        }catch (e) {
+            console.error(e);
         }
     }
     if (!stopRequested) {
@@ -95,22 +99,28 @@ async function myTrainingFunction(coach) {
     console.log('Starting tests');
     const testingScores = [];
     for (let i = 0; i < testingGames; ++i) {
-        await coach.setRandomState()
-        let isDone = false
-        const gameScores = []
-        while (!isDone) {
-            tf.tidy(await asyncToSync(async () => {
-                const action = policyNet.getActions(await coach.getStateTensor())[0];
-                const {done, reward} = await coach.update(action);
-                isDone = done
-                gameScores.push(reward)
-                // console.log(`Testing Means: `, gameScores)
-            }));
-            await tf.nextFrame();  // Unblock UI thread.
+        try {
+            await coach.setRandomState()
+            let isDone = false
+            const gameScores = []
+            while (!isDone) {
+
+                tf.tidy(await asyncToSync(async () => {
+                    const action = policyNet.getActions(await coach.getStateTensor())[0];
+                    const {done, reward} = await coach.update(action);
+                    isDone = done
+                    gameScores.push(reward)
+                    // console.log(`Testing Means: `, gameScores)
+                }));
+                await tf.nextFrame();  // Unblock UI thread.
+
+            }
+            const testScore = sum(gameScores)
+            testingScores.push({test: i, mean: testScore.toFixed(2)})
+            console.log(`Test done, Score: `, testScore.toFixed(2))
+        } catch (e) {
+            console.error(e)
         }
-        const testScore = sum(gameScores)
-        testingScores.push({test: i, mean: testScore.toFixed(2)})
-        console.log(`Test done, Score: `, testScore.toFixed(2))
     }
     await coach.stop()
     console.log(`Testing scores: `, testingScores)
