@@ -153,6 +153,14 @@ class GameSnapshotReader {
 
     /**
      *
+     * @returns {proto.lugo.Ball}
+     */
+    getBall() {
+        return this.#snapshot.getBall()
+    }
+
+    /**
+     *
      * @returns {Goal}
      */
     getOpponentGoal() {
@@ -199,6 +207,11 @@ class GameSnapshotReader {
      * @returns {proto.lugo.Order}
      */
     makeOrderMove(origin, target, speed) {
+        if(origin.getX() === target.getX() && origin.getY() === target.getY()) {
+            // a vector cannot have zeroed direction. In this case, the player will just be stopped
+            return this._makeOrderMoveFromVector(north, 0)
+        }
+
         let direction = vectors.NewVector(origin, target)
         direction = vectors.normalize(direction)
         return this._makeOrderMoveFromVector(direction, speed)

@@ -54,7 +54,7 @@ class Bot extends BotStub {
     onDisputing(orderSet, snapshot) {
         try {
             const {reader, me} = this._makeReader(snapshot)
-            const ballPosition = snapshot.getBall().getPosition()
+            const ballPosition = reader.getBall().getPosition()
 
             const ballRegion = this.#mapper.getRegionFromPoint(ballPosition)
             const myRegion = this.#mapper.getRegionFromPoint(this.#initPosition)
