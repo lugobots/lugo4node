@@ -2,7 +2,7 @@
 
 Lugo4Node is a NodeJS implementation of a client player for [Lugo](https://lugobots.dev/) game.
 
-It **is not a bot** that plays the game, it is only the client for the game server.
+It **is not a bot** that plays the game, it is only the client for the game lugo.
 
 This client implements a brainless player in the game. So, this library implements many methods that does not affect the
 player intelligence/behaviour/decisions. It is meant to reduce the developer concerns on communication, protocols,
@@ -21,7 +21,7 @@ support your strategy (see the project [exampe](./example/simple) folder).
   * [Third option: Using Tensorflow training model](#third-option--using-tensorflow-training-model)
       + [1. Create a Trainable bot](#1-create-a-trainable-bot)
       + [2. Create a training function](#2-create-a-training-function)
-      + [3. Run the game server in Dev Mode](#3-run-the-game-server-in-dev-mode)
+      + [3. Run the game lugo in Dev Mode](#3-run-the-game-server-in-dev-mode)
       + [4. Starting your trainable bot](#4-starting-your-trainable-bot)
       + [5. Adding more players to the game](#5-adding-more-players-to-the-game)
 - [Helpers](#helpers)
@@ -47,7 +47,7 @@ See [example](./example/simple/index-bot-handler.js)
 **Lugo4Node** client implements the method `playAsBot(bot)` that expects an instance [bot](stub.js#L11) implementation.
 
 All you need to do is creating your bot by extending that class and implementing your bot behaviour. See an example
-at [example/simple/my_bot.js](example/simple/my_bot.js)
+at [example/simple/my_bot.ts](example/simple/my_bot.js)
 
 
 ### Second option: Implementing the turn handler (a little more work)
@@ -55,11 +55,11 @@ at [example/simple/my_bot.js](example/simple/my_bot.js)
 As you noticed, the option 1 has some logic injected in it, so you may want to remove that layer of logic and implement
 yours.
 
-The most raw way to communicate with the server is receiving the game raw snapshots.
+The most raw way to communicate with the lugo is receiving the game raw snapshots.
 See [example](./example/simple/index-turn-handler.js)
 
 In this case, you must use the client's `play` method. The `play` method will call your call back function for any
-message received from the game server.
+message received from the game lugo.
 
 It may require that you know a bit more about the game steps, but still not too much.
 
@@ -171,14 +171,14 @@ async function myTrainingFunction(coach) {
 ```
 
 
-#### 3. Run the game server in Dev Mode
+#### 3. Run the game lugo in Dev Mode
 
 The **Game Server** must be started in _dev mode_ to run training sessions.
 
 Run this command below or read the Game Server `--help` instructions to find more options:
 
 ```shell
-docker run -p 8080:8080 -p 5000:5000 lugobots/server:v1.0.0-beta play --dev-mode --waiting-duration 1m
+docker run -p 8080:8080 -p 5000:5000 lugobots/lugo:v1.0.0-beta play --dev-mode --waiting-duration 1m
 ```
 
 
