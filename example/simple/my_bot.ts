@@ -1,7 +1,7 @@
-`use strict`;
-import {Map} from 'lugo4node'
+import {} from 'lugo4node'
+import {DIRECTION} from "../../main";
 
-class Bot extends BotStub {
+class Bot implements Bot {
     /**
      * @type {proto.lugo.Team.Side}
      */
@@ -30,6 +30,7 @@ class Bot extends BotStub {
      */
     constructor(side, number, initPosition, mapper: Map) {
         super();
+        DIRECTION.FORWARD
         this.number = number
         this.mapper = mapper
         this.initPosition = initPosition

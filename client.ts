@@ -1,11 +1,11 @@
-import grpc = require("grpc");
 import {GameClient} from "./pb/ServerServiceClientPb"
 import {Point} from "./pb/physics_pb"
 import {GameSnapshot, JoinRequest, OrderSet, Team} from "./pb/server_pb"
-import {BotStub, defineState, PLAYER_STATE} from './stub'
+import {Bot, PLAYER_STATE} from './stub'
 import {EnvVarLoader} from './configurator'
+import {defineState} from './main'
 
-const PROTOCOL_VERSION = "1.0.0"
+export const PROTOCOL_VERSION = "1.0.0"
 
 /**
  *
@@ -69,11 +69,8 @@ export class Client {
      * @param {function()} onJoin
      * @returns {Promise<void>}
      */
-    async playAsBot(bot: BotStub, onJoin = () => {
+    async playAsBot(bot: Bot, onJoin = () => {
     }) {
-        if (!(bot instanceof BotStub)) {
-            throw new Error("you must pass a BotStub child class")
-        }
         return this.setGettingReadyHandler(s => {
             bot.gettingReady(s)
         })._start((ordersSet, snapshot) => {
@@ -124,7 +121,7 @@ export class Client {
     }) {
         await new Promise((resolve, reject) => {
             // the random guarantee that we will have multiple connections instead of using pool of connections
-            this.client = new GameClient(`${this.serverAdd}?random=${Math.random()}`, grpc.credentials.createInsecure())
+            this.client = new GameClient(`${this.serverAdd}?random=${Math.random()}`)
             const deadline = new Date();
 
 

@@ -1,5 +1,3 @@
-'use strict';
-
 const BASE_UNIT = 100;
 
 const max_x_coordinate = 200 * BASE_UNIT
@@ -7,7 +5,7 @@ const max_y_coordinate = 100 * BASE_UNIT
 const goal_width = 30 * BASE_UNIT;
 const player_max_speed = 100.0;
 
-module.exports = {
+export const SPECS = {
     // PLAYER_SIZE is the size of each player
     PLAYER_SIZE: 4 * BASE_UNIT,
 

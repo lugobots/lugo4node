@@ -1,14 +1,15 @@
-'use strict';
-require('./pb/server_pb')
+import {Point, Vector, Velocity} from './pb/physics_pb'
+
+export {Point, Vector, Velocity} ;
 
 /**
  *
- * @param {proto.lugo.Point} from
- * @param {proto.lugo.Point} to
- * @returns {proto.lugo.Vector}
+ * @param {Point} from
+ * @param {Point} to
+ * @returns {Vector}
  */
-function NewVector(from, to) {
-    const v = new proto.lugo.Vector()
+export function NewVector(from: Point, to: Point): Vector {
+    const v = new Vector()
     v.setX(to.getX() - from.getX())
     v.setY(to.getY() - from.getY())
     if (isInValidateVector(v)) {
@@ -19,34 +20,34 @@ function NewVector(from, to) {
 
 /**
  *
- * @param {proto.lugo.Vector} v
- * @returns {proto.lugo.Vector} a new vector with same direction but normalized to 0-100
+ * @param {Vector} v
+ * @returns {Vector} a new vector with same direction but normalized to 0-100
  */
-function normalize(v) {
+export function normalize(v: Vector): Vector {
     const length = getLength(v)
     return getScaledVector(v, 100 / length)
 }
 
 /**
  *
- * @param {proto.lugo.Vector} v
+ * @param {Vector} v
  * @returns {number}
  */
-function getLength(v) {
+export function getLength(v: Vector): number {
     return Math.hypot(v.getX(), v.getY())
 }
 
 /**
  *
- * @param {proto.lugo.Vector} v
+ * @param {Vector} v
  * @param {number} scale
- * @returns {proto.lugo.Vector}
+ * @returns {Vector}
  */
-function getScaledVector(v, scale) {
+export function getScaledVector(v: Vector, scale: number): Vector {
     if (scale <= 0) {
         throw new Error("vector can not have zero length")
     }
-    const v2 = new proto.lugo.Vector()
+    const v2 = new Vector()
     v2.setX(v.getX() * scale)
     v2.setY(v.getY() * scale)
 
@@ -55,15 +56,15 @@ function getScaledVector(v, scale) {
 
 /**
  *
- * @param {proto.lugo.Vector} originalV
- * @param {proto.lugo.Vector} subV
- * @returns {proto.lugo.Vector}
+ * @param {Vector} originalV
+ * @param {Vector} subV
+ * @returns {Vector}
  */
-function sub(originalV, subV) {
+export function sub(originalV: Vector, subV: Vector): Vector {
     const newX = originalV.getX() - subV.getX()
     const newY = originalV.getY() - subV.getY()
 
-    const newVector = new proto.lugo.Vector()
+    const newVector = new Vector()
     newVector.setX(newX)
     newVector.setY(newY)
     if (isInValidateVector(newVector)) {
@@ -74,18 +75,10 @@ function sub(originalV, subV) {
 
 /**
  *
- * @param {proto.lugo.Vector} v
+ * @param {Vector} v
  */
-function isInValidateVector(v) {
+function isInValidateVector(v: Vector): boolean {
     return (v.getX() === 0 && v.getY() === 0)
 }
 
 
-
-module.exports = {
-    NewVector,
-    normalize,
-    getLength,
-    getScaledVector,
-    sub
-}

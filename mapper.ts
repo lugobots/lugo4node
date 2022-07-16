@@ -2,7 +2,7 @@ import * as physics from './pb/physics_pb';
 import {Point} from './pb/physics_pb';
 import * as lugo from './pb/server_pb';
 
-import * as field from "./field";
+import {SPECS} from "./specs";
 
 // ErrMinCols defines an error for invalid number of cols
 const ErrMinCols = new Error("number of cols lower the minimum")
@@ -176,8 +176,8 @@ export class Map {
         this.cols = cols
         this.rows = rows
         this.side = side
-        this.regionWidth = field.MAX_X_COORDINATE / cols
-        this.regionHeight = field.MAX_Y_COORDINATE / rows
+        this.regionWidth = SPECS.MAX_X_COORDINATE / cols
+        this.regionHeight = SPECS.MAX_Y_COORDINATE / rows
     }
 
     /**
@@ -232,8 +232,8 @@ export class Map {
  */
 function mirrorCoordsToAway(center) {
     let mirrored = new Point()
-    mirrored.setX(field.MAX_X_COORDINATE - center.getX())
-    mirrored.setY(field.MAX_Y_COORDINATE - center.getY())
+    mirrored.setX(SPECS.MAX_X_COORDINATE - center.getX())
+    mirrored.setY(SPECS.MAX_Y_COORDINATE - center.getY())
     return mirrored
 }
 
