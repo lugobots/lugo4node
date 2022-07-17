@@ -1,4 +1,4 @@
-import {Client} from './client'
+import {Client, NewClientFromConfig} from './client'
 import {EnvVarLoader} from './configurator'
 import {Goal} from './goal'
 import {Map, Region} from './mapper'
@@ -13,7 +13,7 @@ import {Point, Vector, Velocity} from './pb/physics_pb'
 
 
 export {
-    Client,
+    Client,NewClientFromConfig,
     EnvVarLoader,
     Goal,
     Map, Region,
@@ -52,8 +52,8 @@ awayGoalBottomPole.setX(SPECS.MAX_X_COORDINATE)
 awayGoalBottomPole.setY(SPECS.GOAL_MIN_Y)
 
 
-class GameSnapshotReader {
-    readonly my_side;
+export class GameSnapshotReader {
+    readonly mySide;
 
     /**
      * @type {GameSnapshot}
@@ -62,7 +62,7 @@ class GameSnapshotReader {
 
     constructor(snapshot: GameSnapshot, mySide: Team.Side) {
         this.snapshot = snapshot
-        this.my_side = mySide
+        this.mySide = mySide
     }
 
     /**
@@ -70,7 +70,7 @@ class GameSnapshotReader {
      * @returns {Team}
      */
     getMyTeam(): Team {
-        return this.getTeam(this.my_side)
+        return this.getTeam(this.mySide)
     }
 
     /**
@@ -101,7 +101,7 @@ class GameSnapshotReader {
      * @returns {Team.Side}
      */
     getOpponentSide(): Team.Side {
-        if (this.my_side === Team.Side.HOME) {
+        if (this.mySide === Team.Side.HOME) {
             return Team.Side.AWAY
         }
         return Team.Side.HOME
@@ -112,7 +112,7 @@ class GameSnapshotReader {
      * @returns {Goal}
      */
     getMyGoal(): Goal {
-        if (this.my_side === Team.Side.HOME) {
+        if (this.mySide === Team.Side.HOME) {
             return homeGoal
         }
         return awayGoal
@@ -131,7 +131,7 @@ class GameSnapshotReader {
      * @returns {Goal}
      */
     getOpponentGoal(): Goal {
-        if (this.my_side === Team.Side.HOME) {
+        if (this.mySide === Team.Side.HOME) {
             return awayGoal
         }
         return homeGoal
@@ -191,7 +191,7 @@ class GameSnapshotReader {
      * @returns {Order}
      * @private
      */
-    _makeOrderMoveFromVector(direction: Vector, speed: number): Order {
+    private _makeOrderMoveFromVector(direction: Vector, speed: number): Order {
         const velocity = new Velocity()
         velocity.setDirection(direction)
         velocity.setSpeed(speed)
@@ -206,49 +206,49 @@ class GameSnapshotReader {
         switch (direction) {
             case DIRECTION.FORWARD:
                 directionTarget = ORIENTATION.EAST
-                if (this.my_side === Team.Side.AWAY) {
+                if (this.mySide === Team.Side.AWAY) {
                     directionTarget = ORIENTATION.WEST
                 }
                 break;
             case DIRECTION.BACKWARD:
                 directionTarget = ORIENTATION.WEST
-                if (this.my_side === Team.Side.AWAY) {
+                if (this.mySide === Team.Side.AWAY) {
                     directionTarget = ORIENTATION.EAST
                 }
                 break;
             case DIRECTION.LEFT:
                 directionTarget = ORIENTATION.NORTH
-                if (this.my_side === Team.Side.AWAY) {
+                if (this.mySide === Team.Side.AWAY) {
                     directionTarget = ORIENTATION.SOUTH
                 }
                 break;
             case DIRECTION.RIGHT:
                 directionTarget = ORIENTATION.SOUTH
-                if (this.my_side === Team.Side.AWAY) {
+                if (this.mySide === Team.Side.AWAY) {
                     directionTarget = ORIENTATION.NORTH
                 }
                 break;
             case DIRECTION.BACKWARD_LEFT:
                 directionTarget = ORIENTATION.NORTH_WEST
-                if (this.my_side === Team.Side.AWAY) {
+                if (this.mySide === Team.Side.AWAY) {
                     directionTarget = ORIENTATION.SOUTH_EAST
                 }
                 break;
             case DIRECTION.BACKWARD_RIGHT:
                 directionTarget = ORIENTATION.SOUTH_WEST
-                if (this.my_side === Team.Side.AWAY) {
+                if (this.mySide === Team.Side.AWAY) {
                     directionTarget = ORIENTATION.NORTH_EAST
                 }
                 break;
             case DIRECTION.FORWARD_LEFT:
                 directionTarget = ORIENTATION.NORTH_EAST
-                if (this.my_side === Team.Side.AWAY) {
+                if (this.mySide === Team.Side.AWAY) {
                     directionTarget = ORIENTATION.SOUTH_WEST
                 }
                 break;
             case DIRECTION.FORWARD_RIGHT:
                 directionTarget = ORIENTATION.SOUTH_EAST
-                if (this.my_side === Team.Side.AWAY) {
+                if (this.mySide === Team.Side.AWAY) {
                     directionTarget = ORIENTATION.NORTH_WEST
                 }
                 break;

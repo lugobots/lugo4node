@@ -6,6 +6,10 @@ if [ -z "$1" ]
     exit 1
 fi
 
+
+
+
+
 for i in `seq 1 11`
 do
   docker run -d --init -v $(pwd)/../../:/app --workdir="/app/example/simple" --network=host -e BOT_NUMBER=$i -e BOT_TEAM=$1 node:16 npm run start

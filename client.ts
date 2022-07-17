@@ -13,7 +13,7 @@ export const PROTOCOL_VERSION = "1.0.0"
  * @param {Point} initialPosition
  * @returns {Client}
  */
-function newClientFromConfig(config, initialPosition) {
+export function NewClientFromConfig(config: EnvVarLoader, initialPosition: Point) : Client {
     return new Client(
         config.grpcUrl,
         config.grpcInsecure,
