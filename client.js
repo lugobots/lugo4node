@@ -37,8 +37,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.Client = exports.NewClientFromConfig = exports.PROTOCOL_VERSION = void 0;
-var ServerServiceClientPb_js_1 = require("./pb/ServerServiceClientPb.js");
 var server_pb_js_1 = require("./pb/server_pb.js");
+var server_grpc_pb_1 = require("./pb/server_grpc_pb");
+var grpc_1 = require("grpc");
 var stub_js_1 = require("./stub.js");
 var main_js_1 = require("./main.js");
 exports.PROTOCOL_VERSION = "1.0.0";
@@ -147,87 +148,86 @@ var Client = /** @class */ (function () {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, new Promise(function (resolve, reject) {
                             // the random guarantee that we will have multiple connections instead of using pool of connections
-                            _this.client = new ServerServiceClientPb_js_1.GameClient("".concat(_this.serverAdd, "?random=").concat(Math.random()));
+                            _this.client = new server_grpc_pb_1.GameClient("".concat(_this.serverAdd, "?random=").concat(Math.random()), grpc_1.credentials.createInsecure());
                             var deadline = new Date();
                             deadline.setSeconds(deadline.getSeconds() + 5);
-                            // this.client.waitForReady(deadline, (err) => {
-                            //     if (err) {
-                            //         reject(new Error(`failed to connect to the Game Server: ${err}`))
-                            //     }
-                            //     console.log(`connect to the gRPC server ${this.teamSide === Team.Side.HOME ? "HOME" : "AWAY"}-${this.number}`)
-                            var req = new server_pb_js_1.JoinRequest();
-                            req.setToken(_this.token);
-                            req.setProtocolVersion(exports.PROTOCOL_VERSION);
-                            req.setTeamSide(_this.teamSide);
-                            req.setNumber(_this.number);
-                            req.setInitPosition(_this.init_position);
-                            var running = _this.client.joinATeam(req);
-                            onJoin();
-                            running.on('data', function (snapshot) { return __awaiter(_this, void 0, void 0, function () {
-                                var _a, orderSet, e_1, e_2;
-                                return __generator(this, function (_b) {
-                                    switch (_b.label) {
-                                        case 0:
-                                            _b.trys.push([0, 11, , 12]);
-                                            _a = snapshot.getState();
-                                            switch (_a) {
-                                                case server_pb_js_1.GameSnapshot.State.LISTENING: return [3 /*break*/, 1];
-                                                case server_pb_js_1.GameSnapshot.State.GET_READY: return [3 /*break*/, 9];
-                                            }
-                                            return [3 /*break*/, 10];
-                                        case 1:
-                                            orderSet = new server_pb_js_1.OrderSet();
-                                            orderSet.setTurn(snapshot.getTurn());
-                                            _b.label = 2;
-                                        case 2:
-                                            _b.trys.push([2, 4, , 5]);
-                                            return [4 /*yield*/, bot(orderSet, snapshot)];
-                                        case 3:
-                                            orderSet = _b.sent();
-                                            return [3 /*break*/, 5];
-                                        case 4:
-                                            e_1 = _b.sent();
-                                            console.error("bot error", e_1);
-                                            return [3 /*break*/, 5];
-                                        case 5:
-                                            if (!orderSet) return [3 /*break*/, 7];
-                                            return [4 /*yield*/, this.orderSetSender(orderSet)];
-                                        case 6:
-                                            _b.sent();
-                                            return [3 /*break*/, 8];
-                                        case 7:
-                                            console.log("[turn #".concat(snapshot.getTurn(), "] bot did not return orders"));
-                                            _b.label = 8;
-                                        case 8: return [3 /*break*/, 10];
-                                        case 9:
-                                            this.gettingReadyHandler(snapshot);
-                                            return [3 /*break*/, 10];
-                                        case 10: return [3 /*break*/, 12];
-                                        case 11:
-                                            e_2 = _b.sent();
-                                            console.error("internal error processing turn", e_2);
-                                            return [3 /*break*/, 12];
-                                        case 12: return [2 /*return*/];
-                                    }
+                            _this.client.waitForReady(deadline, function (err) {
+                                if (err) {
+                                    reject(new Error("failed to connect to the Game Server: ".concat(err)));
+                                }
+                                console.log("connect to the gRPC server ".concat(_this.teamSide === server_pb_js_1.Team.Side.HOME ? "HOME" : "AWAY", "-").concat(_this.number));
+                                var req = new server_pb_js_1.JoinRequest();
+                                req.setToken(_this.token);
+                                req.setProtocolVersion(exports.PROTOCOL_VERSION);
+                                req.setTeamSide(_this.teamSide);
+                                req.setNumber(_this.number);
+                                req.setInitPosition(_this.init_position);
+                                var running = _this.client.joinATeam(req);
+                                onJoin();
+                                running.on('data', function (snapshot) { return __awaiter(_this, void 0, void 0, function () {
+                                    var _a, orderSet, e_1, e_2;
+                                    return __generator(this, function (_b) {
+                                        switch (_b.label) {
+                                            case 0:
+                                                _b.trys.push([0, 11, , 12]);
+                                                _a = snapshot.getState();
+                                                switch (_a) {
+                                                    case server_pb_js_1.GameSnapshot.State.LISTENING: return [3 /*break*/, 1];
+                                                    case server_pb_js_1.GameSnapshot.State.GET_READY: return [3 /*break*/, 9];
+                                                }
+                                                return [3 /*break*/, 10];
+                                            case 1:
+                                                orderSet = new server_pb_js_1.OrderSet();
+                                                orderSet.setTurn(snapshot.getTurn());
+                                                _b.label = 2;
+                                            case 2:
+                                                _b.trys.push([2, 4, , 5]);
+                                                return [4 /*yield*/, bot(orderSet, snapshot)];
+                                            case 3:
+                                                orderSet = _b.sent();
+                                                return [3 /*break*/, 5];
+                                            case 4:
+                                                e_1 = _b.sent();
+                                                console.error("bot error", e_1);
+                                                return [3 /*break*/, 5];
+                                            case 5:
+                                                if (!orderSet) return [3 /*break*/, 7];
+                                                return [4 /*yield*/, this.orderSetSender(orderSet)];
+                                            case 6:
+                                                _b.sent();
+                                                return [3 /*break*/, 8];
+                                            case 7:
+                                                console.log("[turn #".concat(snapshot.getTurn(), "] bot did not return orders"));
+                                                _b.label = 8;
+                                            case 8: return [3 /*break*/, 10];
+                                            case 9:
+                                                this.gettingReadyHandler(snapshot);
+                                                return [3 /*break*/, 10];
+                                            case 10: return [3 /*break*/, 12];
+                                            case 11:
+                                                e_2 = _b.sent();
+                                                console.error("internal error processing turn", e_2);
+                                                return [3 /*break*/, 12];
+                                            case 12: return [2 /*return*/];
+                                        }
+                                    });
+                                }); });
+                                running.on('status', function () {
+                                    // process status
+                                    // console.log('status', status);
                                 });
-                            }); });
-                            running.on('status', function () {
-                                // process status
-                                // console.log('status', status);
-                            });
-                            running.on('error', function (e) { return __awaiter(_this, void 0, void 0, function () {
-                                return __generator(this, function (_a) {
-                                    reject(new Error("error on team connection: ".concat(e)));
-                                    return [2 /*return*/];
+                                running.on('error', function (e) { return __awaiter(_this, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        reject(new Error("error on team connection: ".concat(e)));
+                                        return [2 /*return*/];
+                                    });
+                                }); });
+                                running.on('end', function () {
+                                    console.log('communication done');
+                                    resolve(null);
                                 });
-                            }); });
-                            running.on('end', function () {
-                                console.log('communication done');
-                                resolve(null);
                             });
-                        })
-                        // })
-                    ];
+                        })];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];

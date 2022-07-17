@@ -1,6 +1,8 @@
-import {GameClient} from "./pb/ServerServiceClientPb.js"
 import {Point} from "./pb/physics_pb.js"
 import {GameSnapshot, JoinRequest, OrderSet, Team} from "./pb/server_pb.js"
+import {GameClient} from './pb/server_grpc_pb'
+import {credentials} from 'grpc'
+
 import {Bot, PLAYER_STATE} from './stub.js'
 import {EnvVarLoader} from './configurator.js'
 import {defineState} from './main.js'
@@ -121,16 +123,16 @@ export class Client {
     }) {
         await new Promise((resolve, reject) => {
             // the random guarantee that we will have multiple connections instead of using pool of connections
-            this.client = new GameClient(`${this.serverAdd}?random=${Math.random()}`)
+            this.client = new GameClient(`${this.serverAdd}?random=${Math.random()}`, credentials.createInsecure())
             const deadline = new Date();
 
 
             deadline.setSeconds(deadline.getSeconds() + 5);
-            // this.client.waitForReady(deadline, (err) => {
-            //     if (err) {
-            //         reject(new Error(`failed to connect to the Game Server: ${err}`))
-            //     }
-            //     console.log(`connect to the gRPC server ${this.teamSide === Team.Side.HOME ? "HOME" : "AWAY"}-${this.number}`)
+            this.client.waitForReady(deadline, (err) => {
+                if (err) {
+                    reject(new Error(`failed to connect to the Game Server: ${err}`))
+                }
+                console.log(`connect to the gRPC server ${this.teamSide === Team.Side.HOME ? "HOME" : "AWAY"}-${this.number}`)
 
             const req = new JoinRequest()
             req.setToken(this.token)
@@ -181,7 +183,7 @@ export class Client {
                 resolve(null)
             });
         })
-        // })
+        })
     }
 
     /**

@@ -69,11 +69,11 @@ export {
     NextTurnRequest,
 }
 
-import {BroadcastClient} from './pb/BroadcastServiceClientPb.js'
+import {BroadcastClient} from './pb/broadcast_grpc_pb.js'
 export {BroadcastClient}
 
-import {RemoteClient} from './pb/RemoteServiceClientPb.js'
+import {RemoteClient} from './pb/remote_grpc_pb.js'
 export {RemoteClient}
 
-import {GameClient} from './pb/ServerServiceClientPb.js'
+import {GameClient} from './pb/server_grpc_pb'
 export {GameClient}
