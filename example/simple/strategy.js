@@ -1,6 +1,5 @@
 `use strict`;
 
-
 const PLAYER_POSITIONS = {
   1: {Col: 0, Row: 0},
   2: {Col: 1, Row: 1},

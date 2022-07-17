@@ -14,7 +14,7 @@ import {
     OrderSet,
     ShotClock,
     OrderResponse,
-} from "./pb/server_pb";
+} from './pb/server_pb.js'
 export {Ball, Catch, GameSnapshot, Jump, Kick, Move, Order, Player, Team, JoinRequest, OrderSet, ShotClock,OrderResponse}
 
 // exposing all from broadcast
@@ -32,7 +32,7 @@ import {WatcherRequest,
     EventGameOver,
     EventDebugBreakpoint,
     EventDebugReleased,
-} from './pb/broadcast_pb'
+} from './pb/broadcast_pb.js'
 export {WatcherRequest,
     StartRequest,
     GameEvent,
@@ -58,7 +58,7 @@ import {
     NextOrderRequest,
     PauseResumeRequest,
     NextTurnRequest,
-} from './pb/remote_pb'
+} from './pb/remote_pb.js'
 export {
     CommandResponse,
     GameProperties,
@@ -69,11 +69,11 @@ export {
     NextTurnRequest,
 }
 
-import {BroadcastClient} from './pb/BroadcastServiceClientPb'
+import {BroadcastClient} from './pb/BroadcastServiceClientPb.js'
 export {BroadcastClient}
 
-import {RemoteClient} from './pb/RemoteServiceClientPb'
+import {RemoteClient} from './pb/RemoteServiceClientPb.js'
 export {RemoteClient}
 
-import {GameClient} from './pb/ServerServiceClientPb'
+import {GameClient} from './pb/ServerServiceClientPb.js'
 export {GameClient}

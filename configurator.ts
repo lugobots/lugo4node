@@ -1,5 +1,5 @@
-import * as lugo from './pb/server_pb'
-import {SPECS} from "./specs";
+import * as lugo from './pb/server_pb.js'
+import {SPECS} from "./specs.js"
 
 export class EnvVarLoader {
 
@@ -51,23 +51,23 @@ export class EnvVarLoader {
         this._botToken = process.env.BOT_TOKEN || ""
     }
 
-    get grpcUrl(): string {
+    getGrpcUrl(): string {
         return this._grpcUrl;
     }
 
-    get grpcInsecure(): boolean {
+    getGrpcInsecure(): boolean {
         return this._grpcInsecure;
     }
 
-    get botTeamSide(): lugo.Team.Side {
+    getBotTeamSide(): lugo.Team.Side {
         return this._botTeamSide;
     }
 
-    get botNumber(): number {
+    getBotNumber(): number {
         return this._botNumber;
     }
 
-    get botToken(): string {
+    getBotToken(): string {
         return this._botToken;
     }
 }

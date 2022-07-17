@@ -1,9 +1,9 @@
-import {GameClient} from "./pb/ServerServiceClientPb"
-import {Point} from "./pb/physics_pb"
-import {GameSnapshot, JoinRequest, OrderSet, Team} from "./pb/server_pb"
-import {Bot, PLAYER_STATE} from './stub'
-import {EnvVarLoader} from './configurator'
-import {defineState} from './main'
+import {GameClient} from "./pb/ServerServiceClientPb.js"
+import {Point} from "./pb/physics_pb.js"
+import {GameSnapshot, JoinRequest, OrderSet, Team} from "./pb/server_pb.js"
+import {Bot, PLAYER_STATE} from './stub.js'
+import {EnvVarLoader} from './configurator.js'
+import {defineState} from './main.js'
 
 export const PROTOCOL_VERSION = "1.0.0"
 
@@ -13,29 +13,29 @@ export const PROTOCOL_VERSION = "1.0.0"
  * @param {Point} initialPosition
  * @returns {Client}
  */
-export function NewClientFromConfig(config: EnvVarLoader, initialPosition: Point) : Client {
+export function NewClientFromConfig(config: EnvVarLoader, initialPosition: Point): Client {
     return new Client(
-        config.grpcUrl,
-        config.grpcInsecure,
-        config.botToken,
-        config.botTeamSide,
-        config.botNumber,
+        config.getGrpcUrl(),
+        config.getGrpcInsecure(),
+        config.getBotToken(),
+        config.getBotTeamSide(),
+        config.getBotNumber(),
         initialPosition,
     )
 }
 
 export class Client {
-    private readonly serverAdd
-    private grpc_insecure;
-    private readonly token
-    private readonly teamSide
-    private readonly number
+    private readonly serverAdd: string
+    private grpc_insecure: boolean
+    private readonly token: string
+    private readonly teamSide: Team.Side
+    private readonly number: number
     /**
      * @type {Point}
      */
-    private readonly init_position
+    private readonly init_position: Point
 
-    private client;
+    private client: GameClient;
 
     /**
      * @type {function(GameSnapshot)}
@@ -126,63 +126,62 @@ export class Client {
 
 
             deadline.setSeconds(deadline.getSeconds() + 5);
-            this.client.waitForReady(deadline, (err) => {
-                if (err) {
-                    reject(new Error(`failed to connect to the Game Server: ${err}`))
-                }
-                console.log(`connect to the gRPC server ${this.teamSide === Team.Side.HOME ? "HOME" : "AWAY"}-${this.number}`)
+            // this.client.waitForReady(deadline, (err) => {
+            //     if (err) {
+            //         reject(new Error(`failed to connect to the Game Server: ${err}`))
+            //     }
+            //     console.log(`connect to the gRPC server ${this.teamSide === Team.Side.HOME ? "HOME" : "AWAY"}-${this.number}`)
 
-                const req = new JoinRequest()
-                req.setToken(this.token)
-                req.setProtocolVersion(PROTOCOL_VERSION)
-                req.setTeamSide(this.teamSide)
-                req.setNumber(this.number)
-                req.setInitPosition(this.init_position)
-                const running = this.client.joinATeam(req)
-                onJoin()
+            const req = new JoinRequest()
+            req.setToken(this.token)
+            req.setProtocolVersion(PROTOCOL_VERSION)
+            req.setTeamSide(this.teamSide)
+            req.setNumber(this.number)
+            req.setInitPosition(this.init_position)
+            const running = this.client.joinATeam(req)
+            onJoin()
 
-                running.on('data', async (snapshot) => {
-                    try {
-                        switch (snapshot.getState()) {
-                            case GameSnapshot.State.LISTENING:
-                                let orderSet = new OrderSet()
-                                orderSet.setTurn(snapshot.getTurn())
-                                try {
-                                    orderSet = await bot(orderSet, snapshot)
-                                } catch (e) {
-                                    console.error(`bot error`, e)
-                                }
-                                if (orderSet) {
-                                    this.orderSetSender(orderSet)
-                                } else {
-                                    console.log(`[turn #${snapshot.getTurn()}] bot did not return orders`)
-                                }
-                                break;
-                            case GameSnapshot.State.GET_READY:
-                                this.gettingReadyHandler(snapshot)
-                                break;
+            running.on('data', async (snapshot) => {
+                try {
+                    switch (snapshot.getState()) {
+                        case GameSnapshot.State.LISTENING:
+                            let orderSet = new OrderSet()
+                            orderSet.setTurn(snapshot.getTurn())
+                            try {
+                                orderSet = await bot(orderSet, snapshot)
+                            } catch (e) {
+                                console.error(`bot error`, e)
+                            }
+                            if (orderSet) {
+                                await this.orderSetSender(orderSet)
+                            } else {
+                                console.log(`[turn #${snapshot.getTurn()}] bot did not return orders`)
+                            }
+                            break;
+                        case GameSnapshot.State.GET_READY:
+                            this.gettingReadyHandler(snapshot)
+                            break;
 
-                        }
-                    } catch (e) {
-                        console.error(`internal error processing turn`, e)
                     }
+                } catch (e) {
+                    console.error(`internal error processing turn`, e)
+                }
 
-                });
-                running.on('status', function () {
-                    // process status
-                    // console.log('status', status);
-                });
+            });
+            running.on('status', function () {
+                // process status
+                // console.log('status', status);
+            });
 
-                running.on('error', async (e) => {
-                    this.client.close()
-                    reject(new Error(`error on team connection: ${e}`))
-                });
-                running.on('end', function () {
-                    console.log('communication done');
-                    resolve(null)
-                });
-            })
+            running.on('error', async (e) => {
+                reject(new Error(`error on team connection: ${e}`))
+            });
+            running.on('end', function () {
+                console.log('communication done');
+                resolve(null)
+            });
         })
+        // })
     }
 
     /**
@@ -190,11 +189,9 @@ export class Client {
      * @param {OrderSet} orderSet
      * @param {game_service.GameClient} connection
      */
-    orderSetSender(orderSet) {
+    async orderSetSender(orderSet) {
         /** @type {module:grpc.ClientUnaryCall} response */
-        const response = this.client.sendOrders(orderSet, (res) => {
-            // console.log(`Eu odeio JS`, res)
-        })
+        const response = await this.client.sendOrders(orderSet, null)
 
         // console.log(response.getPeer())
     }

@@ -1,4 +1,4 @@
-import {Point, Vector, Velocity} from './pb/physics_pb'
+import {Point, Vector, Velocity} from './pb/physics_pb.js'
 
 export {Point, Vector, Velocity} ;
 

@@ -1,5 +1,5 @@
-import {Vector} from './pb/physics_pb'
-import * as vectors from './vector'
+import {Vector} from './pb/physics_pb.js'
+import * as vectors from './vector.js'
 
 
 export const EAST = vectors.normalize(new Vector().setX(1))

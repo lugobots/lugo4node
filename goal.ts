@@ -21,19 +21,19 @@ export class Goal {
         this._bottomPole = bottomPole;
     }
 
-    get center(): Point {
+    getCenter(): Point {
         return this._center;
     }
 
-    get place(): Team.Side {
+    getPlace(): Team.Side {
         return this._place;
     }
 
-    get topPole(): Point {
+    getTopPole(): Point {
         return this._topPole;
     }
 
-    get bottomPole(): Point {
+    getBottomPole(): Point {
         return this._bottomPole;
     }
 

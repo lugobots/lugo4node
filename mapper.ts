@@ -1,8 +1,8 @@
-import * as physics from './pb/physics_pb';
-import {Point} from './pb/physics_pb';
-import * as lugo from './pb/server_pb';
+import * as physics from './pb/physics_pb.js'
+import {Point} from './pb/physics_pb.js'
+import * as lugo from './pb/server_pb.js'
 
-import {SPECS} from "./specs";
+import {SPECS} from './specs.js'
 
 // ErrMinCols defines an error for invalid number of cols
 const ErrMinCols = new Error("number of cols lower the minimum")

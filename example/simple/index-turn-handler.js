@@ -1,8 +1,8 @@
 const {
     EnvVarLoader,
-    newClientFromConfig,
+    NewClientFromConfig,
     GameSnapshotReader,
-    Mapper,
+    Map,
 } = require('lugo4node')
 const {PLAYER_POSITIONS} = require("./strategy");
 
@@ -11,14 +11,14 @@ const {PLAYER_POSITIONS} = require("./strategy");
 const config = new EnvVarLoader()
 
 // the map will help us to see the field in quadrants (called regions) instead of working with coordinates
-const map = new Mapper(10, 6, config.botTeamSide)
+const map = new Map(10, 6, config.getBotTeamSide())
 
 // our bot strategy defines our bot initial position based on its number
-const initialRegion = map.getRegion(PLAYER_POSITIONS[config.botNumber].Col, PLAYER_POSITIONS[config.botNumber].Row)
+const initialRegion = map.getRegion(PLAYER_POSITIONS[config.getBotNumber()].Col, PLAYER_POSITIONS[config.getBotNumber()].Row)
 
 // now we can create the bot. We will use a shortcut to create the client from the config, but we could use the
 // client constructor as well
-const lugoClient = new newClientFromConfig(config, initialRegion.getCenter())
+const lugoClient = new NewClientFromConfig(config, initialRegion.getCenter())
 
 /**
  *

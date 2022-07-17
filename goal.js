@@ -1,4 +1,7 @@
-export class Goal {
+"use strict";
+exports.__esModule = true;
+exports.Goal = void 0;
+var Goal = /** @class */ (function () {
     /**
      *
      * @param place
@@ -6,22 +9,24 @@ export class Goal {
      * @param topPole
      * @param bottomPole
      */
-    constructor(place, center, topPole, bottomPole) {
+    function Goal(place, center, topPole, bottomPole) {
         this._center = center;
         this._place = place;
         this._topPole = topPole;
         this._bottomPole = bottomPole;
     }
-    get center() {
+    Goal.prototype.getCenter = function () {
         return this._center;
-    }
-    get place() {
+    };
+    Goal.prototype.getPlace = function () {
         return this._place;
-    }
-    get topPole() {
+    };
+    Goal.prototype.getTopPole = function () {
         return this._topPole;
-    }
-    get bottomPole() {
+    };
+    Goal.prototype.getBottomPole = function () {
         return this._bottomPole;
-    }
-}
+    };
+    return Goal;
+}());
+exports.Goal = Goal;

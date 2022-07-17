@@ -1,36 +1,49 @@
-import { Client, NewClientFromConfig } from './client';
-import { EnvVarLoader } from './configurator';
-import { Goal } from './goal';
-import { Map, Region } from './mapper';
-import * as ORIENTATION from './orentation';
-import * as Lugo from './proto_exported';
-import { SPECS } from "./specs";
-import { PLAYER_STATE } from './stub';
-import * as vectors from "./vector";
+"use strict";
+exports.__esModule = true;
+exports.defineState = exports.DIRECTION = exports.homeGoal = exports.awayGoal = exports.GameSnapshotReader = exports.vectors = exports.PLAYER_STATE = exports.SPECS = exports.Lugo = exports.ORIENTATION = exports.Region = exports.Map = exports.Goal = exports.EnvVarLoader = exports.NewClientFromConfig = exports.Client = void 0;
+var client_js_1 = require("./client.js");
+exports.Client = client_js_1.Client;
+exports.NewClientFromConfig = client_js_1.NewClientFromConfig;
+var configurator_js_1 = require("./configurator.js");
+exports.EnvVarLoader = configurator_js_1.EnvVarLoader;
+var goal_js_1 = require("./goal.js");
+exports.Goal = goal_js_1.Goal;
+var mapper_js_1 = require("./mapper.js");
+exports.Map = mapper_js_1.Map;
+exports.Region = mapper_js_1.Region;
+var ORIENTATION = require("./orentation.js");
+exports.ORIENTATION = ORIENTATION;
+var Lugo = require("./proto_exported.js");
+exports.Lugo = Lugo;
+var specs_js_1 = require("./specs.js");
+exports.SPECS = specs_js_1.SPECS;
+var stub_js_1 = require("./stub.js");
+exports.PLAYER_STATE = stub_js_1.PLAYER_STATE;
+var vectors = require("./vector.js");
+exports.vectors = vectors;
 // imports actually used in this file
-import { Catch, Jump, Kick, Move, Order, Team, } from "./pb/server_pb";
-import { Point, Velocity } from './pb/physics_pb';
-export { Client, NewClientFromConfig, EnvVarLoader, Goal, Map, Region, ORIENTATION, Lugo, SPECS, PLAYER_STATE, vectors, };
-const homeGoalCenter = new Point();
+var server_pb_js_1 = require("./pb/server_pb.js");
+var physics_pb_js_1 = require("./pb/physics_pb.js");
+var homeGoalCenter = new physics_pb_js_1.Point();
 homeGoalCenter.setX(0);
-homeGoalCenter.setY(SPECS.MAX_Y_COORDINATE / 2);
-const homeGoalTopPole = new Point();
+homeGoalCenter.setY(specs_js_1.SPECS.MAX_Y_COORDINATE / 2);
+var homeGoalTopPole = new physics_pb_js_1.Point();
 homeGoalTopPole.setX(0);
-homeGoalTopPole.setY(SPECS.GOAL_MAX_Y);
-const homeGoalBottomPole = new Point();
+homeGoalTopPole.setY(specs_js_1.SPECS.GOAL_MAX_Y);
+var homeGoalBottomPole = new physics_pb_js_1.Point();
 homeGoalBottomPole.setX(0);
-homeGoalBottomPole.setY(SPECS.GOAL_MIN_Y);
-const awayGoalCenter = new Point();
-awayGoalCenter.setX(SPECS.MAX_X_COORDINATE);
-awayGoalCenter.setY(SPECS.MAX_Y_COORDINATE / 2);
-const awayGoalTopPole = new Point();
-awayGoalTopPole.setX(SPECS.MAX_X_COORDINATE);
-awayGoalTopPole.setY(SPECS.GOAL_MAX_Y);
-const awayGoalBottomPole = new Point();
-awayGoalBottomPole.setX(SPECS.MAX_X_COORDINATE);
-awayGoalBottomPole.setY(SPECS.GOAL_MIN_Y);
-export class GameSnapshotReader {
-    constructor(snapshot, mySide) {
+homeGoalBottomPole.setY(specs_js_1.SPECS.GOAL_MIN_Y);
+var awayGoalCenter = new physics_pb_js_1.Point();
+awayGoalCenter.setX(specs_js_1.SPECS.MAX_X_COORDINATE);
+awayGoalCenter.setY(specs_js_1.SPECS.MAX_Y_COORDINATE / 2);
+var awayGoalTopPole = new physics_pb_js_1.Point();
+awayGoalTopPole.setX(specs_js_1.SPECS.MAX_X_COORDINATE);
+awayGoalTopPole.setY(specs_js_1.SPECS.GOAL_MAX_Y);
+var awayGoalBottomPole = new physics_pb_js_1.Point();
+awayGoalBottomPole.setX(specs_js_1.SPECS.MAX_X_COORDINATE);
+awayGoalBottomPole.setY(specs_js_1.SPECS.GOAL_MIN_Y);
+var GameSnapshotReader = /** @class */ (function () {
+    function GameSnapshotReader(snapshot, mySide) {
         this.snapshot = snapshot;
         this.mySide = mySide;
     }
@@ -38,92 +51,93 @@ export class GameSnapshotReader {
      *
      * @returns {Team}
      */
-    getMyTeam() {
+    GameSnapshotReader.prototype.getMyTeam = function () {
         return this.getTeam(this.mySide);
-    }
+    };
     /**
      * @param { Team.Side} side
      * @returns {Team}
      */
-    getTeam(side) {
-        if (side === Team.Side.HOME) {
+    GameSnapshotReader.prototype.getTeam = function (side) {
+        if (side === server_pb_js_1.Team.Side.HOME) {
             return this.snapshot.getHomeTeam();
         }
         return this.snapshot.getAwayTeam();
-    }
+    };
     /**
      *
      * @param { Player} player
      * @returns {boolean}
      */
-    isBallHolder(player) {
-        const ball = this.snapshot.getBall();
+    GameSnapshotReader.prototype.isBallHolder = function (player) {
+        var ball = this.snapshot.getBall();
         return ball.getHolder() != null && ball.getHolder().getTeamSide() === player.getTeamSide() && ball.getHolder().getNumber() === player.getNumber();
-    }
+    };
     /**
      *
      * @returns {Team.Side}
      */
-    getOpponentSide() {
-        if (this.mySide === Team.Side.HOME) {
-            return Team.Side.AWAY;
+    GameSnapshotReader.prototype.getOpponentSide = function () {
+        if (this.mySide === server_pb_js_1.Team.Side.HOME) {
+            return server_pb_js_1.Team.Side.AWAY;
         }
-        return Team.Side.HOME;
-    }
+        return server_pb_js_1.Team.Side.HOME;
+    };
     /**
      *
      * @returns {Goal}
      */
-    getMyGoal() {
-        if (this.mySide === Team.Side.HOME) {
-            return homeGoal;
+    GameSnapshotReader.prototype.getMyGoal = function () {
+        if (this.mySide === server_pb_js_1.Team.Side.HOME) {
+            return exports.homeGoal;
         }
-        return awayGoal;
-    }
+        return exports.awayGoal;
+    };
     /**
      *
      * @returns {Ball}
      */
-    getBall() {
+    GameSnapshotReader.prototype.getBall = function () {
         return this.snapshot.getBall();
-    }
+    };
     /**
      *
      * @returns {Goal}
      */
-    getOpponentGoal() {
-        if (this.mySide === Team.Side.HOME) {
-            return awayGoal;
+    GameSnapshotReader.prototype.getOpponentGoal = function () {
+        if (this.mySide === server_pb_js_1.Team.Side.HOME) {
+            return exports.awayGoal;
         }
-        return homeGoal;
-    }
+        return exports.homeGoal;
+    };
     /**
      *
      * @param {.Team.Side} side
      * @param {number} number
      * @returns {.Player}
      */
-    getPlayer(side, number) {
-        const team = this.getTeam(side);
+    GameSnapshotReader.prototype.getPlayer = function (side, number) {
+        var team = this.getTeam(side);
         if (team == null) {
             return null;
         }
-        for (const player of team.getPlayersList()) {
+        for (var _i = 0, _a = team.getPlayersList(); _i < _a.length; _i++) {
+            var player = _a[_i];
             if (player.getNumber() === number) {
                 return player;
             }
         }
         return null;
-    }
+    };
     /**
      *
      * @param {Point} origin
      * @param {Point} target
      * @return {Order}
      */
-    makeOrderMoveMaxSpeed(origin, target) {
-        return this.makeOrderMove(origin, target, SPECS.PLAYER_MAX_SPEED);
-    }
+    GameSnapshotReader.prototype.makeOrderMoveMaxSpeed = function (origin, target) {
+        return this.makeOrderMove(origin, target, specs_js_1.SPECS.PLAYER_MAX_SPEED);
+    };
     /**
      *
      * @param {Point} origin
@@ -131,15 +145,15 @@ export class GameSnapshotReader {
      * @param speed
      * @returns {Order}
      */
-    makeOrderMove(origin, target, speed) {
+    GameSnapshotReader.prototype.makeOrderMove = function (origin, target, speed) {
         if (origin.getX() === target.getX() && origin.getY() === target.getY()) {
             // a vector cannot have zeroed direction. In this case, the player will just be stopped
             return this._makeOrderMoveFromVector(ORIENTATION.NORTH, 0);
         }
-        let direction = vectors.NewVector(origin, target);
+        var direction = vectors.NewVector(origin, target);
         direction = vectors.normalize(direction);
         return this._makeOrderMoveFromVector(direction, speed);
-    }
+    };
     /**
      *
      * @param {Vector} direction
@@ -147,84 +161,84 @@ export class GameSnapshotReader {
      * @returns {Order}
      * @private
      */
-    _makeOrderMoveFromVector(direction, speed) {
-        const velocity = new Velocity();
+    GameSnapshotReader.prototype._makeOrderMoveFromVector = function (direction, speed) {
+        var velocity = new physics_pb_js_1.Velocity();
         velocity.setDirection(direction);
         velocity.setSpeed(speed);
-        const moveOrder = new Move();
+        var moveOrder = new server_pb_js_1.Move();
         moveOrder.setVelocity(velocity);
-        return new Order().setMove(moveOrder);
-    }
-    makeOrderMoveByDirection(direction) {
-        let directionTarget;
+        return new server_pb_js_1.Order().setMove(moveOrder);
+    };
+    GameSnapshotReader.prototype.makeOrderMoveByDirection = function (direction) {
+        var directionTarget;
         switch (direction) {
             case DIRECTION.FORWARD:
                 directionTarget = ORIENTATION.EAST;
-                if (this.mySide === Team.Side.AWAY) {
+                if (this.mySide === server_pb_js_1.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.WEST;
                 }
                 break;
             case DIRECTION.BACKWARD:
                 directionTarget = ORIENTATION.WEST;
-                if (this.mySide === Team.Side.AWAY) {
+                if (this.mySide === server_pb_js_1.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.EAST;
                 }
                 break;
             case DIRECTION.LEFT:
                 directionTarget = ORIENTATION.NORTH;
-                if (this.mySide === Team.Side.AWAY) {
+                if (this.mySide === server_pb_js_1.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.SOUTH;
                 }
                 break;
             case DIRECTION.RIGHT:
                 directionTarget = ORIENTATION.SOUTH;
-                if (this.mySide === Team.Side.AWAY) {
+                if (this.mySide === server_pb_js_1.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.NORTH;
                 }
                 break;
             case DIRECTION.BACKWARD_LEFT:
                 directionTarget = ORIENTATION.NORTH_WEST;
-                if (this.mySide === Team.Side.AWAY) {
+                if (this.mySide === server_pb_js_1.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.SOUTH_EAST;
                 }
                 break;
             case DIRECTION.BACKWARD_RIGHT:
                 directionTarget = ORIENTATION.SOUTH_WEST;
-                if (this.mySide === Team.Side.AWAY) {
+                if (this.mySide === server_pb_js_1.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.NORTH_EAST;
                 }
                 break;
             case DIRECTION.FORWARD_LEFT:
                 directionTarget = ORIENTATION.NORTH_EAST;
-                if (this.mySide === Team.Side.AWAY) {
+                if (this.mySide === server_pb_js_1.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.SOUTH_WEST;
                 }
                 break;
             case DIRECTION.FORWARD_RIGHT:
                 directionTarget = ORIENTATION.SOUTH_EAST;
-                if (this.mySide === Team.Side.AWAY) {
+                if (this.mySide === server_pb_js_1.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.NORTH_WEST;
                 }
                 break;
             default:
-                throw new Error(`unknown direction ${direction}`);
+                throw new Error("unknown direction ".concat(direction));
         }
-        return this._makeOrderMoveFromVector(directionTarget, SPECS.PLAYER_MAX_SPEED);
-    }
-    makeOrderJump(origin, target, speed) {
-        let direction = ORIENTATION.EAST;
+        return this._makeOrderMoveFromVector(directionTarget, specs_js_1.SPECS.PLAYER_MAX_SPEED);
+    };
+    GameSnapshotReader.prototype.makeOrderJump = function (origin, target, speed) {
+        var direction = ORIENTATION.EAST;
         if (origin.getX() !== target.getX() || origin.getY() !== target.getY()) {
             // a vector cannot have zeroed direction. In this case, the player will just be stopped
             direction = vectors.NewVector(origin, target);
             direction = vectors.normalize(direction);
         }
-        const velocity = new Velocity();
+        var velocity = new physics_pb_js_1.Velocity();
         velocity.setDirection(direction);
         velocity.setSpeed(speed);
-        const jump = new Jump();
+        var jump = new server_pb_js_1.Jump();
         jump.setVelocity(velocity);
-        return new Order().setJump(jump);
-    }
+        return new server_pb_js_1.Order().setJump(jump);
+    };
     /**
      *
      * @param {Ball} ball
@@ -232,35 +246,37 @@ export class GameSnapshotReader {
      * @param {number} speed
      * @returns {Order}
      */
-    makeOrderKick(ball, target, speed) {
-        const ballExpectedDirection = vectors.NewVector(ball.getPosition(), target);
+    GameSnapshotReader.prototype.makeOrderKick = function (ball, target, speed) {
+        var ballExpectedDirection = vectors.NewVector(ball.getPosition(), target);
         // the ball velocity is summed to the kick velocity, so we have to consider the current ball direction
-        const diffVector = vectors.sub(ballExpectedDirection, ball.getVelocity().getDirection());
-        const newVelocity = new Velocity();
+        var diffVector = vectors.sub(ballExpectedDirection, ball.getVelocity().getDirection());
+        var newVelocity = new physics_pb_js_1.Velocity();
         newVelocity.setSpeed(speed);
         newVelocity.setDirection(vectors.normalize(diffVector));
-        return new Order().setKick(new Kick().setVelocity(newVelocity));
-    }
+        return new server_pb_js_1.Order().setKick(new server_pb_js_1.Kick().setVelocity(newVelocity));
+    };
     /**
      *
      * @param {Ball} ball
      * @param {Point} target
      * @returns {Order}
      */
-    makeOrderKickMaxSpeed(ball, target) {
-        return this.makeOrderKick(ball, target, SPECS.BALL_MAX_SPEED);
-    }
+    GameSnapshotReader.prototype.makeOrderKickMaxSpeed = function (ball, target) {
+        return this.makeOrderKick(ball, target, specs_js_1.SPECS.BALL_MAX_SPEED);
+    };
     /**
      *
      * @returns {!Order}
      */
-    makeOrderCatch() {
-        return new Order().setCatch(new Catch());
-    }
-}
-export const awayGoal = new Goal(Team.Side.AWAY, awayGoalCenter, awayGoalTopPole, awayGoalBottomPole);
-export const homeGoal = new Goal(Team.Side.HOME, homeGoalCenter, homeGoalTopPole, homeGoalBottomPole);
-export var DIRECTION;
+    GameSnapshotReader.prototype.makeOrderCatch = function () {
+        return new server_pb_js_1.Order().setCatch(new server_pb_js_1.Catch());
+    };
+    return GameSnapshotReader;
+}());
+exports.GameSnapshotReader = GameSnapshotReader;
+exports.awayGoal = new goal_js_1.Goal(server_pb_js_1.Team.Side.AWAY, awayGoalCenter, awayGoalTopPole, awayGoalBottomPole);
+exports.homeGoal = new goal_js_1.Goal(server_pb_js_1.Team.Side.HOME, homeGoalCenter, homeGoalTopPole, homeGoalBottomPole);
+var DIRECTION;
 (function (DIRECTION) {
     DIRECTION[DIRECTION["FORWARD"] = 0] = "FORWARD";
     DIRECTION[DIRECTION["BACKWARD"] = 1] = "BACKWARD";
@@ -270,7 +286,7 @@ export var DIRECTION;
     DIRECTION[DIRECTION["BACKWARD_RIGHT"] = 5] = "BACKWARD_RIGHT";
     DIRECTION[DIRECTION["FORWARD_LEFT"] = 6] = "FORWARD_LEFT";
     DIRECTION[DIRECTION["FORWARD_RIGHT"] = 7] = "FORWARD_RIGHT";
-})(DIRECTION || (DIRECTION = {}));
+})(DIRECTION = exports.DIRECTION || (exports.DIRECTION = {}));
 /**
  *
  * @param {GameSnapshot}  snapshot
@@ -278,24 +294,25 @@ export var DIRECTION;
  * @param side
  * @returns {PLAYER_STATE}
  */
-export function defineState(snapshot, playerNumber, side) {
+function defineState(snapshot, playerNumber, side) {
     if (!snapshot || !snapshot.getBall()) {
         throw new Error('invalid snapshot state - cannot define player state');
     }
-    const reader = new GameSnapshotReader(snapshot, side);
-    const me = reader.getPlayer(side, playerNumber);
+    var reader = new GameSnapshotReader(snapshot, side);
+    var me = reader.getPlayer(side, playerNumber);
     if (!me) {
         throw new Error('could not find the bot in the snapshot - cannot define player state');
     }
-    const ballHolder = snapshot.getBall().getHolder();
+    var ballHolder = snapshot.getBall().getHolder();
     if (!ballHolder) {
-        return PLAYER_STATE.DISPUTING_THE_BALL;
+        return stub_js_1.PLAYER_STATE.DISPUTING_THE_BALL;
     }
     else if (ballHolder.getTeamSide() === side) {
         if (ballHolder.getNumber() === playerNumber) {
-            return PLAYER_STATE.HOLDING_THE_BALL;
+            return stub_js_1.PLAYER_STATE.HOLDING_THE_BALL;
         }
-        return PLAYER_STATE.SUPPORTING;
+        return stub_js_1.PLAYER_STATE.SUPPORTING;
     }
-    return PLAYER_STATE.DEFENDING;
+    return stub_js_1.PLAYER_STATE.DEFENDING;
 }
+exports.defineState = defineState;

@@ -1,4 +1,4 @@
-import {GameSnapshot, OrderSet, Team} from './pb/server_pb'
+import {GameSnapshot, OrderSet, Team} from './pb/server_pb.js'
 
 export enum PLAYER_STATE {
     SUPPORTING = "supporting",

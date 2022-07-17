@@ -1,15 +1,15 @@
-import {Client, NewClientFromConfig} from './client'
-import {EnvVarLoader} from './configurator'
-import {Goal} from './goal'
-import {Map, Region} from './mapper'
-import * as ORIENTATION from './orentation'
-import * as Lugo from './proto_exported'
-import {SPECS} from "./specs";
-import {Bot, PLAYER_STATE} from './stub'
-import * as vectors from "./vector";
+import {Client, NewClientFromConfig} from './client.js'
+import {EnvVarLoader} from './configurator.js'
+import {Goal} from './goal.js'
+import {Map, Region} from './mapper.js'
+import * as ORIENTATION from './orentation.js'
+import * as Lugo from './proto_exported.js'
+import {SPECS} from "./specs.js"
+import {Bot, PLAYER_STATE} from './stub.js'
+import * as vectors from "./vector.js"
 // imports actually used in this file
-import {Ball, Catch, GameSnapshot, Jump, Kick, Move, Order, Player, Team,} from "./pb/server_pb";
-import {Point, Vector, Velocity} from './pb/physics_pb'
+import {Ball, Catch, GameSnapshot, Jump, Kick, Move, Order, Player, Team,} from "./pb/server_pb.js"
+import {Point, Vector, Velocity} from './pb/physics_pb.js'
 
 
 export {
