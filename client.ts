@@ -7,6 +7,7 @@ import {Bot, PLAYER_STATE} from './stub.js'
 import {EnvVarLoader} from './configurator.js'
 import {defineState} from './main.js'
 
+
 export const PROTOCOL_VERSION = "1.0.0"
 
 /**
@@ -134,55 +135,55 @@ export class Client {
                 }
                 console.log(`connect to the gRPC server ${this.teamSide === Team.Side.HOME ? "HOME" : "AWAY"}-${this.number}`)
 
-            const req = new JoinRequest()
-            req.setToken(this.token)
-            req.setProtocolVersion(PROTOCOL_VERSION)
-            req.setTeamSide(this.teamSide)
-            req.setNumber(this.number)
-            req.setInitPosition(this.init_position)
-            const running = this.client.joinATeam(req)
-            onJoin()
+                const req = new JoinRequest()
+                req.setToken(this.token)
+                req.setProtocolVersion(PROTOCOL_VERSION)
+                req.setTeamSide(this.teamSide)
+                req.setNumber(this.number)
+                req.setInitPosition(this.init_position)
+                const running = this.client.joinATeam(req)
+                onJoin()
 
-            running.on('data', async (snapshot) => {
-                try {
-                    switch (snapshot.getState()) {
-                        case GameSnapshot.State.LISTENING:
-                            let orderSet = new OrderSet()
-                            orderSet.setTurn(snapshot.getTurn())
-                            try {
-                                orderSet = await bot(orderSet, snapshot)
-                            } catch (e) {
-                                console.error(`bot error`, e)
-                            }
-                            if (orderSet) {
-                                await this.orderSetSender(orderSet)
-                            } else {
-                                console.log(`[turn #${snapshot.getTurn()}] bot did not return orders`)
-                            }
-                            break;
-                        case GameSnapshot.State.GET_READY:
-                            this.gettingReadyHandler(snapshot)
-                            break;
+                running.on('data', async (snapshot) => {
+                    try {
+                        switch (snapshot.getState()) {
+                            case GameSnapshot.State.LISTENING:
+                                let orderSet = new OrderSet()
+                                orderSet.setTurn(snapshot.getTurn())
+                                try {
+                                    orderSet = await bot(orderSet, snapshot)
+                                } catch (e) {
+                                    console.error(`bot error`, e)
+                                }
+                                if (orderSet) {
+                                    await this.orderSetSender(orderSet)
+                                } else {
+                                    console.log(`[turn #${snapshot.getTurn()}] bot did not return orders`)
+                                }
+                                break;
+                            case GameSnapshot.State.GET_READY:
+                                this.gettingReadyHandler(snapshot)
+                                break;
 
+                        }
+                    } catch (e) {
+                        console.error(`internal error processing turn`, e)
                     }
-                } catch (e) {
-                    console.error(`internal error processing turn`, e)
-                }
 
-            });
-            running.on('status', function () {
-                // process status
-                // console.log('status', status);
-            });
+                });
+                running.on('status', function () {
+                    // process status
+                    // console.log('status', status);
+                });
 
-            running.on('error', async (e) => {
-                reject(new Error(`error on team connection: ${e}`))
-            });
-            running.on('end', function () {
-                console.log('communication done');
-                resolve(null)
-            });
-        })
+                running.on('error', async (e) => {
+                    reject(new Error(`error on team connection: ${e}`))
+                });
+                running.on('end', function () {
+                    console.log('communication done');
+                    resolve(null)
+                });
+            })
         })
     }
 

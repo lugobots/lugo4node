@@ -1,29 +1,107 @@
 import {Client, NewClientFromConfig} from './client.js'
 import {EnvVarLoader} from './configurator.js'
 import {Goal} from './goal.js'
-import {Map, Region} from './mapper.js'
+import {Mapper, Region} from './mapper.js'
 import * as ORIENTATION from './orentation.js'
-import * as Lugo from './proto_exported.js'
+import {
+    Ball,
+    Catch,
+    GameSnapshot,
+    Jump,
+    Kick,
+    Move,
+    Order,
+    Player,
+    Team,
+    JoinRequest,
+    OrderSet,
+    ShotClock,
+    OrderResponse,
+    WatcherRequest,
+    StartRequest,
+    GameEvent,
+    GameSetup,
+    TeamSettings,
+    TeamColors,
+    TeamColor,
+    EventNewPlayer,
+    EventLostPlayer,
+    EventStateChange,
+    EventGoal,
+    EventGameOver,
+    EventDebugBreakpoint,
+    EventDebugReleased,
+    CommandResponse,
+    GameProperties,
+    PlayerProperties,
+    BallProperties,
+    NextOrderRequest,
+    PauseResumeRequest,
+    NextTurnRequest,
+    BroadcastClient,
+    RemoteClient,
+    GameClient,
+
+} from './proto_exported.js'
 import {SPECS} from "./specs.js"
 import {Bot, PLAYER_STATE} from './stub.js'
-import * as vectors from "./vector.js"
+import {sub,NewVector, getScaledVector, normalize, getLength}  from "./vector.js"
 // imports actually used in this file
-import {Ball, Catch, GameSnapshot, Jump, Kick, Move, Order, Player, Team,} from "./pb/server_pb.js"
+
 import {Point, Vector, Velocity} from './pb/physics_pb.js'
 
+export const vectors = {sub,NewVector, getScaledVector, normalize, getLength}
 
 export {
     Client,NewClientFromConfig,
     EnvVarLoader,
     Goal,
-    Map, Region,
+    Mapper, Region,
     ORIENTATION,
-    Lugo,
     SPECS,
     Bot, PLAYER_STATE,
-    vectors,
+    Point, Vector, Velocity,
 }
 
+export {
+    Ball,
+    Catch,
+    GameSnapshot,
+    Jump,
+    Kick,
+    Move,
+    Order,
+    Player,
+    Team,
+    JoinRequest,
+    OrderSet,
+    ShotClock,
+    OrderResponse,
+    WatcherRequest,
+    StartRequest,
+    GameEvent,
+    GameSetup,
+    TeamSettings,
+    TeamColors,
+    TeamColor,
+    EventNewPlayer,
+    EventLostPlayer,
+    EventStateChange,
+    EventGoal,
+    EventGameOver,
+    EventDebugBreakpoint,
+    EventDebugReleased,
+    CommandResponse,
+    GameProperties,
+    PlayerProperties,
+    BallProperties,
+    NextOrderRequest,
+    PauseResumeRequest,
+    NextTurnRequest,
+    BroadcastClient,
+    RemoteClient,
+    GameClient,
+}
 
 const homeGoalCenter = new Point()
 homeGoalCenter.setX(0)
@@ -179,8 +257,8 @@ export class GameSnapshotReader {
             return this._makeOrderMoveFromVector(ORIENTATION.NORTH, 0)
         }
 
-        let direction = vectors.NewVector(origin, target)
-        direction = vectors.normalize(direction)
+        let direction = NewVector(origin, target)
+        direction = normalize(direction)
         return this._makeOrderMoveFromVector(direction, speed)
     }
 
@@ -264,8 +342,8 @@ export class GameSnapshotReader {
         let direction = ORIENTATION.EAST
         if (origin.getX() !== target.getX() || origin.getY() !== target.getY()) {
             // a vector cannot have zeroed direction. In this case, the player will just be stopped
-            direction = vectors.NewVector(origin, target)
-            direction = vectors.normalize(direction)
+            direction = NewVector(origin, target)
+            direction = normalize(direction)
         }
         const velocity = new Velocity()
         velocity.setDirection(direction)
@@ -285,14 +363,14 @@ export class GameSnapshotReader {
      * @returns {Order}
      */
     makeOrderKick(ball: Ball, target: Point, speed: number): Order {
-        const ballExpectedDirection = vectors.NewVector(ball.getPosition(), target)
+        const ballExpectedDirection = NewVector(ball.getPosition(), target)
 
         // the ball velocity is summed to the kick velocity, so we have to consider the current ball direction
-        const diffVector = vectors.sub(ballExpectedDirection, ball.getVelocity().getDirection())
+        const diffVector = sub(ballExpectedDirection, ball.getVelocity().getDirection())
 
         const newVelocity = new Velocity()
         newVelocity.setSpeed(speed)
-        newVelocity.setDirection(vectors.normalize(diffVector))
+        newVelocity.setDirection(normalize(diffVector))
         return new Order().setKick(new Kick().setVelocity(newVelocity))
     }
 

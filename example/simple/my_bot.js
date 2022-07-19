@@ -1,7 +1,7 @@
-`use strict`;
-const {GameSnapshotReader, Bot, PLAYER_STATE} = require('lugo4node')
+const {GameSnapshotReader, Bot, PLAYER_STATE, Mapper, BroadcastClient, } = require('@lugobots/lugo4node')
+const {} = require('@lugobots/lugo4node').vectors
 
-class Bot extends Bot {
+class MyBot extends Bot {
   /**
    * @type {Team.Side}
    */
@@ -13,7 +13,7 @@ class Bot extends Bot {
   #number;
 
   /**
-   * @type {proto.lugo.Point}
+   * @type {Lugo.Point}
    */
   #initPosition;
 
@@ -24,10 +24,10 @@ class Bot extends Bot {
 
   /**
    *
-   * @param {proto.lugo.Team.Side} side
+   * @param {BroadcastClient} side
    * @param {number} number
-   * @param {proto.lugo.Point} initPosition
-   * @param {Map} mapper
+   * @param {Point} initPosition
+   * @param {Mapper} mapper
    */
   constructor(side, number, initPosition, mapper) {
     super();
@@ -35,12 +35,16 @@ class Bot extends Bot {
     this.#number = number
     this.#mapper = mapper
     this.#initPosition = initPosition
+
+    side.
+
   }
 
   /**
    *
-   * @param {proto.lugo.GameSnapshot} snapshot
+   * @param {GameSnapshot} snapshot
    * @private
+   * @return {GameSnapshotReader}
    */
   _makeReader(snapshot) {
     const reader = new GameSnapshotReader(snapshot, this.#side)
@@ -51,11 +55,17 @@ class Bot extends Bot {
     return {reader, me}
   }
 
+  /**
+   *
+   * @param {} orderSet
+   * @param snapshot
+   * @return {*}
+   */
   onDisputing(orderSet, snapshot) {
     try {
       const {reader, me} = this._makeReader(snapshot)
-      const ballPosition = reader.getBall().getPosition()
 
+      const ballPosition = reader.getBall().getPosition()
       const ballRegion = this.#mapper.getRegionFromPoint(ballPosition)
       const myRegion = this.#mapper.getRegionFromPoint(this.#initPosition)
 
@@ -66,7 +76,7 @@ class Bot extends Bot {
       }
       const moveOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), moveDest)
       // const catchOrder = reader.
-      const orderSet = new proto.lugo.OrderSet()
+      const orderSet = new Lugo.OrderSet()
       orderSet.setTurn(snapshot.getTurn())
       orderSet.setDebugMessage("mi mi mi")
       orderSet.setOrdersList([moveOrder])
@@ -91,7 +101,7 @@ class Bot extends Bot {
       const moveOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), moveDest)
       const catchOrder =  reader.makeOrderCatch()
 
-      const orderSet = new proto.lugo.OrderSet()
+      const orderSet = new Lugo.OrderSet()
       orderSet.setTurn(snapshot.getTurn())
       orderSet.setDebugMessage("trying to catch the ball")
       orderSet.setOrdersList([moveOrder, catchOrder])
@@ -116,7 +126,7 @@ class Bot extends Bot {
         myOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), reader.getOpponentGoal().center)
       }
 
-      const orderSet = new proto.lugo.OrderSet()
+      const orderSet = new Lugo.OrderSet()
       orderSet.setTurn(snapshot.getTurn())
       orderSet.setDebugMessage("attack!")
       orderSet.setOrdersList([myOrder])
@@ -132,7 +142,7 @@ class Bot extends Bot {
       const ballHolderPosition = snapshot.getBall().getPosition()
       const myOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), ballHolderPosition)
 
-      const orderSet = new proto.lugo.OrderSet()
+      const orderSet = new Lugo.OrderSet()
       orderSet.setTurn(snapshot.getTurn())
       orderSet.setDebugMessage("supporting")
       orderSet.setOrdersList([myOrder])
@@ -142,6 +152,13 @@ class Bot extends Bot {
     }
   }
 
+  /**
+   *
+   * @param orderSet
+   * @param snapshot
+   * @param state
+   * @return {OrderSet}
+   */
   asGoalkeeper(orderSet, snapshot, state) {
     try {
       const {reader, me} = this._makeReader(snapshot)
@@ -152,7 +169,7 @@ class Bot extends Bot {
 
       const myOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), position)
 
-      const orderSet = new proto.lugo.OrderSet()
+      const orderSet = new Lugo.OrderSet()
       orderSet.setTurn(snapshot.getTurn())
       orderSet.setDebugMessage("supporting")
       orderSet.setOrdersList([myOrder, reader.makeOrderCatch()])
@@ -163,4 +180,4 @@ class Bot extends Bot {
   }
 }
 
-module.exports = Bot
+module.exports = MyBot

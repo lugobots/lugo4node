@@ -1,6 +1,7 @@
 import * as physics from './pb/physics_pb.js'
-import {Point} from './pb/physics_pb.js'
 import * as lugo from './pb/server_pb.js'
+
+const {Point} = physics
 
 import {SPECS} from './specs.js'
 
@@ -14,13 +15,13 @@ const ErrMinRows = new Error("number of rows lower the minimum")
 const ErrMaxRows = new Error("number of rows higher the maximum")
 
 
-// MinCols Define the min number of cols allowed on the field division by the Map
+// MinCols Define the min number of cols allowed on the field division by the Mapper
 const MinCols = 4
-// MinRows Define the min number of rows allowed on the field division by the Map
+// MinRows Define the min number of rows allowed on the field division by the Mapper
 const MinRows = 2
-// MaxCols Define the max number of cols allowed on the field division by the Map
+// MaxCols Define the max number of cols allowed on the field division by the Mapper
 const MaxCols = 200
-// MaxRows Define the max number of rows allowed on the field division by the Map
+// MaxRows Define the max number of rows allowed on the field division by the Mapper
 const MaxRows = 100
 
 export class Region {
@@ -42,7 +43,7 @@ export class Region {
      */
     center;
     /**
-     * @type {Map}
+     * @type {Mapper}
      */
     positioner;
 
@@ -52,9 +53,9 @@ export class Region {
      * @param row {number}
      * @param side {lugo.Team.Side}
      * @param center {physics.Point}
-     * @param positioner  {Map}
+     * @param positioner  {Mapper}
      */
-    constructor(col: number, row: number, side: lugo.Team.Side, center: physics.Point, positioner: Map) {
+    constructor(col: number, row: number, side: lugo.Team.Side, center: physics.Point, positioner: Mapper) {
         this.col = col
         this.row = row
         this.side = side
@@ -135,7 +136,7 @@ export class Region {
     }
 }
 
-export class Map {
+export class Mapper {
     /**
      * @type {number}
      */
@@ -147,6 +148,7 @@ export class Map {
     private readonly rows: number;
     /**
      * @type {lugo.Team.Side}
+     * @private
      */
     private readonly side: lugo.Team.Side;
 

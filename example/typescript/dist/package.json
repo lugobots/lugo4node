@@ -4,11 +4,11 @@
   "description": "A simple example of using a bot class",
   "main": "dist/index-bot-handler.js",
   "scripts": {
-    "start": "node index-bot-handler.js",
-    "raw": "node index-turn-handler.js",
+    "start": "node dist/indexBotHandler.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "tsc": "tsc"
   },
+  "type": "commonjs",
   "author": "Rubens Silva",
   "license": "ISC",
   "dependencies": {

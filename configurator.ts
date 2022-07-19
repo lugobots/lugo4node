@@ -1,4 +1,4 @@
-import * as lugo from './pb/server_pb.js'
+import * as Lugo from './pb/server_pb.js'
 import {SPECS} from "./specs.js"
 
 export class EnvVarLoader {
@@ -13,9 +13,9 @@ export class EnvVarLoader {
      */
     private readonly _grpcInsecure: boolean
     /**
-     * @type {lugo.Team.Side}
+     * @type {Lugo.Team.Side}
      */
-    private readonly _botTeamSide: lugo.Team.Side
+    private readonly _botTeamSide: Lugo.Team.Side
 
     /**
      * @type {number}
@@ -36,12 +36,12 @@ export class EnvVarLoader {
             throw new Error("missing BOT_NUMBER env value")
         }
 
-        // the lugo address
+        // the Lugo address
         this._grpcUrl = process.env.BOT_GRPC_URL || 'localhost:5000'
         this._grpcInsecure = Boolean((process.env.BOT_GRPC_INSECURE || "true").toLowerCase())
 
         // defining bot side
-        this._botTeamSide = lugo.Team.Side[process.env.BOT_TEAM.toUpperCase()]
+        this._botTeamSide = Lugo.Team.Side[process.env.BOT_TEAM.toUpperCase()]
         this._botNumber = parseInt(process.env.BOT_NUMBER)
         if (this._botNumber < 1 || this._botNumber > SPECS.MAX_PLAYERS) {
             throw new Error(`invalid bot number '${this._botNumber}', must be between 1 and ${SPECS.MAX_PLAYERS}`)
@@ -59,7 +59,7 @@ export class EnvVarLoader {
         return this._grpcInsecure;
     }
 
-    getBotTeamSide(): lugo.Team.Side {
+    getBotTeamSide(): Lugo.Team.Side {
         return this._botTeamSide;
     }
 

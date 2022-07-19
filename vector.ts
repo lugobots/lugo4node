@@ -1,7 +1,5 @@
 import {Point, Vector, Velocity} from './pb/physics_pb.js'
 
-export {Point, Vector, Velocity} ;
-
 /**
  *
  * @param {Point} from

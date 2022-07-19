@@ -1,7 +1,7 @@
 # Lugo4Node - A Lugo Bots Client (Deep learning ready :brain:)
 
-docker run --init -v $(pwd)/../../:/app --workdir="/app/example/simple" node:16 npm run tsc
 
+docker run --init -v $(pwd):/app --workdir="/app/" node:18 npm run tsc
 
 
 Lugo4Node is a NodeJS implementation of a client player for [Lugo](https://lugobots.dev/) game.

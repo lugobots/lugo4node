@@ -1,10 +1,14 @@
 {
   "compilerOptions": {
-    "module": "commonjs"
+    "outDir": "dist",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "allowJs": true,
+    "declaration": true
   },
   "exclude": [
     "node_modules",
     "example",
-    "pb/*.ts",
-  ]
+    "pb"
+  ],
 }

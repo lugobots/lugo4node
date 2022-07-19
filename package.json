@@ -2,10 +2,12 @@
   "name": "@lugobots/lugo4node",
   "version": "0.0.1-beta.2",
   "description": "Lugo4Node is a NodeJS implementation of a client player for [Lugo](https://lugobots.dev/) game.",
-  "main": "main.js",
+  "main": "dist/main.js",
   "scripts": {
-    "tsc": "tsc"
+    "tsc": "rm -rf dist/* && mkdir -p dist/pb && tsc && cp pb/* dist/pb/",
+    "tsconly": "tsc"
   },
+  "type": "module",
   "keywords": [],
   "author": "Rubens Silva",
   "license": "ISC",

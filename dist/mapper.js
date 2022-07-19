@@ -1,8 +1,9 @@
 "use strict";
 exports.__esModule = true;
-exports.Map = exports.Region = void 0;
-var physics_pb_js_1 = require("./pb/physics_pb.js");
+exports.Mapper = exports.Region = void 0;
+var physics = require("./pb/physics_pb.js");
 var lugo = require("./pb/server_pb.js");
+var Point = physics.Point;
 var specs_js_1 = require("./specs.js");
 // ErrMinCols defines an error for invalid number of cols
 var ErrMinCols = new Error("number of cols lower the minimum");
@@ -12,13 +13,13 @@ var ErrMaxCols = new Error("number of cols higher the maximum");
 var ErrMinRows = new Error("number of rows lower the minimum");
 // ErrMaxRows defines an error for invalid number of rows
 var ErrMaxRows = new Error("number of rows higher the maximum");
-// MinCols Define the min number of cols allowed on the field division by the Map
+// MinCols Define the min number of cols allowed on the field division by the Mapper
 var MinCols = 4;
-// MinRows Define the min number of rows allowed on the field division by the Map
+// MinRows Define the min number of rows allowed on the field division by the Mapper
 var MinRows = 2;
-// MaxCols Define the max number of cols allowed on the field division by the Map
+// MaxCols Define the max number of cols allowed on the field division by the Mapper
 var MaxCols = 200;
-// MaxRows Define the max number of rows allowed on the field division by the Map
+// MaxRows Define the max number of rows allowed on the field division by the Mapper
 var MaxRows = 100;
 var Region = /** @class */ (function () {
     /**
@@ -27,7 +28,7 @@ var Region = /** @class */ (function () {
      * @param row {number}
      * @param side {lugo.Team.Side}
      * @param center {physics.Point}
-     * @param positioner  {Map}
+     * @param positioner  {Mapper}
      */
     function Region(col, row, side, center, positioner) {
         this.col = col;
@@ -102,14 +103,14 @@ var Region = /** @class */ (function () {
     return Region;
 }());
 exports.Region = Region;
-var Map = /** @class */ (function () {
+var Mapper = /** @class */ (function () {
     /**
      *
      * @param cols {number}
      * @param rows {number}
      * @param side {lugo.Team.Side}
      */
-    function Map(cols, rows, side) {
+    function Mapper(cols, rows, side) {
         if (cols < MinCols) {
             throw ErrMinCols;
         }
@@ -133,12 +134,12 @@ var Map = /** @class */ (function () {
      * @param row {number}
      * @return {Region}
      */
-    Map.prototype.getRegion = function (col, row) {
+    Mapper.prototype.getRegion = function (col, row) {
         col = Math.max(0, col);
         col = Math.min(this.cols - 1, col);
         row = Math.max(0, row);
         row = Math.min(this.rows - 1, row);
-        var center = new physics_pb_js_1.Point();
+        var center = new Point();
         center.setX(Math.round((col * this.regionWidth) + (this.regionWidth / 2)));
         center.setY(Math.round((row * this.regionHeight) + (this.regionHeight / 2)));
         if (this.side === lugo.Team.Side.AWAY) {
@@ -150,7 +151,7 @@ var Map = /** @class */ (function () {
      * @param {physics.Point} point
      * @return Region
      */
-    Map.prototype.getRegionFromPoint = function (point) {
+    Mapper.prototype.getRegionFromPoint = function (point) {
         if (this.side === lugo.Team.Side.AWAY) {
             point = mirrorCoordsToAway(point);
         }
@@ -160,16 +161,16 @@ var Map = /** @class */ (function () {
         var row = Math.min(cy, this.rows - 1);
         return this.getRegion(col, row);
     };
-    return Map;
+    return Mapper;
 }());
-exports.Map = Map;
+exports.Mapper = Mapper;
 /**
  *
  * @param center
  * @return {Point}
  */
 function mirrorCoordsToAway(center) {
-    var mirrored = new physics_pb_js_1.Point();
+    var mirrored = new Point();
     mirrored.setX(specs_js_1.SPECS.MAX_X_COORDINATE - center.getX());
     mirrored.setY(specs_js_1.SPECS.MAX_Y_COORDINATE - center.getY());
     return mirrored;
