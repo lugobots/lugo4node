@@ -245,7 +245,7 @@ var Client = /** @class */ (function () {
             var response;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.client.sendOrders(orderSet, null)
+                    case 0: return [4 /*yield*/, this.client.sendOrders(orderSet, function () { })
                         // console.log(response.getPeer())
                     ];
                     case 1:

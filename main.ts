@@ -3,54 +3,11 @@ import {EnvVarLoader} from './configurator.js'
 import {Goal} from './goal.js'
 import {Mapper, Region} from './mapper.js'
 import * as ORIENTATION from './orentation.js'
-import {
-    Ball,
-    Catch,
-    GameSnapshot,
-    Jump,
-    Kick,
-    Move,
-    Order,
-    Player,
-    Team,
-    JoinRequest,
-    OrderSet,
-    ShotClock,
-    OrderResponse,
-    WatcherRequest,
-    StartRequest,
-    GameEvent,
-    GameSetup,
-    TeamSettings,
-    TeamColors,
-    TeamColor,
-    EventNewPlayer,
-    EventLostPlayer,
-    EventStateChange,
-    EventGoal,
-    EventGameOver,
-    EventDebugBreakpoint,
-    EventDebugReleased,
-    CommandResponse,
-    GameProperties,
-    PlayerProperties,
-    BallProperties,
-    NextOrderRequest,
-    PauseResumeRequest,
-    NextTurnRequest,
-    BroadcastClient,
-    RemoteClient,
-    GameClient,
-
-} from './proto_exported.js'
+import * as Lugo from './proto_exported.js'
 import {SPECS} from "./specs.js"
 import {Bot, PLAYER_STATE} from './stub.js'
-import {sub,NewVector, getScaledVector, normalize, getLength}  from "./vector.js"
+import * as vectors  from "./vector.js"
 // imports actually used in this file
-
-import {Point, Vector, Velocity} from './pb/physics_pb.js'
-
-export const vectors = {sub,NewVector, getScaledVector, normalize, getLength}
 
 export {
     Client,NewClientFromConfig,
@@ -60,72 +17,33 @@ export {
     ORIENTATION,
     SPECS,
     Bot, PLAYER_STATE,
-    Point, Vector, Velocity,
+    Lugo,
+    vectors,
 }
 
-export {
-    Ball,
-    Catch,
-    GameSnapshot,
-    Jump,
-    Kick,
-    Move,
-    Order,
-    Player,
-    Team,
-    JoinRequest,
-    OrderSet,
-    ShotClock,
-    OrderResponse,
-    WatcherRequest,
-    StartRequest,
-    GameEvent,
-    GameSetup,
-    TeamSettings,
-    TeamColors,
-    TeamColor,
-    EventNewPlayer,
-    EventLostPlayer,
-    EventStateChange,
-    EventGoal,
-    EventGameOver,
-    EventDebugBreakpoint,
-    EventDebugReleased,
-    CommandResponse,
-    GameProperties,
-    PlayerProperties,
-    BallProperties,
-    NextOrderRequest,
-    PauseResumeRequest,
-    NextTurnRequest,
-    BroadcastClient,
-    RemoteClient,
-    GameClient,
-}
-
-const homeGoalCenter = new Point()
+const homeGoalCenter = new Lugo.Point()
 homeGoalCenter.setX(0)
 homeGoalCenter.setY(SPECS.MAX_Y_COORDINATE / 2)
 
-const homeGoalTopPole = new Point()
+const homeGoalTopPole = new Lugo.Point()
 homeGoalTopPole.setX(0)
 homeGoalTopPole.setY(SPECS.GOAL_MAX_Y)
 
-const homeGoalBottomPole = new Point()
+const homeGoalBottomPole = new Lugo.Point()
 homeGoalBottomPole.setX(0)
 homeGoalBottomPole.setY(SPECS.GOAL_MIN_Y)
 
 
-const awayGoalCenter = new Point()
+const awayGoalCenter = new Lugo.Point()
 awayGoalCenter.setX(SPECS.MAX_X_COORDINATE)
 awayGoalCenter.setY(SPECS.MAX_Y_COORDINATE / 2)
 
 
-const awayGoalTopPole = new Point()
+const awayGoalTopPole = new Lugo.Point()
 awayGoalTopPole.setX(SPECS.MAX_X_COORDINATE)
 awayGoalTopPole.setY(SPECS.GOAL_MAX_Y)
 
-const awayGoalBottomPole = new Point()
+const awayGoalBottomPole = new Lugo.Point()
 awayGoalBottomPole.setX(SPECS.MAX_X_COORDINATE)
 awayGoalBottomPole.setY(SPECS.GOAL_MIN_Y)
 
@@ -138,7 +56,7 @@ export class GameSnapshotReader {
      */
     readonly snapshot;
 
-    constructor(snapshot: GameSnapshot, mySide: Team.Side) {
+    constructor(snapshot: Lugo.GameSnapshot, mySide: Lugo.Team.Side) {
         this.snapshot = snapshot
         this.mySide = mySide
     }
@@ -147,16 +65,16 @@ export class GameSnapshotReader {
      *
      * @returns {Team}
      */
-    getMyTeam(): Team {
+    getMyTeam(): Lugo.Team {
         return this.getTeam(this.mySide)
     }
 
     /**
-     * @param { Team.Side} side
+     * @param { Lugo.Team.Side} side
      * @returns {Team}
      */
-    getTeam(side): Team {
-        if (side === Team.Side.HOME) {
+    getTeam(side): Lugo.Team {
+        if (side === Lugo.Side.HOME) {
             return this.snapshot.getHomeTeam()
         }
         return this.snapshot.getAwayTeam()
@@ -168,7 +86,7 @@ export class GameSnapshotReader {
      * @param { Player} player
      * @returns {boolean}
      */
-    isBallHolder(player: Player): boolean {
+    isBallHolder(player: Lugo.Player): boolean {
         const ball = this.snapshot.getBall()
 
         return ball.getHolder() != null && ball.getHolder().getTeamSide() === player.getTeamSide() && ball.getHolder().getNumber() === player.getNumber()
@@ -176,13 +94,13 @@ export class GameSnapshotReader {
 
     /**
      *
-     * @returns {Team.Side}
+     * @returns {Lugo.Team.Side}
      */
-    getOpponentSide(): Team.Side {
-        if (this.mySide === Team.Side.HOME) {
-            return Team.Side.AWAY
+    getOpponentSide(): Lugo.Team.Side {
+        if (this.mySide === Lugo.Team.Side.HOME) {
+            return Lugo.Team.Side.AWAY
         }
-        return Team.Side.HOME
+        return Lugo.Team.Side.HOME
     }
 
     /**
@@ -190,7 +108,7 @@ export class GameSnapshotReader {
      * @returns {Goal}
      */
     getMyGoal(): Goal {
-        if (this.mySide === Team.Side.HOME) {
+        if (this.mySide === Lugo.Team.Side.HOME) {
             return homeGoal
         }
         return awayGoal
@@ -198,9 +116,9 @@ export class GameSnapshotReader {
 
     /**
      *
-     * @returns {Ball}
+     * @returns {Lugo.Ball}
      */
-    getBall(): Ball {
+    getBall(): Lugo.Ball {
         return this.snapshot.getBall()
     }
 
@@ -209,7 +127,7 @@ export class GameSnapshotReader {
      * @returns {Goal}
      */
     getOpponentGoal(): Goal {
-        if (this.mySide === Team.Side.HOME) {
+        if (this.mySide === Lugo.Team.Side.HOME) {
             return awayGoal
         }
         return homeGoal
@@ -217,11 +135,11 @@ export class GameSnapshotReader {
 
     /**
      *
-     * @param {.Team.Side} side
+     * @param {.Lugo.Team.Side} side
      * @param {number} number
      * @returns {.Player}
      */
-    getPlayer(side: Team.Side, number: number): Player | null {
+    getPlayer(side: Lugo.Team.Side, number: number): Lugo.Player | null {
         const team = this.getTeam(side)
         if (team == null) {
             return null
@@ -240,7 +158,7 @@ export class GameSnapshotReader {
      * @param {Point} target
      * @return {Order}
      */
-    makeOrderMoveMaxSpeed(origin: Point, target: Point): Order {
+    makeOrderMoveMaxSpeed(origin: Lugo.Point, target: Lugo.Point): Lugo.Order {
         return this.makeOrderMove(origin, target, SPECS.PLAYER_MAX_SPEED)
     }
 
@@ -251,14 +169,14 @@ export class GameSnapshotReader {
      * @param speed
      * @returns {Order}
      */
-    makeOrderMove(origin: Point, target: Point, speed: number): Order {
+    makeOrderMove(origin: Lugo.Point, target: Lugo.Point, speed: number): Lugo.Order {
         if (origin.getX() === target.getX() && origin.getY() === target.getY()) {
             // a vector cannot have zeroed direction. In this case, the player will just be stopped
             return this._makeOrderMoveFromVector(ORIENTATION.NORTH, 0)
         }
 
-        let direction = NewVector(origin, target)
-        direction = normalize(direction)
+        let direction = vectors.NewVector(origin, target)
+        direction = vectors.normalize(direction)
         return this._makeOrderMoveFromVector(direction, speed)
     }
 
@@ -269,64 +187,64 @@ export class GameSnapshotReader {
      * @returns {Order}
      * @private
      */
-    private _makeOrderMoveFromVector(direction: Vector, speed: number): Order {
-        const velocity = new Velocity()
+    private _makeOrderMoveFromVector(direction: Lugo.Vector, speed: number): Lugo.Order {
+        const velocity = new Lugo.Velocity()
         velocity.setDirection(direction)
         velocity.setSpeed(speed)
 
-        const moveOrder = new Move()
+        const moveOrder = new Lugo.Move()
         moveOrder.setVelocity(velocity)
-        return new Order().setMove(moveOrder)
+        return new Lugo.Order().setMove(moveOrder)
     }
 
-    makeOrderMoveByDirection(direction: DIRECTION): Order {
+    makeOrderMoveByDirection(direction: DIRECTION): Lugo.Order {
         let directionTarget;
         switch (direction) {
             case DIRECTION.FORWARD:
                 directionTarget = ORIENTATION.EAST
-                if (this.mySide === Team.Side.AWAY) {
+                if (this.mySide === Lugo.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.WEST
                 }
                 break;
             case DIRECTION.BACKWARD:
                 directionTarget = ORIENTATION.WEST
-                if (this.mySide === Team.Side.AWAY) {
+                if (this.mySide === Lugo.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.EAST
                 }
                 break;
             case DIRECTION.LEFT:
                 directionTarget = ORIENTATION.NORTH
-                if (this.mySide === Team.Side.AWAY) {
+                if (this.mySide === Lugo.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.SOUTH
                 }
                 break;
             case DIRECTION.RIGHT:
                 directionTarget = ORIENTATION.SOUTH
-                if (this.mySide === Team.Side.AWAY) {
+                if (this.mySide === Lugo.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.NORTH
                 }
                 break;
             case DIRECTION.BACKWARD_LEFT:
                 directionTarget = ORIENTATION.NORTH_WEST
-                if (this.mySide === Team.Side.AWAY) {
+                if (this.mySide === Lugo.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.SOUTH_EAST
                 }
                 break;
             case DIRECTION.BACKWARD_RIGHT:
                 directionTarget = ORIENTATION.SOUTH_WEST
-                if (this.mySide === Team.Side.AWAY) {
+                if (this.mySide === Lugo.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.NORTH_EAST
                 }
                 break;
             case DIRECTION.FORWARD_LEFT:
                 directionTarget = ORIENTATION.NORTH_EAST
-                if (this.mySide === Team.Side.AWAY) {
+                if (this.mySide === Lugo.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.SOUTH_WEST
                 }
                 break;
             case DIRECTION.FORWARD_RIGHT:
                 directionTarget = ORIENTATION.SOUTH_EAST
-                if (this.mySide === Team.Side.AWAY) {
+                if (this.mySide === Lugo.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.NORTH_WEST
                 }
                 break;
@@ -338,21 +256,21 @@ export class GameSnapshotReader {
     }
 
 
-    makeOrderJump(origin: Point, target: Point, speed: number): Order {
+    makeOrderJump(origin: Lugo.Point, target: Lugo.Point, speed: number): Lugo.Order {
         let direction = ORIENTATION.EAST
         if (origin.getX() !== target.getX() || origin.getY() !== target.getY()) {
             // a vector cannot have zeroed direction. In this case, the player will just be stopped
-            direction = NewVector(origin, target)
-            direction = normalize(direction)
+            direction = vectors.NewVector(origin, target)
+            direction = vectors.normalize(direction)
         }
-        const velocity = new Velocity()
+        const velocity = new Lugo.Velocity()
         velocity.setDirection(direction)
         velocity.setSpeed(speed)
 
-        const jump = new Jump()
+        const jump = new Lugo.Jump()
         jump.setVelocity(velocity)
 
-        return new Order().setJump(jump)
+        return new Lugo.Order().setJump(jump)
     }
 
     /**
@@ -362,16 +280,16 @@ export class GameSnapshotReader {
      * @param {number} speed
      * @returns {Order}
      */
-    makeOrderKick(ball: Ball, target: Point, speed: number): Order {
-        const ballExpectedDirection = NewVector(ball.getPosition(), target)
+    makeOrderKick(ball: Lugo.Ball, target: Lugo.Point, speed: number): Lugo.Order {
+        const ballExpectedDirection = vectors.NewVector(ball.getPosition(), target)
 
         // the ball velocity is summed to the kick velocity, so we have to consider the current ball direction
-        const diffVector = sub(ballExpectedDirection, ball.getVelocity().getDirection())
+        const diffVector = vectors.sub(ballExpectedDirection, ball.getVelocity().getDirection())
 
-        const newVelocity = new Velocity()
+        const newVelocity = new Lugo.Velocity()
         newVelocity.setSpeed(speed)
-        newVelocity.setDirection(normalize(diffVector))
-        return new Order().setKick(new Kick().setVelocity(newVelocity))
+        newVelocity.setDirection(vectors.normalize(diffVector))
+        return new Lugo.Order().setKick(new Lugo.Kick().setVelocity(newVelocity))
     }
 
     /**
@@ -380,7 +298,7 @@ export class GameSnapshotReader {
      * @param {Point} target
      * @returns {Order}
      */
-    makeOrderKickMaxSpeed(ball: Ball, target: Point): Order {
+    makeOrderKickMaxSpeed(ball: Lugo.Ball, target: Lugo.Point): Lugo.Order {
         return this.makeOrderKick(ball, target, SPECS.BALL_MAX_SPEED)
     }
 
@@ -388,20 +306,20 @@ export class GameSnapshotReader {
      *
      * @returns {!Order}
      */
-    makeOrderCatch(): Order {
-        return new Order().setCatch(new Catch())
+    makeOrderCatch(): Lugo.Order {
+        return new Lugo.Order().setCatch(new Lugo.Catch())
     }
 
 }
 
 export const awayGoal = new Goal(
-    Team.Side.AWAY,
+    Lugo.Team.Side.AWAY,
     awayGoalCenter,
     awayGoalTopPole,
     awayGoalBottomPole
 )
 export const homeGoal = new Goal(
-    Team.Side.HOME,
+    Lugo.Team.Side.HOME,
     homeGoalCenter,
     homeGoalTopPole,
     homeGoalBottomPole
@@ -426,7 +344,7 @@ export enum DIRECTION {
  * @param side
  * @returns {PLAYER_STATE}
  */
-export function defineState(snapshot: GameSnapshot, playerNumber: number, side: Team.Side): PLAYER_STATE {
+export function defineState(snapshot: Lugo.GameSnapshot, playerNumber: number, side: Lugo.Team.Side): PLAYER_STATE {
     if (!snapshot || !snapshot.getBall()) {
         throw new Error('invalid snapshot state - cannot define player state')
     }

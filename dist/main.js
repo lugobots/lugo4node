@@ -1,7 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.GameClient = exports.RemoteClient = exports.BroadcastClient = exports.NextTurnRequest = exports.PauseResumeRequest = exports.NextOrderRequest = exports.BallProperties = exports.PlayerProperties = exports.GameProperties = exports.CommandResponse = exports.EventDebugReleased = exports.EventDebugBreakpoint = exports.EventGameOver = exports.EventGoal = exports.EventStateChange = exports.EventLostPlayer = exports.EventNewPlayer = exports.TeamColor = exports.TeamColors = exports.TeamSettings = exports.GameSetup = exports.GameEvent = exports.StartRequest = exports.WatcherRequest = exports.OrderResponse = exports.ShotClock = exports.OrderSet = exports.JoinRequest = exports.Team = exports.Player = exports.Order = exports.Move = exports.Kick = exports.Jump = exports.GameSnapshot = exports.Catch = exports.Ball = exports.Velocity = exports.Vector = exports.Point = exports.PLAYER_STATE = exports.SPECS = exports.ORIENTATION = exports.Region = exports.Mapper = exports.Goal = exports.EnvVarLoader = exports.NewClientFromConfig = exports.Client = exports.vectors = void 0;
-exports.defineState = exports.DIRECTION = exports.homeGoal = exports.awayGoal = exports.GameSnapshotReader = void 0;
+exports.defineState = exports.DIRECTION = exports.homeGoal = exports.awayGoal = exports.GameSnapshotReader = exports.vectors = exports.Lugo = exports.PLAYER_STATE = exports.SPECS = exports.ORIENTATION = exports.Region = exports.Mapper = exports.Goal = exports.EnvVarLoader = exports.NewClientFromConfig = exports.Client = void 0;
 var client_js_1 = require("./client.js");
 exports.Client = client_js_1.Client;
 exports.NewClientFromConfig = client_js_1.NewClientFromConfig;
@@ -14,71 +13,30 @@ exports.Mapper = mapper_js_1.Mapper;
 exports.Region = mapper_js_1.Region;
 var ORIENTATION = require("./orentation.js");
 exports.ORIENTATION = ORIENTATION;
-var proto_exported_js_1 = require("./proto_exported.js");
-exports.Ball = proto_exported_js_1.Ball;
-exports.Catch = proto_exported_js_1.Catch;
-exports.GameSnapshot = proto_exported_js_1.GameSnapshot;
-exports.Jump = proto_exported_js_1.Jump;
-exports.Kick = proto_exported_js_1.Kick;
-exports.Move = proto_exported_js_1.Move;
-exports.Order = proto_exported_js_1.Order;
-exports.Player = proto_exported_js_1.Player;
-exports.Team = proto_exported_js_1.Team;
-exports.JoinRequest = proto_exported_js_1.JoinRequest;
-exports.OrderSet = proto_exported_js_1.OrderSet;
-exports.ShotClock = proto_exported_js_1.ShotClock;
-exports.OrderResponse = proto_exported_js_1.OrderResponse;
-exports.WatcherRequest = proto_exported_js_1.WatcherRequest;
-exports.StartRequest = proto_exported_js_1.StartRequest;
-exports.GameEvent = proto_exported_js_1.GameEvent;
-exports.GameSetup = proto_exported_js_1.GameSetup;
-exports.TeamSettings = proto_exported_js_1.TeamSettings;
-exports.TeamColors = proto_exported_js_1.TeamColors;
-exports.TeamColor = proto_exported_js_1.TeamColor;
-exports.EventNewPlayer = proto_exported_js_1.EventNewPlayer;
-exports.EventLostPlayer = proto_exported_js_1.EventLostPlayer;
-exports.EventStateChange = proto_exported_js_1.EventStateChange;
-exports.EventGoal = proto_exported_js_1.EventGoal;
-exports.EventGameOver = proto_exported_js_1.EventGameOver;
-exports.EventDebugBreakpoint = proto_exported_js_1.EventDebugBreakpoint;
-exports.EventDebugReleased = proto_exported_js_1.EventDebugReleased;
-exports.CommandResponse = proto_exported_js_1.CommandResponse;
-exports.GameProperties = proto_exported_js_1.GameProperties;
-exports.PlayerProperties = proto_exported_js_1.PlayerProperties;
-exports.BallProperties = proto_exported_js_1.BallProperties;
-exports.NextOrderRequest = proto_exported_js_1.NextOrderRequest;
-exports.PauseResumeRequest = proto_exported_js_1.PauseResumeRequest;
-exports.NextTurnRequest = proto_exported_js_1.NextTurnRequest;
-exports.BroadcastClient = proto_exported_js_1.BroadcastClient;
-exports.RemoteClient = proto_exported_js_1.RemoteClient;
-exports.GameClient = proto_exported_js_1.GameClient;
+var Lugo = require("./proto_exported.js");
+exports.Lugo = Lugo;
 var specs_js_1 = require("./specs.js");
 exports.SPECS = specs_js_1.SPECS;
 var stub_js_1 = require("./stub.js");
 exports.PLAYER_STATE = stub_js_1.PLAYER_STATE;
-var vector_js_1 = require("./vector.js");
-// imports actually used in this file
-var physics_pb_js_1 = require("./pb/physics_pb.js");
-exports.Point = physics_pb_js_1.Point;
-exports.Vector = physics_pb_js_1.Vector;
-exports.Velocity = physics_pb_js_1.Velocity;
-exports.vectors = { sub: vector_js_1.sub, NewVector: vector_js_1.NewVector, getScaledVector: vector_js_1.getScaledVector, normalize: vector_js_1.normalize, getLength: vector_js_1.getLength };
-var homeGoalCenter = new physics_pb_js_1.Point();
+var vectors = require("./vector.js");
+exports.vectors = vectors;
+var homeGoalCenter = new Lugo.Point();
 homeGoalCenter.setX(0);
 homeGoalCenter.setY(specs_js_1.SPECS.MAX_Y_COORDINATE / 2);
-var homeGoalTopPole = new physics_pb_js_1.Point();
+var homeGoalTopPole = new Lugo.Point();
 homeGoalTopPole.setX(0);
 homeGoalTopPole.setY(specs_js_1.SPECS.GOAL_MAX_Y);
-var homeGoalBottomPole = new physics_pb_js_1.Point();
+var homeGoalBottomPole = new Lugo.Point();
 homeGoalBottomPole.setX(0);
 homeGoalBottomPole.setY(specs_js_1.SPECS.GOAL_MIN_Y);
-var awayGoalCenter = new physics_pb_js_1.Point();
+var awayGoalCenter = new Lugo.Point();
 awayGoalCenter.setX(specs_js_1.SPECS.MAX_X_COORDINATE);
 awayGoalCenter.setY(specs_js_1.SPECS.MAX_Y_COORDINATE / 2);
-var awayGoalTopPole = new physics_pb_js_1.Point();
+var awayGoalTopPole = new Lugo.Point();
 awayGoalTopPole.setX(specs_js_1.SPECS.MAX_X_COORDINATE);
 awayGoalTopPole.setY(specs_js_1.SPECS.GOAL_MAX_Y);
-var awayGoalBottomPole = new physics_pb_js_1.Point();
+var awayGoalBottomPole = new Lugo.Point();
 awayGoalBottomPole.setX(specs_js_1.SPECS.MAX_X_COORDINATE);
 awayGoalBottomPole.setY(specs_js_1.SPECS.GOAL_MIN_Y);
 var GameSnapshotReader = /** @class */ (function () {
@@ -94,11 +52,11 @@ var GameSnapshotReader = /** @class */ (function () {
         return this.getTeam(this.mySide);
     };
     /**
-     * @param { Team.Side} side
+     * @param { Lugo.Team.Side} side
      * @returns {Team}
      */
     GameSnapshotReader.prototype.getTeam = function (side) {
-        if (side === proto_exported_js_1.Team.Side.HOME) {
+        if (side === Lugo.Side.HOME) {
             return this.snapshot.getHomeTeam();
         }
         return this.snapshot.getAwayTeam();
@@ -114,27 +72,27 @@ var GameSnapshotReader = /** @class */ (function () {
     };
     /**
      *
-     * @returns {Team.Side}
+     * @returns {Lugo.Team.Side}
      */
     GameSnapshotReader.prototype.getOpponentSide = function () {
-        if (this.mySide === proto_exported_js_1.Team.Side.HOME) {
-            return proto_exported_js_1.Team.Side.AWAY;
+        if (this.mySide === Lugo.Team.Side.HOME) {
+            return Lugo.Team.Side.AWAY;
         }
-        return proto_exported_js_1.Team.Side.HOME;
+        return Lugo.Team.Side.HOME;
     };
     /**
      *
      * @returns {Goal}
      */
     GameSnapshotReader.prototype.getMyGoal = function () {
-        if (this.mySide === proto_exported_js_1.Team.Side.HOME) {
+        if (this.mySide === Lugo.Team.Side.HOME) {
             return exports.homeGoal;
         }
         return exports.awayGoal;
     };
     /**
      *
-     * @returns {Ball}
+     * @returns {Lugo.Ball}
      */
     GameSnapshotReader.prototype.getBall = function () {
         return this.snapshot.getBall();
@@ -144,14 +102,14 @@ var GameSnapshotReader = /** @class */ (function () {
      * @returns {Goal}
      */
     GameSnapshotReader.prototype.getOpponentGoal = function () {
-        if (this.mySide === proto_exported_js_1.Team.Side.HOME) {
+        if (this.mySide === Lugo.Team.Side.HOME) {
             return exports.awayGoal;
         }
         return exports.homeGoal;
     };
     /**
      *
-     * @param {.Team.Side} side
+     * @param {.Lugo.Team.Side} side
      * @param {number} number
      * @returns {.Player}
      */
@@ -189,8 +147,8 @@ var GameSnapshotReader = /** @class */ (function () {
             // a vector cannot have zeroed direction. In this case, the player will just be stopped
             return this._makeOrderMoveFromVector(ORIENTATION.NORTH, 0);
         }
-        var direction = (0, vector_js_1.NewVector)(origin, target);
-        direction = (0, vector_js_1.normalize)(direction);
+        var direction = vectors.NewVector(origin, target);
+        direction = vectors.normalize(direction);
         return this._makeOrderMoveFromVector(direction, speed);
     };
     /**
@@ -201,61 +159,61 @@ var GameSnapshotReader = /** @class */ (function () {
      * @private
      */
     GameSnapshotReader.prototype._makeOrderMoveFromVector = function (direction, speed) {
-        var velocity = new physics_pb_js_1.Velocity();
+        var velocity = new Lugo.Velocity();
         velocity.setDirection(direction);
         velocity.setSpeed(speed);
-        var moveOrder = new proto_exported_js_1.Move();
+        var moveOrder = new Lugo.Move();
         moveOrder.setVelocity(velocity);
-        return new proto_exported_js_1.Order().setMove(moveOrder);
+        return new Lugo.Order().setMove(moveOrder);
     };
     GameSnapshotReader.prototype.makeOrderMoveByDirection = function (direction) {
         var directionTarget;
         switch (direction) {
             case DIRECTION.FORWARD:
                 directionTarget = ORIENTATION.EAST;
-                if (this.mySide === proto_exported_js_1.Team.Side.AWAY) {
+                if (this.mySide === Lugo.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.WEST;
                 }
                 break;
             case DIRECTION.BACKWARD:
                 directionTarget = ORIENTATION.WEST;
-                if (this.mySide === proto_exported_js_1.Team.Side.AWAY) {
+                if (this.mySide === Lugo.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.EAST;
                 }
                 break;
             case DIRECTION.LEFT:
                 directionTarget = ORIENTATION.NORTH;
-                if (this.mySide === proto_exported_js_1.Team.Side.AWAY) {
+                if (this.mySide === Lugo.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.SOUTH;
                 }
                 break;
             case DIRECTION.RIGHT:
                 directionTarget = ORIENTATION.SOUTH;
-                if (this.mySide === proto_exported_js_1.Team.Side.AWAY) {
+                if (this.mySide === Lugo.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.NORTH;
                 }
                 break;
             case DIRECTION.BACKWARD_LEFT:
                 directionTarget = ORIENTATION.NORTH_WEST;
-                if (this.mySide === proto_exported_js_1.Team.Side.AWAY) {
+                if (this.mySide === Lugo.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.SOUTH_EAST;
                 }
                 break;
             case DIRECTION.BACKWARD_RIGHT:
                 directionTarget = ORIENTATION.SOUTH_WEST;
-                if (this.mySide === proto_exported_js_1.Team.Side.AWAY) {
+                if (this.mySide === Lugo.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.NORTH_EAST;
                 }
                 break;
             case DIRECTION.FORWARD_LEFT:
                 directionTarget = ORIENTATION.NORTH_EAST;
-                if (this.mySide === proto_exported_js_1.Team.Side.AWAY) {
+                if (this.mySide === Lugo.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.SOUTH_WEST;
                 }
                 break;
             case DIRECTION.FORWARD_RIGHT:
                 directionTarget = ORIENTATION.SOUTH_EAST;
-                if (this.mySide === proto_exported_js_1.Team.Side.AWAY) {
+                if (this.mySide === Lugo.Team.Side.AWAY) {
                     directionTarget = ORIENTATION.NORTH_WEST;
                 }
                 break;
@@ -268,15 +226,15 @@ var GameSnapshotReader = /** @class */ (function () {
         var direction = ORIENTATION.EAST;
         if (origin.getX() !== target.getX() || origin.getY() !== target.getY()) {
             // a vector cannot have zeroed direction. In this case, the player will just be stopped
-            direction = (0, vector_js_1.NewVector)(origin, target);
-            direction = (0, vector_js_1.normalize)(direction);
+            direction = vectors.NewVector(origin, target);
+            direction = vectors.normalize(direction);
         }
-        var velocity = new physics_pb_js_1.Velocity();
+        var velocity = new Lugo.Velocity();
         velocity.setDirection(direction);
         velocity.setSpeed(speed);
-        var jump = new proto_exported_js_1.Jump();
+        var jump = new Lugo.Jump();
         jump.setVelocity(velocity);
-        return new proto_exported_js_1.Order().setJump(jump);
+        return new Lugo.Order().setJump(jump);
     };
     /**
      *
@@ -286,13 +244,13 @@ var GameSnapshotReader = /** @class */ (function () {
      * @returns {Order}
      */
     GameSnapshotReader.prototype.makeOrderKick = function (ball, target, speed) {
-        var ballExpectedDirection = (0, vector_js_1.NewVector)(ball.getPosition(), target);
+        var ballExpectedDirection = vectors.NewVector(ball.getPosition(), target);
         // the ball velocity is summed to the kick velocity, so we have to consider the current ball direction
-        var diffVector = (0, vector_js_1.sub)(ballExpectedDirection, ball.getVelocity().getDirection());
-        var newVelocity = new physics_pb_js_1.Velocity();
+        var diffVector = vectors.sub(ballExpectedDirection, ball.getVelocity().getDirection());
+        var newVelocity = new Lugo.Velocity();
         newVelocity.setSpeed(speed);
-        newVelocity.setDirection((0, vector_js_1.normalize)(diffVector));
-        return new proto_exported_js_1.Order().setKick(new proto_exported_js_1.Kick().setVelocity(newVelocity));
+        newVelocity.setDirection(vectors.normalize(diffVector));
+        return new Lugo.Order().setKick(new Lugo.Kick().setVelocity(newVelocity));
     };
     /**
      *
@@ -308,13 +266,13 @@ var GameSnapshotReader = /** @class */ (function () {
      * @returns {!Order}
      */
     GameSnapshotReader.prototype.makeOrderCatch = function () {
-        return new proto_exported_js_1.Order().setCatch(new proto_exported_js_1.Catch());
+        return new Lugo.Order().setCatch(new Lugo.Catch());
     };
     return GameSnapshotReader;
 }());
 exports.GameSnapshotReader = GameSnapshotReader;
-exports.awayGoal = new goal_js_1.Goal(proto_exported_js_1.Team.Side.AWAY, awayGoalCenter, awayGoalTopPole, awayGoalBottomPole);
-exports.homeGoal = new goal_js_1.Goal(proto_exported_js_1.Team.Side.HOME, homeGoalCenter, homeGoalTopPole, homeGoalBottomPole);
+exports.awayGoal = new goal_js_1.Goal(Lugo.Team.Side.AWAY, awayGoalCenter, awayGoalTopPole, awayGoalBottomPole);
+exports.homeGoal = new goal_js_1.Goal(Lugo.Team.Side.HOME, homeGoalCenter, homeGoalTopPole, homeGoalBottomPole);
 var DIRECTION;
 (function (DIRECTION) {
     DIRECTION[DIRECTION["FORWARD"] = 0] = "FORWARD";

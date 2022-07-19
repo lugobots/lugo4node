@@ -192,9 +192,9 @@ export class Client {
      * @param {OrderSet} orderSet
      * @param {game_service.GameClient} connection
      */
-    async orderSetSender(orderSet) {
+    async orderSetSender(orderSet: OrderSet) {
         /** @type {module:grpc.ClientUnaryCall} response */
-        const response = await this.client.sendOrders(orderSet, null)
+        const response = await this.client.sendOrders(orderSet, () => {})
 
         // console.log(response.getPeer())
     }

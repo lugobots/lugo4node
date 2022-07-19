@@ -17,6 +17,9 @@ import {
 } from './pb/server_pb.js'
 export {Ball, Catch, GameSnapshot, Jump, Kick, Move, Order, Player, Team, JoinRequest, OrderSet, ShotClock,OrderResponse}
 
+export const {Side} = Team
+export const {State} = GameSnapshot
+
 // exposing all from broadcast
 import {WatcherRequest,
     StartRequest,
@@ -68,6 +71,10 @@ export {
     PauseResumeRequest,
     NextTurnRequest,
 }
+
+// exposing all from physics
+import {Point, Vector, Velocity} from './pb/physics_pb.js'
+export {Point, Vector, Velocity}
 
 import {BroadcastClient} from './pb/broadcast_grpc_pb.js'
 export {BroadcastClient}

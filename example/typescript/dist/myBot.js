@@ -5,7 +5,7 @@ var lugo4node_1 = require("@lugobots/lugo4node");
 var MyBot = /** @class */ (function () {
     /**
      *
-     * @param side
+     * @param {Lugo.Side} side
      * @param number
      * @param initPosition
      * @param mapper
@@ -14,6 +14,7 @@ var MyBot = /** @class */ (function () {
         this.number = number;
         this.mapper = mapper;
         this.initPosition = initPosition;
+        mapper.getRegionFromPoint(initPosition);
     }
     MyBot.prototype.makeReader = function (snapshot) {
         var reader = new lugo4node_1.GameSnapshotReader(snapshot, this.side);
@@ -36,7 +37,7 @@ var MyBot = /** @class */ (function () {
             }
             var moveOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), moveDest);
             // const catchOrder = reader.
-            var orderSet_1 = new lugo4node_1.OrderSet();
+            var orderSet_1 = new lugo4node_1.Lugo.OrderSet();
             orderSet_1.setTurn(snapshot.getTurn());
             orderSet_1.setDebugMessage("mi mi mi");
             orderSet_1.setOrdersList([moveOrder]);
@@ -59,7 +60,7 @@ var MyBot = /** @class */ (function () {
             }
             var moveOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), moveDest);
             var catchOrder = reader.makeOrderCatch();
-            var orderSet_2 = new lugo4node_1.OrderSet();
+            var orderSet_2 = new lugo4node_1.Lugo.OrderSet();
             orderSet_2.setTurn(snapshot.getTurn());
             orderSet_2.setDebugMessage("trying to catch the ball");
             orderSet_2.setOrdersList([moveOrder, catchOrder]);
@@ -82,7 +83,7 @@ var MyBot = /** @class */ (function () {
             else {
                 myOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), reader.getOpponentGoal().getCenter());
             }
-            var orderSet_3 = new lugo4node_1.OrderSet();
+            var orderSet_3 = new lugo4node_1.Lugo.OrderSet();
             orderSet_3.setTurn(snapshot.getTurn());
             orderSet_3.setDebugMessage("attack!");
             orderSet_3.setOrdersList([myOrder]);
@@ -97,7 +98,7 @@ var MyBot = /** @class */ (function () {
             var _a = this.makeReader(snapshot), reader = _a.reader, me = _a.me;
             var ballHolderPosition = snapshot.getBall().getPosition();
             var myOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), ballHolderPosition);
-            var orderSet_4 = new lugo4node_1.OrderSet();
+            var orderSet_4 = new lugo4node_1.Lugo.OrderSet();
             orderSet_4.setTurn(snapshot.getTurn());
             orderSet_4.setDebugMessage("supporting");
             orderSet_4.setOrdersList([myOrder]);
@@ -115,7 +116,7 @@ var MyBot = /** @class */ (function () {
                 position = reader.getMyGoal().getCenter();
             }
             var myOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), position);
-            var orderSet_5 = new lugo4node_1.OrderSet();
+            var orderSet_5 = new lugo4node_1.Lugo.OrderSet();
             orderSet_5.setTurn(snapshot.getTurn());
             orderSet_5.setDebugMessage("supporting");
             orderSet_5.setOrdersList([myOrder, reader.makeOrderCatch()]);

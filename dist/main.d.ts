@@ -3,48 +3,39 @@ import { EnvVarLoader } from './configurator.js';
 import { Goal } from './goal.js';
 import { Mapper, Region } from './mapper.js';
 import * as ORIENTATION from './orentation.js';
-import { Ball, Catch, GameSnapshot, Jump, Kick, Move, Order, Player, Team, JoinRequest, OrderSet, ShotClock, OrderResponse, WatcherRequest, StartRequest, GameEvent, GameSetup, TeamSettings, TeamColors, TeamColor, EventNewPlayer, EventLostPlayer, EventStateChange, EventGoal, EventGameOver, EventDebugBreakpoint, EventDebugReleased, CommandResponse, GameProperties, PlayerProperties, BallProperties, NextOrderRequest, PauseResumeRequest, NextTurnRequest, BroadcastClient, RemoteClient, GameClient } from './proto_exported.js';
+import * as Lugo from './proto_exported.js';
 import { SPECS } from "./specs.js";
 import { Bot, PLAYER_STATE } from './stub.js';
-import { sub, NewVector, getScaledVector, normalize, getLength } from "./vector.js";
-import { Point, Vector, Velocity } from './pb/physics_pb.js';
-export declare const vectors: {
-    sub: typeof sub;
-    NewVector: typeof NewVector;
-    getScaledVector: typeof getScaledVector;
-    normalize: typeof normalize;
-    getLength: typeof getLength;
-};
-export { Client, NewClientFromConfig, EnvVarLoader, Goal, Mapper, Region, ORIENTATION, SPECS, Bot, PLAYER_STATE, Point, Vector, Velocity, };
-export { Ball, Catch, GameSnapshot, Jump, Kick, Move, Order, Player, Team, JoinRequest, OrderSet, ShotClock, OrderResponse, WatcherRequest, StartRequest, GameEvent, GameSetup, TeamSettings, TeamColors, TeamColor, EventNewPlayer, EventLostPlayer, EventStateChange, EventGoal, EventGameOver, EventDebugBreakpoint, EventDebugReleased, CommandResponse, GameProperties, PlayerProperties, BallProperties, NextOrderRequest, PauseResumeRequest, NextTurnRequest, BroadcastClient, RemoteClient, GameClient, };
+import * as vectors from "./vector.js";
+export { Client, NewClientFromConfig, EnvVarLoader, Goal, Mapper, Region, ORIENTATION, SPECS, Bot, PLAYER_STATE, Lugo, vectors, };
 export declare class GameSnapshotReader {
     readonly mySide: any;
     /**
      * @type {GameSnapshot}
      */
     readonly snapshot: any;
-    constructor(snapshot: GameSnapshot, mySide: Team.Side);
+    constructor(snapshot: Lugo.GameSnapshot, mySide: Lugo.Team.Side);
     /**
      *
      * @returns {Team}
      */
-    getMyTeam(): Team;
+    getMyTeam(): Lugo.Team;
     /**
-     * @param { Team.Side} side
+     * @param { Lugo.Team.Side} side
      * @returns {Team}
      */
-    getTeam(side: any): Team;
+    getTeam(side: any): Lugo.Team;
     /**
      *
      * @param { Player} player
      * @returns {boolean}
      */
-    isBallHolder(player: Player): boolean;
+    isBallHolder(player: Lugo.Player): boolean;
     /**
      *
-     * @returns {Team.Side}
+     * @returns {Lugo.Team.Side}
      */
-    getOpponentSide(): Team.Side;
+    getOpponentSide(): Lugo.Team.Side;
     /**
      *
      * @returns {Goal}
@@ -52,9 +43,9 @@ export declare class GameSnapshotReader {
     getMyGoal(): Goal;
     /**
      *
-     * @returns {Ball}
+     * @returns {Lugo.Ball}
      */
-    getBall(): Ball;
+    getBall(): Lugo.Ball;
     /**
      *
      * @returns {Goal}
@@ -62,18 +53,18 @@ export declare class GameSnapshotReader {
     getOpponentGoal(): Goal;
     /**
      *
-     * @param {.Team.Side} side
+     * @param {.Lugo.Team.Side} side
      * @param {number} number
      * @returns {.Player}
      */
-    getPlayer(side: Team.Side, number: number): Player | null;
+    getPlayer(side: Lugo.Team.Side, number: number): Lugo.Player | null;
     /**
      *
      * @param {Point} origin
      * @param {Point} target
      * @return {Order}
      */
-    makeOrderMoveMaxSpeed(origin: Point, target: Point): Order;
+    makeOrderMoveMaxSpeed(origin: Lugo.Point, target: Lugo.Point): Lugo.Order;
     /**
      *
      * @param {Point} origin
@@ -81,7 +72,7 @@ export declare class GameSnapshotReader {
      * @param speed
      * @returns {Order}
      */
-    makeOrderMove(origin: Point, target: Point, speed: number): Order;
+    makeOrderMove(origin: Lugo.Point, target: Lugo.Point, speed: number): Lugo.Order;
     /**
      *
      * @param {Vector} direction
@@ -90,8 +81,8 @@ export declare class GameSnapshotReader {
      * @private
      */
     private _makeOrderMoveFromVector;
-    makeOrderMoveByDirection(direction: DIRECTION): Order;
-    makeOrderJump(origin: Point, target: Point, speed: number): Order;
+    makeOrderMoveByDirection(direction: DIRECTION): Lugo.Order;
+    makeOrderJump(origin: Lugo.Point, target: Lugo.Point, speed: number): Lugo.Order;
     /**
      *
      * @param {Ball} ball
@@ -99,19 +90,19 @@ export declare class GameSnapshotReader {
      * @param {number} speed
      * @returns {Order}
      */
-    makeOrderKick(ball: Ball, target: Point, speed: number): Order;
+    makeOrderKick(ball: Lugo.Ball, target: Lugo.Point, speed: number): Lugo.Order;
     /**
      *
      * @param {Ball} ball
      * @param {Point} target
      * @returns {Order}
      */
-    makeOrderKickMaxSpeed(ball: Ball, target: Point): Order;
+    makeOrderKickMaxSpeed(ball: Lugo.Ball, target: Lugo.Point): Lugo.Order;
     /**
      *
      * @returns {!Order}
      */
-    makeOrderCatch(): Order;
+    makeOrderCatch(): Lugo.Order;
 }
 export declare const awayGoal: Goal;
 export declare const homeGoal: Goal;
@@ -132,4 +123,4 @@ export declare enum DIRECTION {
  * @param side
  * @returns {PLAYER_STATE}
  */
-export declare function defineState(snapshot: GameSnapshot, playerNumber: number, side: Team.Side): PLAYER_STATE;
+export declare function defineState(snapshot: Lugo.GameSnapshot, playerNumber: number, side: Lugo.Team.Side): PLAYER_STATE;

@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.GameClient = exports.RemoteClient = exports.BroadcastClient = exports.NextTurnRequest = exports.PauseResumeRequest = exports.NextOrderRequest = exports.BallProperties = exports.PlayerProperties = exports.GameProperties = exports.CommandResponse = exports.EventDebugReleased = exports.EventDebugBreakpoint = exports.EventGameOver = exports.EventGoal = exports.EventStateChange = exports.EventLostPlayer = exports.EventNewPlayer = exports.TeamColor = exports.TeamColors = exports.TeamSettings = exports.GameSetup = exports.GameEvent = exports.StartRequest = exports.WatcherRequest = exports.OrderResponse = exports.ShotClock = exports.OrderSet = exports.JoinRequest = exports.Team = exports.Player = exports.Order = exports.Move = exports.Kick = exports.Jump = exports.GameSnapshot = exports.Catch = exports.Ball = void 0;
+exports.GameClient = exports.RemoteClient = exports.BroadcastClient = exports.Velocity = exports.Vector = exports.Point = exports.NextTurnRequest = exports.PauseResumeRequest = exports.NextOrderRequest = exports.BallProperties = exports.PlayerProperties = exports.GameProperties = exports.CommandResponse = exports.EventDebugReleased = exports.EventDebugBreakpoint = exports.EventGameOver = exports.EventGoal = exports.EventStateChange = exports.EventLostPlayer = exports.EventNewPlayer = exports.TeamColor = exports.TeamColors = exports.TeamSettings = exports.GameSetup = exports.GameEvent = exports.StartRequest = exports.WatcherRequest = exports.State = exports.Side = exports.OrderResponse = exports.ShotClock = exports.OrderSet = exports.JoinRequest = exports.Team = exports.Player = exports.Order = exports.Move = exports.Kick = exports.Jump = exports.GameSnapshot = exports.Catch = exports.Ball = void 0;
 // exposing all from server
 var server_pb_js_1 = require("./pb/server_pb.js");
 exports.Ball = server_pb_js_1.Ball;
@@ -16,6 +16,8 @@ exports.JoinRequest = server_pb_js_1.JoinRequest;
 exports.OrderSet = server_pb_js_1.OrderSet;
 exports.ShotClock = server_pb_js_1.ShotClock;
 exports.OrderResponse = server_pb_js_1.OrderResponse;
+exports.Side = server_pb_js_1.Team.Side;
+exports.State = server_pb_js_1.GameSnapshot.State;
 // exposing all from broadcast
 var broadcast_pb_js_1 = require("./pb/broadcast_pb.js");
 exports.WatcherRequest = broadcast_pb_js_1.WatcherRequest;
@@ -41,6 +43,11 @@ exports.BallProperties = remote_pb_js_1.BallProperties;
 exports.NextOrderRequest = remote_pb_js_1.NextOrderRequest;
 exports.PauseResumeRequest = remote_pb_js_1.PauseResumeRequest;
 exports.NextTurnRequest = remote_pb_js_1.NextTurnRequest;
+// exposing all from physics
+var physics_pb_js_1 = require("./pb/physics_pb.js");
+exports.Point = physics_pb_js_1.Point;
+exports.Vector = physics_pb_js_1.Vector;
+exports.Velocity = physics_pb_js_1.Velocity;
 var broadcast_grpc_pb_js_1 = require("./pb/broadcast_grpc_pb.js");
 exports.BroadcastClient = broadcast_grpc_pb_js_1.BroadcastClient;
 var remote_grpc_pb_js_1 = require("./pb/remote_grpc_pb.js");

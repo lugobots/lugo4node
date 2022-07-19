@@ -1,28 +1,29 @@
-import {Bot, GameSnapshotReader, GameSnapshot, Mapper, PLAYER_STATE, Point, Team, Player, OrderSet} from '@lugobots/lugo4node'
+import {Bot, GameSnapshotReader, Lugo, Mapper, PLAYER_STATE} from '@lugobots/lugo4node'
+
 
 export class MyBot implements Bot {
-    side: Team.Side;
+    side: Lugo.Team.Side;
     number: number;
 
-    initPosition: Point;
+    initPosition: Lugo.Point;
 
     mapper: Mapper;
 
     /**
      *
-     * @param side
+     * @param {Lugo.Side} side
      * @param number
      * @param initPosition
      * @param mapper
      */
-    constructor(side: Team.Side, number: number, initPosition: Point, mapper: Mapper) {
+    constructor(side: Lugo.Team.Side, number: number, initPosition: Lugo.Point, mapper: Mapper) {
         this.number = number
         this.mapper = mapper
         this.initPosition = initPosition
-
+        mapper.getRegionFromPoint(initPosition)
     }
 
-    private makeReader(snapshot: GameSnapshot): { reader: GameSnapshotReader, me: Player } {
+    private makeReader(snapshot: Lugo.GameSnapshot): { reader: GameSnapshotReader, me: Lugo.Player } {
         const reader = new GameSnapshotReader(snapshot, this.side)
         const me = reader.getPlayer(this.side, this.number)
         if (!me) {
@@ -31,7 +32,7 @@ export class MyBot implements Bot {
         return {reader, me}
     }
 
-    onDisputing(orderSet: OrderSet, snapshot: GameSnapshot): OrderSet | null {
+    onDisputing(orderSet: Lugo.OrderSet, snapshot: Lugo.GameSnapshot): Lugo.OrderSet | null {
         try {
             const {reader, me} = this.makeReader(snapshot)
             const ballPosition = reader.getBall().getPosition()
@@ -46,7 +47,7 @@ export class MyBot implements Bot {
             }
             const moveOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), moveDest)
             // const catchOrder = reader.
-            const orderSet = new OrderSet()
+            const orderSet = new Lugo.OrderSet()
             orderSet.setTurn(snapshot.getTurn())
             orderSet.setDebugMessage("mi mi mi")
             orderSet.setOrdersList([moveOrder])
@@ -56,7 +57,7 @@ export class MyBot implements Bot {
         }
     }
 
-    onDefending(orderSet: OrderSet, snapshot: GameSnapshot): OrderSet | null {
+    onDefending(orderSet: Lugo.OrderSet, snapshot: Lugo.GameSnapshot): Lugo.OrderSet | null {
         try {
             const {reader, me} = this.makeReader(snapshot)
             const ballPosition = snapshot.getBall().getPosition()
@@ -71,7 +72,7 @@ export class MyBot implements Bot {
             const moveOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), moveDest)
             const catchOrder = reader.makeOrderCatch()
 
-            const orderSet = new OrderSet()
+            const orderSet = new Lugo.OrderSet()
             orderSet.setTurn(snapshot.getTurn())
             orderSet.setDebugMessage("trying to catch the ball")
             orderSet.setOrdersList([moveOrder, catchOrder])
@@ -81,7 +82,7 @@ export class MyBot implements Bot {
         }
     }
 
-    onHolding(orderSet: OrderSet, snapshot: GameSnapshot): OrderSet | null {
+    onHolding(orderSet: Lugo.OrderSet, snapshot: Lugo.GameSnapshot): Lugo.OrderSet | null {
         try {
             const {reader, me} = this.makeReader(snapshot)
 
@@ -96,7 +97,7 @@ export class MyBot implements Bot {
                 myOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), reader.getOpponentGoal().getCenter())
             }
 
-            const orderSet = new OrderSet()
+            const orderSet = new Lugo.OrderSet()
             orderSet.setTurn(snapshot.getTurn())
             orderSet.setDebugMessage("attack!")
             orderSet.setOrdersList([myOrder])
@@ -106,13 +107,13 @@ export class MyBot implements Bot {
         }
     }
 
-    onSupporting(orderSet: OrderSet, snapshot: GameSnapshot): OrderSet | null {
+    onSupporting(orderSet: Lugo.OrderSet, snapshot: Lugo.GameSnapshot): Lugo.OrderSet | null {
         try {
             const {reader, me} = this.makeReader(snapshot)
             const ballHolderPosition = snapshot.getBall().getPosition()
             const myOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), ballHolderPosition)
 
-            const orderSet = new OrderSet()
+            const orderSet = new Lugo.OrderSet()
             orderSet.setTurn(snapshot.getTurn())
             orderSet.setDebugMessage("supporting")
             orderSet.setOrdersList([myOrder])
@@ -122,7 +123,7 @@ export class MyBot implements Bot {
         }
     }
 
-    asGoalkeeper(orderSet: OrderSet, snapshot: GameSnapshot, state: PLAYER_STATE): OrderSet | null {
+    asGoalkeeper(orderSet: Lugo.OrderSet, snapshot: Lugo.GameSnapshot, state: PLAYER_STATE): Lugo.OrderSet | null {
         try {
             const {reader, me} = this.makeReader(snapshot)
             let position = snapshot.getBall().getPosition()
@@ -132,7 +133,7 @@ export class MyBot implements Bot {
 
             const myOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), position)
 
-            const orderSet = new OrderSet()
+            const orderSet = new Lugo.OrderSet()
             orderSet.setTurn(snapshot.getTurn())
             orderSet.setDebugMessage("supporting")
             orderSet.setOrdersList([myOrder, reader.makeOrderCatch()])
@@ -142,7 +143,7 @@ export class MyBot implements Bot {
         }
     }
 
-    gettingReady(snapshot: GameSnapshot): void {
+    gettingReady(snapshot: Lugo.GameSnapshot): void {
 
     };
 }
