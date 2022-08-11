@@ -2,10 +2,10 @@
   "name": "example-bot",
   "version": "1.0.0",
   "description": "A simple example of using a bot class",
-  "main": "dist/index-bot-handler.js",
+  "main": "dist/main.js",
   "scripts": {
-    "start": "node dist/indexBotHandler.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node dist/main.js",
+    "play": "npm run tsc && cd ../../ && docker build -t example-bot-typescript -f example/typescript/Dockerfile . && cd - && docker-compose up",
     "tsc": "tsc"
   },
   "type": "module",

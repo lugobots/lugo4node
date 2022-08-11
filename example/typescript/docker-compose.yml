@@ -7,7 +7,7 @@ services:
       - "5000:5000"
       - "8080:8080"
   player_01:
-    image: exemplo-bot-typescript:latest
+    image: example-bot-typescript:latest
     network_mode: "host"
     depends_on:
       - game_server
@@ -15,7 +15,7 @@ services:
       - BOT_NUMBER=1
       - BOT_TEAM=home
   player_02:
-    image: exemplo-bot-typescript:latest
+    image: example-bot-typescript:latest
     network_mode: "host"
     depends_on:
       - game_server
@@ -23,7 +23,7 @@ services:
       - BOT_NUMBER=2
       - BOT_TEAM=home
   player_03:
-    image: exemplo-bot-typescript:latest
+    image: example-bot-typescript:latest
     network_mode: "host"
     depends_on:
       - game_server
@@ -31,7 +31,7 @@ services:
       - BOT_NUMBER=3
       - BOT_TEAM=home
   player_04:
-    image: exemplo-bot-typescript:latest
+    image: example-bot-typescript:latest
     network_mode: "host"
     depends_on:
       - game_server
@@ -39,7 +39,7 @@ services:
       - BOT_NUMBER=4
       - BOT_TEAM=home
   player_05:
-    image: exemplo-bot-typescript:latest
+    image: example-bot-typescript:latest
     network_mode: "host"
     depends_on:
       - game_server
@@ -47,7 +47,7 @@ services:
       - BOT_NUMBER=5
       - BOT_TEAM=home
   player_06:
-    image: exemplo-bot-typescript:latest
+    image: example-bot-typescript:latest
     network_mode: "host"
     depends_on:
       - game_server
@@ -55,7 +55,7 @@ services:
       - BOT_NUMBER=6
       - BOT_TEAM=home
   player_07:
-    image: exemplo-bot-typescript:latest
+    image: example-bot-typescript:latest
     network_mode: "host"
     depends_on:
       - game_server
@@ -63,7 +63,7 @@ services:
       - BOT_NUMBER=7
       - BOT_TEAM=home
   player_08:
-    image: exemplo-bot-typescript:latest
+    image: example-bot-typescript:latest
     network_mode: "host"
     depends_on:
       - game_server
@@ -71,7 +71,7 @@ services:
       - BOT_NUMBER=8
       - BOT_TEAM=home
   player_09:
-    image: exemplo-bot-typescript:latest
+    image: example-bot-typescript:latest
     network_mode: "host"
     depends_on:
       - game_server
@@ -79,7 +79,7 @@ services:
       - BOT_NUMBER=9
       - BOT_TEAM=home
   player_10:
-    image: exemplo-bot-typescript:latest
+    image: example-bot-typescript:latest
     network_mode: "host"
     depends_on:
       - game_server
@@ -87,7 +87,7 @@ services:
       - BOT_NUMBER=10
       - BOT_TEAM=home
   player_11:
-    image: exemplo-bot-typescript:latest
+    image: example-bot-typescript:latest
     network_mode: "host"
     depends_on:
       - game_server
@@ -95,7 +95,7 @@ services:
       - BOT_NUMBER=11
       - BOT_TEAM=home
   player_away_01:
-    image: ${AWAY_BOT:-lugobots/the-dummies-go:v1.0.0-beta}
+    image: ${AWAY_BOT:-lugobots/the-dummies-go:latest}
     network_mode: "host"
     depends_on:
       - game_server
@@ -103,7 +103,7 @@ services:
       - BOT_NUMBER=1
       - BOT_TEAM=away
   player_away_02:
-    image: ${AWAY_BOT:-lugobots/the-dummies-go:v1.0.0-beta}
+    image: ${AWAY_BOT:-lugobots/the-dummies-go:latest}
     network_mode: "host"
     depends_on:
       - game_server
@@ -111,7 +111,7 @@ services:
       - BOT_NUMBER=2
       - BOT_TEAM=away
   player_away_03:
-    image: ${AWAY_BOT:-lugobots/the-dummies-go:v1.0.0-beta}
+    image: ${AWAY_BOT:-lugobots/the-dummies-go:latest}
     network_mode: "host"
     depends_on:
       - game_server
@@ -119,7 +119,7 @@ services:
       - BOT_NUMBER=3
       - BOT_TEAM=away
   player_away_04:
-    image: ${AWAY_BOT:-lugobots/the-dummies-go:v1.0.0-beta}
+    image: ${AWAY_BOT:-lugobots/the-dummies-go:latest}
     network_mode: "host"
     depends_on:
       - game_server
@@ -127,7 +127,7 @@ services:
       - BOT_NUMBER=4
       - BOT_TEAM=away
   player_away_05:
-    image: ${AWAY_BOT:-lugobots/the-dummies-go:v1.0.0-beta}
+    image: ${AWAY_BOT:-lugobots/the-dummies-go:latest}
     network_mode: "host"
     depends_on:
       - game_server
@@ -135,7 +135,7 @@ services:
       - BOT_NUMBER=5
       - BOT_TEAM=away
   player_away_06:
-    image: ${AWAY_BOT:-lugobots/the-dummies-go:v1.0.0-beta}
+    image: ${AWAY_BOT:-lugobots/the-dummies-go:latest}
     network_mode: "host"
     depends_on:
       - game_server
@@ -143,7 +143,7 @@ services:
       - BOT_NUMBER=6
       - BOT_TEAM=away
   player_away_07:
-    image: ${AWAY_BOT:-lugobots/the-dummies-go:v1.0.0-beta}
+    image: ${AWAY_BOT:-lugobots/the-dummies-go:latest}
     network_mode: "host"
     depends_on:
       - game_server
@@ -151,7 +151,7 @@ services:
       - BOT_NUMBER=7
       - BOT_TEAM=away
   player_away_08:
-    image: ${AWAY_BOT:-lugobots/the-dummies-go:v1.0.0-beta}
+    image: ${AWAY_BOT:-lugobots/the-dummies-go:latest}
     network_mode: "host"
     depends_on:
       - game_server
@@ -159,7 +159,7 @@ services:
       - BOT_NUMBER=8
       - BOT_TEAM=away
   player_away_09:
-    image: ${AWAY_BOT:-lugobots/the-dummies-go:v1.0.0-beta}
+    image: ${AWAY_BOT:-lugobots/the-dummies-go:latest}
     network_mode: "host"
     depends_on:
       - game_server
@@ -167,7 +167,7 @@ services:
       - BOT_NUMBER=9
       - BOT_TEAM=away
   player_away_10:
-    image: ${AWAY_BOT:-lugobots/the-dummies-go:v1.0.0-beta}
+    image: ${AWAY_BOT:-lugobots/the-dummies-go:latest}
     network_mode: "host"
     depends_on:
       - game_server
@@ -175,7 +175,7 @@ services:
       - BOT_NUMBER=10
       - BOT_TEAM=away
   player_away_11:
-    image: ${AWAY_BOT:-lugobots/the-dummies-go:v1.0.0-beta}
+    image: ${AWAY_BOT:-lugobots/the-dummies-go:latest}
     network_mode: "host"
     depends_on:
       - game_server

@@ -1,4 +1,4 @@
-import {Bot, GameSnapshotReader, Lugo, Mapper, PLAYER_STATE} from '@lugobots/lugo4node'
+import {Bot, GameSnapshotReader, Lugo, Mapper, PLAYER_STATE, Region} from '@lugobots/lugo4node'
 
 
 export class MyBot implements Bot {
@@ -32,25 +32,35 @@ export class MyBot implements Bot {
         return {reader, me}
     }
 
+    private isNear(regionOrigin : Region, destOrigin: Region) : boolean {
+        const maxDistance = 2
+        return Math.abs(regionOrigin.getRow() - destOrigin.getRow()) <= maxDistance &&
+                Math.abs(regionOrigin.getCol() - destOrigin.getCol()) <= maxDistance
+    }
+
     onDisputing(orderSet: Lugo.OrderSet, snapshot: Lugo.GameSnapshot): Lugo.OrderSet | null {
         try {
+            // the Lugo.GameSnapshot helps us to read the game state
             const {reader, me} = this.makeReader(snapshot)
             const ballPosition = reader.getBall().getPosition()
 
             const ballRegion = this.mapper.getRegionFromPoint(ballPosition)
-            const myRegion = this.mapper.getRegionFromPoint(this.initPosition)
+            const myRegion = this.mapper.getRegionFromPoint(me.getPosition())
 
-            let moveDest = this.initPosition
-            if (Math.abs(myRegion.getRow() - ballRegion.getRow()) <= 2 &&
-                Math.abs(myRegion.getCol() - ballRegion.getCol()) <= 2) {
-                moveDest = ballPosition
+            //by default, let's stay on our region
+            let moveDestination = this.initPosition
+
+            // but if the ball is near to me, I will try to catch it
+            if (this.isNear(ballRegion, myRegion)) {
+                moveDestination = ballPosition
             }
-            const moveOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), moveDest)
-            // const catchOrder = reader.
-            const orderSet = new Lugo.OrderSet()
-            orderSet.setTurn(snapshot.getTurn())
-            orderSet.setDebugMessage("mi mi mi")
-            orderSet.setOrdersList([moveOrder])
+
+            const moveOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), moveDestination)
+            
+            // we can ALWAYS try to catch the ball
+            const catchOrder = reader.makeOrderCatch()
+
+            orderSet.setOrdersList([moveOrder, catchOrder])
             return orderSet
         } catch (e) {
             console.log(`did not play this turn`, e)
