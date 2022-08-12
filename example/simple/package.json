@@ -2,12 +2,10 @@
   "name": "example-bot",
   "version": "1.0.0",
   "description": "A simple example of using a bot class",
-  "main": "dist/index-bot-handler.js",
+  "main": "main.js",
   "scripts": {
-    "start": "node index-bot-handler.js",
-    "raw": "node index-turn-handler.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "tsc": "tsc"
+    "start": "node main.js",
+    "play": "cd ../../ && docker build -t example-bot-js -f example/simple/Dockerfile . && cd - && docker-compose up"
   },
   "author": "Rubens Silva",
   "license": "ISC",

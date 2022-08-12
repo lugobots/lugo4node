@@ -15,6 +15,5 @@ COPY example/typescript /app/example/typescript
 
 WORKDIR /app/example/typescript
 
-RUN ls -l /app/example/typescript && echo "===" && ls -las /app
 CMD [ "npm", "run", "start" ]
 

@@ -68,7 +68,7 @@ export class Client {
 
     /**
      *
-     * @param {BotStub} bot
+     * @param {Bot} bot
      * @param {function()} onJoin
      * @returns {Promise<void>}
      */

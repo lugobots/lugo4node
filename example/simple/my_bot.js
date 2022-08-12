@@ -1,9 +1,10 @@
-const {GameSnapshotReader, Bot, PLAYER_STATE, Mapper, BroadcastClient, } = require('@lugobots/lugo4node')
+const {GameSnapshotReader, Bot, PLAYER_STATE, Mapper, BroadcastClient,  } = require('@lugobots/lugo4node')
 const {} = require('@lugobots/lugo4node').vectors
 
-class MyBot extends Bot {
+
+class MyBot {
   /**
-   * @type {Team.Side}
+   * @type {Lugo.Team.Side}
    */
   #side;
 
@@ -13,30 +14,27 @@ class MyBot extends Bot {
   #number;
 
   /**
-   * @type {Lugo.Point}
+   * @type {physics.Point}
    */
   #initPosition;
 
   /**
-   * @type {Map}
+   * @type {Mapper}
    */
   #mapper;
 
   /**
    *
-   * @param {BroadcastClient} side
+   * @param {Lugo.Team.Side} side
    * @param {number} number
-   * @param {Point} initPosition
+   * @param {physics.Point} initPosition
    * @param {Mapper} mapper
    */
   constructor(side, number, initPosition, mapper) {
-    super();
     this.#side = side
     this.#number = number
     this.#mapper = mapper
     this.#initPosition = initPosition
-
-    side.
 
   }
 
@@ -76,7 +74,6 @@ class MyBot extends Bot {
       }
       const moveOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), moveDest)
       // const catchOrder = reader.
-      const orderSet = new Lugo.OrderSet()
       orderSet.setTurn(snapshot.getTurn())
       orderSet.setDebugMessage("mi mi mi")
       orderSet.setOrdersList([moveOrder])
@@ -101,7 +98,6 @@ class MyBot extends Bot {
       const moveOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), moveDest)
       const catchOrder =  reader.makeOrderCatch()
 
-      const orderSet = new Lugo.OrderSet()
       orderSet.setTurn(snapshot.getTurn())
       orderSet.setDebugMessage("trying to catch the ball")
       orderSet.setOrdersList([moveOrder, catchOrder])
@@ -126,7 +122,6 @@ class MyBot extends Bot {
         myOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), reader.getOpponentGoal().center)
       }
 
-      const orderSet = new Lugo.OrderSet()
       orderSet.setTurn(snapshot.getTurn())
       orderSet.setDebugMessage("attack!")
       orderSet.setOrdersList([myOrder])
@@ -142,7 +137,6 @@ class MyBot extends Bot {
       const ballHolderPosition = snapshot.getBall().getPosition()
       const myOrder = reader.makeOrderMoveMaxSpeed(me.getPosition(), ballHolderPosition)
 
-      const orderSet = new Lugo.OrderSet()
       orderSet.setTurn(snapshot.getTurn())
       orderSet.setDebugMessage("supporting")
       orderSet.setOrdersList([myOrder])
