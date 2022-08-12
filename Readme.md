@@ -64,7 +64,9 @@ message received from the game lugo.
 It may require that you know a bit more about the game steps, but still not too much.
 
 
-### Third option: Using Tensorflow training model
+### Third option: Using Tensorflow training model 
+
+**IMPORTANT** The deep learning feature is broken in the versions greater than v0.0.1-beta.2
 
 If you are a **deep learning** enthusiastic and knows [Tensorflow JS](https://tensorflow.org/js), you may want to use
 the Lugo deep learning environment.
