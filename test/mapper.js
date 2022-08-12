@@ -1,6 +1,6 @@
 const assert = require('assert');
 const mapper = require('../mapper')
-const field = require('../field')
+const field = require('../SPECS')
 const {FIELD} = require("../main");
 
 describe('Region', () => {

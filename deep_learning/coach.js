@@ -115,7 +115,7 @@ class Coach extends BotStub {
     async gameTurnHandler(orderSet, snapshot) {
         this._debug(`new turn`)
         if (this.#waitingForAction) {
-            throw new Error("faulty synchrony - got new turn while waiting for order (check the server 'timer-mode')")
+            throw new Error("faulty synchrony - got new turn while waiting for order (check the lugo 'timer-mode')")
         }
         this._gotNextState(snapshot)
 

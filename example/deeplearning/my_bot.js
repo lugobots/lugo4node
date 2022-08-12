@@ -30,7 +30,7 @@ class MyTrainableBot extends deep_learning.TrainableBotStub {
     #remoteControl;
 
     /**
-     * @type {Map}
+     * @type {Mapper}
      */
     #mapper;
 

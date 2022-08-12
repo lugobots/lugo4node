@@ -1,9 +1,13 @@
 {
   "name": "@lugobots/lugo4node",
-  "version": "0.0.1-beta.1",
+  "version": "0.0.1-beta.2",
   "description": "Lugo4Node is a NodeJS implementation of a client player for [Lugo](https://lugobots.dev/) game.",
-  "main": "main.js",
-  "scripts": {},
+  "main": "dist/main.js",
+  "scripts": {
+    "tsc": "rm -rf dist/* && mkdir -p dist/pb && tsc && cp pb/* dist/pb/ && cp commonjs.package.json dist/package.json",
+    "tsconly": "tsc"
+  },
+  "type": "module",
   "keywords": [],
   "author": "Rubens Silva",
   "license": "ISC",
@@ -11,7 +15,9 @@
     "@grpc/grpc-js": "^1.6.7",
     "google-protobuf": "^3.20.1",
     "grpc": "^1.24.11",
-    "process": "^0.11.10"
+    "process": "^0.11.10",
+    "typescript": "^4.7.4",
+    "grpc-web": "^1.3.1"
   },
   "devDependencies": {
     "@grpc/proto-loader": "^0.6.12",

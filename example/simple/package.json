@@ -2,15 +2,15 @@
   "name": "example-bot",
   "version": "1.0.0",
   "description": "A simple example of using a bot class",
-  "main": "index-bot-handler.js",
+  "main": "main.js",
   "scripts": {
-    "start": "node index-bot-handler.js",
-    "raw": "node index-turn-handler.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node main.js",
+    "play": "cd ../../ && docker build -t example-bot-js -f example/simple/Dockerfile . && cd - && docker-compose up"
   },
   "author": "Rubens Silva",
   "license": "ISC",
   "dependencies": {
-    "lugo4node": "file:../../"
+    "@lugobots/lugo4node": "file:../../",
+    "typescript": "^4.7.4"
   }
 }

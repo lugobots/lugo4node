@@ -1,4 +1,4 @@
-const Mapper = require('../mapper').Map
+const Mapperper = require('../mapper').Mapper
 const {Client} = require('../client')
 
 const PLAYER_POSITIONS = {
