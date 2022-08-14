@@ -1,5 +1,4 @@
 const {GameSnapshotReader, Bot, PLAYER_STATE, Mapper, BroadcastClient,  } = require('@lugobots/lugo4node')
-const {} = require('@lugobots/lugo4node').vectors
 
 
 class MyBot {
