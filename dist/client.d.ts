@@ -38,7 +38,7 @@ export declare class Client {
     constructor(server_add: any, grpc_insecure: any, token: any, teamSide: any, number: any, init_position: any);
     /**
      *
-     * @param {BotStub} bot
+     * @param {Bot} bot
      * @param {function()} onJoin
      * @returns {Promise<void>}
      */

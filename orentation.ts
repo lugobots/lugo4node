@@ -1,16 +1,16 @@
 import {Vector} from './pb/physics_pb.js'
-import * as vectors from './vector.js'
+import * as geo from './geo.js'
 
 
-export const EAST = vectors.normalize(new Vector().setX(1))
-export const WEST = vectors.normalize(new Vector().setX(-1))
-export const SOUTH = vectors.normalize(new Vector().setY(-1))
-export const NORTH = vectors.normalize(new Vector().setY(1))
+export const EAST = geo.normalize(new Vector().setX(1))
+export const WEST = geo.normalize(new Vector().setX(-1))
+export const SOUTH = geo.normalize(new Vector().setY(-1))
+export const NORTH = geo.normalize(new Vector().setY(1))
 
-export const NORTH_EAST = vectors.normalize(new Vector().setX(1).setY(1))
-export const NORTH_WEST = vectors.normalize(new Vector().setX(-1).setY(1))
-export const SOUTH_EAST = vectors.normalize(new Vector().setX(1).setY(-1))
-export const SOUTH_WEST = vectors.normalize(new Vector().setX(-1).setY(-1))
+export const NORTH_EAST = geo.normalize(new Vector().setX(1).setY(1))
+export const NORTH_WEST = geo.normalize(new Vector().setX(-1).setY(1))
+export const SOUTH_EAST = geo.normalize(new Vector().setX(1).setY(-1))
+export const SOUTH_WEST = geo.normalize(new Vector().setX(-1).setY(-1))
 
 
 

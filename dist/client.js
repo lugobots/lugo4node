@@ -79,7 +79,7 @@ var Client = /** @class */ (function () {
     }
     /**
      *
-     * @param {BotStub} bot
+     * @param {Bot} bot
      * @param {function()} onJoin
      * @returns {Promise<void>}
      */
