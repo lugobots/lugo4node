@@ -1,7 +1,7 @@
 import {Point} from "./pb/physics_pb.js"
 import {GameSnapshot, JoinRequest, OrderSet, Team} from "./pb/server_pb.js"
 import {GameClient} from './pb/server_grpc_pb'
-import {credentials} from 'grpc'
+import {credentials} from '@grpc/grpc-js'
 
 import {Bot, PLAYER_STATE} from './stub.js'
 import {EnvVarLoader} from './configurator.js'

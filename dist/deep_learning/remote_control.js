@@ -47,7 +47,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 };
 var _RemoteControl_client;
 "use strict";
-var grpc = require("grpc");
+var grpc = require("@grpc/grpc-js");
 var remote = require("../pb/remote_grpc_pb");
 require("../pb/server_pb");
 var RemoteControl = /** @class */ (function () {

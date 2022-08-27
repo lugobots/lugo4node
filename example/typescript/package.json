@@ -5,7 +5,7 @@
   "main": "dist/main.js",
   "scripts": {
     "start": "node dist/main.js",
-    "play": "npm run tsc && cd ../../ && docker build -t example-bot-typescript -f example/typescript/Dockerfile . && cd - && docker-compose up",
+    "play": "cd ../../ && docker build -t example-bot-typescript -f example/typescript/Dockerfile . && cd - && docker-compose up",
     "tsc": "tsc"
   },
   "type": "module",

@@ -1,7 +1,7 @@
 // GENERATED CODE -- DO NOT EDIT!
 
 'use strict';
-var grpc = require('grpc');
+var grpc = require('@grpc/grpc-js');
 var broadcast_pb = require('./broadcast_pb.js');
 var server_pb = require('./server_pb.js');
 
@@ -55,7 +55,7 @@ function deserialize_lugo_WatcherRequest(buffer_arg) {
 // training sessions.
 var BroadcastService = exports.BroadcastService = {
   // Keep an open stream that publish all important events in the match.
-  onEvent: {
+onEvent: {
     path: '/lugo.Broadcast/OnEvent',
     requestStream: false,
     responseStream: true,
@@ -67,7 +67,7 @@ var BroadcastService = exports.BroadcastService = {
     responseDeserialize: deserialize_lugo_GameEvent,
   },
   // Returns the game setup configuration.
-  getGameSetup: {
+getGameSetup: {
     path: '/lugo.Broadcast/GetGameSetup',
     requestStream: false,
     responseStream: false,
@@ -79,8 +79,8 @@ var BroadcastService = exports.BroadcastService = {
     responseDeserialize: deserialize_lugo_GameSetup,
   },
   // StartGame allows the master watcher to start the match.
-  // See the Game Server starting mode to understand how it works.
-  startGame: {
+// See the Game Server starting mode to understand how it works.
+startGame: {
     path: '/lugo.Broadcast/StartGame',
     requestStream: false,
     responseStream: false,

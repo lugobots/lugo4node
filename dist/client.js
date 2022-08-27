@@ -39,7 +39,7 @@ exports.__esModule = true;
 exports.Client = exports.NewClientFromConfig = exports.PROTOCOL_VERSION = void 0;
 var server_pb_js_1 = require("./pb/server_pb.js");
 var server_grpc_pb_1 = require("./pb/server_grpc_pb");
-var grpc_1 = require("grpc");
+var grpc_js_1 = require("@grpc/grpc-js");
 var stub_js_1 = require("./stub.js");
 var main_js_1 = require("./main.js");
 exports.PROTOCOL_VERSION = "1.0.0";
@@ -148,7 +148,7 @@ var Client = /** @class */ (function () {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, new Promise(function (resolve, reject) {
                             // the random guarantee that we will have multiple connections instead of using pool of connections
-                            _this.client = new server_grpc_pb_1.GameClient("".concat(_this.serverAdd, "?random=").concat(Math.random()), grpc_1.credentials.createInsecure());
+                            _this.client = new server_grpc_pb_1.GameClient("".concat(_this.serverAdd, "?random=").concat(Math.random()), grpc_js_1.credentials.createInsecure());
                             var deadline = new Date();
                             deadline.setSeconds(deadline.getSeconds() + 5);
                             _this.client.waitForReady(deadline, function (err) {
