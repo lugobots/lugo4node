@@ -2,9 +2,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "module": "CommonJS",
-    "moduleResolution": "Node"
+    "moduleResolution": "Node",
+    "typeRoots": ["./src"]
   },
-  "exclude": [
-    "node_modules",
-  ]
 }

@@ -4,4 +4,5 @@
 
 This example uses local references to the **Node4node** project.
 
-1. npm run play
+1. npm run tsc
+2. npm run play

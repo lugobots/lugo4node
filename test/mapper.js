@@ -1,7 +1,7 @@
 const assert = require('assert');
 const mapper = require('../mapper')
-const field = require('../SPECS')
-const {FIELD} = require("../main");
+const field = require('../specs')
+const {FIELD} = require("../index");
 
 describe('Region', () => {
     it('should identify an equal region', () => {

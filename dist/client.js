@@ -41,7 +41,7 @@ var server_pb_js_1 = require("./pb/server_pb.js");
 var server_grpc_pb_1 = require("./pb/server_grpc_pb");
 var grpc_js_1 = require("@grpc/grpc-js");
 var stub_js_1 = require("./stub.js");
-var main_js_1 = require("./main.js");
+var index_js_1 = require("./index.js");
 exports.PROTOCOL_VERSION = "1.0.0";
 /**
  *
@@ -92,7 +92,7 @@ var Client = /** @class */ (function () {
                 return [2 /*return*/, this.setGettingReadyHandler(function (s) {
                         bot.gettingReady(s);
                     })._start(function (ordersSet, snapshot) {
-                        var playerState = (0, main_js_1.defineState)(snapshot, _this.number, _this.teamSide);
+                        var playerState = (0, index_js_1.defineState)(snapshot, _this.number, _this.teamSide);
                         if (_this.number === 1) {
                             return bot.asGoalkeeper(ordersSet, snapshot, playerState);
                         }

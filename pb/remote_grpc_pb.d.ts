@@ -4,7 +4,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import * as grpc from "grpc";
+import * as grpc from "@grpc/grpc-js";
 import * as remote_pb from "./remote_pb";
 import * as physics_pb from "./physics_pb";
 import * as server_pb from "./server_pb";
@@ -75,7 +75,7 @@ interface IRemoteService_ISetGameProperties extends grpc.MethodDefinition<remote
 
 export const RemoteService: IRemoteService;
 
-export interface IRemoteServer {
+export interface IRemoteServer extends grpc.UntypedServiceImplementation {
     pauseOrResume: grpc.handleUnaryCall<remote_pb.PauseResumeRequest, remote_pb.CommandResponse>;
     nextTurn: grpc.handleUnaryCall<remote_pb.NextTurnRequest, remote_pb.CommandResponse>;
     nextOrder: grpc.handleUnaryCall<remote_pb.NextOrderRequest, remote_pb.CommandResponse>;
@@ -106,7 +106,7 @@ export interface IRemoteClient {
 }
 
 export class RemoteClient extends grpc.Client implements IRemoteClient {
-    constructor(address: string, credentials: grpc.ChannelCredentials, options?: object);
+    constructor(address: string, credentials: grpc.ChannelCredentials, options?: Partial<grpc.ClientOptions>);
     public pauseOrResume(request: remote_pb.PauseResumeRequest, callback: (error: grpc.ServiceError | null, response: remote_pb.CommandResponse) => void): grpc.ClientUnaryCall;
     public pauseOrResume(request: remote_pb.PauseResumeRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: remote_pb.CommandResponse) => void): grpc.ClientUnaryCall;
     public pauseOrResume(request: remote_pb.PauseResumeRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: remote_pb.CommandResponse) => void): grpc.ClientUnaryCall;

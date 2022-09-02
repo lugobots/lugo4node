@@ -1,7 +1,7 @@
 var assert = require('assert');
 var mapper = require('../mapper');
-var field = require('../SPECS');
-var FIELD = require("../main").FIELD;
+var field = require('../specs');
+var FIELD = require("../index").FIELD;
 describe('Region', function () {
     it('should identify an equal region', function () {
         var regionA = new mapper.Region(5, 10, proto.lugo.Team.Side.HOME, null, null);

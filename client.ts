@@ -5,7 +5,7 @@ import {credentials} from '@grpc/grpc-js'
 
 import {Bot, PLAYER_STATE} from './stub.js'
 import {EnvVarLoader} from './configurator.js'
-import {defineState} from './main.js'
+import {defineState} from './index.js'
 
 
 export const PROTOCOL_VERSION = "1.0.0"

@@ -4,7 +4,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import * as grpc from "grpc";
+import * as grpc from "@grpc/grpc-js";
 import * as broadcast_pb from "./broadcast_pb";
 import * as server_pb from "./server_pb";
 
@@ -44,7 +44,7 @@ interface IBroadcastService_IStartGame extends grpc.MethodDefinition<broadcast_p
 
 export const BroadcastService: IBroadcastService;
 
-export interface IBroadcastServer {
+export interface IBroadcastServer extends grpc.UntypedServiceImplementation {
     onEvent: grpc.handleServerStreamingCall<broadcast_pb.WatcherRequest, broadcast_pb.GameEvent>;
     getGameSetup: grpc.handleUnaryCall<broadcast_pb.WatcherRequest, broadcast_pb.GameSetup>;
     startGame: grpc.handleUnaryCall<broadcast_pb.StartRequest, broadcast_pb.GameSetup>;
@@ -62,7 +62,7 @@ export interface IBroadcastClient {
 }
 
 export class BroadcastClient extends grpc.Client implements IBroadcastClient {
-    constructor(address: string, credentials: grpc.ChannelCredentials, options?: object);
+    constructor(address: string, credentials: grpc.ChannelCredentials, options?: Partial<grpc.ClientOptions>);
     public onEvent(request: broadcast_pb.WatcherRequest, options?: Partial<grpc.CallOptions>): grpc.ClientReadableStream<broadcast_pb.GameEvent>;
     public onEvent(request: broadcast_pb.WatcherRequest, metadata?: grpc.Metadata, options?: Partial<grpc.CallOptions>): grpc.ClientReadableStream<broadcast_pb.GameEvent>;
     public getGameSetup(request: broadcast_pb.WatcherRequest, callback: (error: grpc.ServiceError | null, response: broadcast_pb.GameSetup) => void): grpc.ClientUnaryCall;
