@@ -147,13 +147,14 @@ var Client = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, new Promise(function (resolve, reject) {
+                            var serverURL = "".concat(_this.serverAdd);
                             // the random guarantee that we will have multiple connections instead of using pool of connections
-                            _this.client = new server_grpc_pb_1.GameClient("".concat(_this.serverAdd, "?random=").concat(Math.random()), grpc_js_1.credentials.createInsecure());
+                            _this.client = new server_grpc_pb_1.GameClient(serverURL, grpc_js_1.credentials.createInsecure());
                             var deadline = new Date();
-                            deadline.setSeconds(deadline.getSeconds() + 5);
+                            deadline.setSeconds(deadline.getSeconds() + 10);
                             _this.client.waitForReady(deadline, function (err) {
                                 if (err) {
-                                    reject(new Error("failed to connect to the Game Server: ".concat(err)));
+                                    reject(new Error("failed to connect to the Game Server at '".concat(serverURL, "': ").concat(err)));
                                 }
                                 console.log("connect to the gRPC server ".concat(_this.teamSide === server_pb_js_1.Team.Side.HOME ? "HOME" : "AWAY", "-").concat(_this.number));
                                 var req = new server_pb_js_1.JoinRequest();
