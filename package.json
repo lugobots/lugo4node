@@ -1,6 +1,6 @@
 {
   "name": "@lugobots/lugo4node",
-  "version": "0.0.1-beta.7",
+  "version": "0.0.1-beta.9",
   "description": "Lugo4Node is a NodeJS implementation of a client player for [Lugo](https://lugobots.dev/) game.",
   "main": "dist/index.js",
   "scripts": {
@@ -21,10 +21,9 @@
     "@grpc/proto-loader": "^0.6.12",
     "mocha": "^10.0.0"
   },
-  "directories": {
-    "example": "example",
-    "test": "test"
-  },
+  "files": [
+    "/dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lugobots/lugo4node.git"
