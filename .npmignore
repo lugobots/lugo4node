@@ -1,0 +1,8 @@
+./example
+./node_modules
+./src
+./test
+.gitignore
+commonjs.package.json
+Readme.md
+tsconfig.json
