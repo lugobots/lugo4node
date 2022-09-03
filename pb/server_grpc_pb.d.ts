@@ -4,7 +4,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import * as grpc from "grpc";
+import * as grpc from "@grpc/grpc-js";
 import * as server_pb from "./server_pb";
 import * as physics_pb from "./physics_pb";
 
@@ -34,7 +34,7 @@ interface IGameService_ISendOrders extends grpc.MethodDefinition<server_pb.Order
 
 export const GameService: IGameService;
 
-export interface IGameServer {
+export interface IGameServer extends grpc.UntypedServiceImplementation {
     joinATeam: grpc.handleServerStreamingCall<server_pb.JoinRequest, server_pb.GameSnapshot>;
     sendOrders: grpc.handleUnaryCall<server_pb.OrderSet, server_pb.OrderResponse>;
 }
@@ -48,7 +48,7 @@ export interface IGameClient {
 }
 
 export class GameClient extends grpc.Client implements IGameClient {
-    constructor(address: string, credentials: grpc.ChannelCredentials, options?: object);
+    constructor(address: string, credentials: grpc.ChannelCredentials, options?: Partial<grpc.ClientOptions>);
     public joinATeam(request: server_pb.JoinRequest, options?: Partial<grpc.CallOptions>): grpc.ClientReadableStream<server_pb.GameSnapshot>;
     public joinATeam(request: server_pb.JoinRequest, metadata?: grpc.Metadata, options?: Partial<grpc.CallOptions>): grpc.ClientReadableStream<server_pb.GameSnapshot>;
     public sendOrders(request: server_pb.OrderSet, callback: (error: grpc.ServiceError | null, response: server_pb.OrderResponse) => void): grpc.ClientUnaryCall;

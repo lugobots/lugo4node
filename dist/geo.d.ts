@@ -31,4 +31,5 @@ export declare function getScaledVector(v: Vector, scale: number): Vector;
  * @param {Vector} subV
  * @returns {Vector}
  */
-export declare function sub(originalV: Vector, subV: Vector): Vector;
+export declare function subVector(originalV: Vector, subV: Vector): Vector;
+export declare function distanceBetweenPoints(a: Point, b: Point): number;

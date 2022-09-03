@@ -6,7 +6,7 @@ import * as ORIENTATION from './orentation.js'
 import * as Lugo from './proto_exported.js'
 import {SPECS} from "./specs.js"
 import {Bot, PLAYER_STATE} from './stub.js'
-import * as vectors  from "./vector.js"
+import * as geo  from "./geo.js"
 // imports actually used in this file
 
 export {
@@ -18,7 +18,7 @@ export {
     SPECS,
     Bot, PLAYER_STATE,
     Lugo,
-    vectors,
+    geo,
 }
 
 const homeGoalCenter = new Lugo.Point()
@@ -175,8 +175,8 @@ export class GameSnapshotReader {
             return this._makeOrderMoveFromVector(ORIENTATION.NORTH, 0)
         }
 
-        let direction = vectors.NewVector(origin, target)
-        direction = vectors.normalize(direction)
+        let direction = geo.NewVector(origin, target)
+        direction = geo.normalize(direction)
         return this._makeOrderMoveFromVector(direction, speed)
     }
 
@@ -260,8 +260,8 @@ export class GameSnapshotReader {
         let direction = ORIENTATION.EAST
         if (origin.getX() !== target.getX() || origin.getY() !== target.getY()) {
             // a vector cannot have zeroed direction. In this case, the player will just be stopped
-            direction = vectors.NewVector(origin, target)
-            direction = vectors.normalize(direction)
+            direction = geo.NewVector(origin, target)
+            direction = geo.normalize(direction)
         }
         const velocity = new Lugo.Velocity()
         velocity.setDirection(direction)
@@ -281,14 +281,14 @@ export class GameSnapshotReader {
      * @returns {Order}
      */
     makeOrderKick(ball: Lugo.Ball, target: Lugo.Point, speed: number): Lugo.Order {
-        const ballExpectedDirection = vectors.NewVector(ball.getPosition(), target)
+        const ballExpectedDirection = geo.NewVector(ball.getPosition(), target)
 
         // the ball velocity is summed to the kick velocity, so we have to consider the current ball direction
-        const diffVector = vectors.sub(ballExpectedDirection, ball.getVelocity().getDirection())
+        const diffVector = geo.subVector(ballExpectedDirection, ball.getVelocity().getDirection())
 
         const newVelocity = new Lugo.Velocity()
         newVelocity.setSpeed(speed)
-        newVelocity.setDirection(vectors.normalize(diffVector))
+        newVelocity.setDirection(geo.normalize(diffVector))
         return new Lugo.Order().setKick(new Lugo.Kick().setVelocity(newVelocity))
     }
 

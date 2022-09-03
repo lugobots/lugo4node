@@ -6,8 +6,8 @@ import * as ORIENTATION from './orentation.js';
 import * as Lugo from './proto_exported.js';
 import { SPECS } from "./specs.js";
 import { Bot, PLAYER_STATE } from './stub.js';
-import * as vectors from "./vector.js";
-export { Client, NewClientFromConfig, EnvVarLoader, Goal, Mapper, Region, ORIENTATION, SPECS, Bot, PLAYER_STATE, Lugo, vectors, };
+import * as geo from "./geo.js";
+export { Client, NewClientFromConfig, EnvVarLoader, Goal, Mapper, Region, ORIENTATION, SPECS, Bot, PLAYER_STATE, Lugo, geo, };
 export declare class GameSnapshotReader {
     readonly mySide: any;
     /**

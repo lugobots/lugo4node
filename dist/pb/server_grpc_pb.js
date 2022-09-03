@@ -1,7 +1,7 @@
 // GENERATED CODE -- DO NOT EDIT!
 
 'use strict';
-var grpc = require('grpc');
+var grpc = require('@grpc/grpc-js');
 var server_pb = require('./server_pb.js');
 var physics_pb = require('./physics_pb.js');
 
@@ -53,7 +53,7 @@ function deserialize_lugo_OrderSet(buffer_arg) {
 // Service provided by the game service to the players (clients).
 var GameService = exports.GameService = {
   // JoinATeam allows the player to listen the server during the match.
-  joinATeam: {
+joinATeam: {
     path: '/lugo.Game/JoinATeam',
     requestStream: false,
     responseStream: true,
@@ -65,7 +65,7 @@ var GameService = exports.GameService = {
     responseDeserialize: deserialize_lugo_GameSnapshot,
   },
   // SendOrders allows the player to send others to the server when the game is on listening state.
-  sendOrders: {
+sendOrders: {
     path: '/lugo.Game/SendOrders',
     requestStream: false,
     responseStream: false,

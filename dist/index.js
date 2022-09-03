@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.defineState = exports.DIRECTION = exports.homeGoal = exports.awayGoal = exports.GameSnapshotReader = exports.vectors = exports.Lugo = exports.PLAYER_STATE = exports.SPECS = exports.ORIENTATION = exports.Region = exports.Mapper = exports.Goal = exports.EnvVarLoader = exports.NewClientFromConfig = exports.Client = void 0;
+exports.defineState = exports.DIRECTION = exports.homeGoal = exports.awayGoal = exports.GameSnapshotReader = exports.geo = exports.Lugo = exports.PLAYER_STATE = exports.SPECS = exports.ORIENTATION = exports.Region = exports.Mapper = exports.Goal = exports.EnvVarLoader = exports.NewClientFromConfig = exports.Client = void 0;
 var client_js_1 = require("./client.js");
 exports.Client = client_js_1.Client;
 exports.NewClientFromConfig = client_js_1.NewClientFromConfig;
@@ -19,8 +19,8 @@ var specs_js_1 = require("./specs.js");
 exports.SPECS = specs_js_1.SPECS;
 var stub_js_1 = require("./stub.js");
 exports.PLAYER_STATE = stub_js_1.PLAYER_STATE;
-var vectors = require("./vector.js");
-exports.vectors = vectors;
+var geo = require("./geo.js");
+exports.geo = geo;
 var homeGoalCenter = new Lugo.Point();
 homeGoalCenter.setX(0);
 homeGoalCenter.setY(specs_js_1.SPECS.MAX_Y_COORDINATE / 2);
@@ -147,8 +147,8 @@ var GameSnapshotReader = /** @class */ (function () {
             // a vector cannot have zeroed direction. In this case, the player will just be stopped
             return this._makeOrderMoveFromVector(ORIENTATION.NORTH, 0);
         }
-        var direction = vectors.NewVector(origin, target);
-        direction = vectors.normalize(direction);
+        var direction = geo.NewVector(origin, target);
+        direction = geo.normalize(direction);
         return this._makeOrderMoveFromVector(direction, speed);
     };
     /**
@@ -226,8 +226,8 @@ var GameSnapshotReader = /** @class */ (function () {
         var direction = ORIENTATION.EAST;
         if (origin.getX() !== target.getX() || origin.getY() !== target.getY()) {
             // a vector cannot have zeroed direction. In this case, the player will just be stopped
-            direction = vectors.NewVector(origin, target);
-            direction = vectors.normalize(direction);
+            direction = geo.NewVector(origin, target);
+            direction = geo.normalize(direction);
         }
         var velocity = new Lugo.Velocity();
         velocity.setDirection(direction);
@@ -244,12 +244,12 @@ var GameSnapshotReader = /** @class */ (function () {
      * @returns {Order}
      */
     GameSnapshotReader.prototype.makeOrderKick = function (ball, target, speed) {
-        var ballExpectedDirection = vectors.NewVector(ball.getPosition(), target);
+        var ballExpectedDirection = geo.NewVector(ball.getPosition(), target);
         // the ball velocity is summed to the kick velocity, so we have to consider the current ball direction
-        var diffVector = vectors.sub(ballExpectedDirection, ball.getVelocity().getDirection());
+        var diffVector = geo.subVector(ballExpectedDirection, ball.getVelocity().getDirection());
         var newVelocity = new Lugo.Velocity();
         newVelocity.setSpeed(speed);
-        newVelocity.setDirection(vectors.normalize(diffVector));
+        newVelocity.setDirection(geo.normalize(diffVector));
         return new Lugo.Order().setKick(new Lugo.Kick().setVelocity(newVelocity));
     };
     /**

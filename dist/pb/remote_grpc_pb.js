@@ -1,7 +1,7 @@
 // GENERATED CODE -- DO NOT EDIT!
 
 'use strict';
-var grpc = require('grpc');
+var grpc = require('@grpc/grpc-js');
 var remote_pb = require('./remote_pb.js');
 var physics_pb = require('./physics_pb.js');
 var server_pb = require('./server_pb.js');

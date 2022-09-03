@@ -1,5 +1,5 @@
 `use strict`;
-const grpc = require("grpc");
+const grpc = require("@grpc/grpc-js");
 const remote = require("../pb/remote_grpc_pb")
 require("../pb/server_pb")
 

@@ -39,9 +39,9 @@ exports.__esModule = true;
 exports.Client = exports.NewClientFromConfig = exports.PROTOCOL_VERSION = void 0;
 var server_pb_js_1 = require("./pb/server_pb.js");
 var server_grpc_pb_1 = require("./pb/server_grpc_pb");
-var grpc_1 = require("grpc");
+var grpc_js_1 = require("@grpc/grpc-js");
 var stub_js_1 = require("./stub.js");
-var main_js_1 = require("./main.js");
+var index_js_1 = require("./index.js");
 exports.PROTOCOL_VERSION = "1.0.0";
 /**
  *
@@ -79,7 +79,7 @@ var Client = /** @class */ (function () {
     }
     /**
      *
-     * @param {BotStub} bot
+     * @param {Bot} bot
      * @param {function()} onJoin
      * @returns {Promise<void>}
      */
@@ -92,7 +92,7 @@ var Client = /** @class */ (function () {
                 return [2 /*return*/, this.setGettingReadyHandler(function (s) {
                         bot.gettingReady(s);
                     })._start(function (ordersSet, snapshot) {
-                        var playerState = (0, main_js_1.defineState)(snapshot, _this.number, _this.teamSide);
+                        var playerState = (0, index_js_1.defineState)(snapshot, _this.number, _this.teamSide);
                         if (_this.number === 1) {
                             return bot.asGoalkeeper(ordersSet, snapshot, playerState);
                         }
@@ -147,13 +147,14 @@ var Client = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, new Promise(function (resolve, reject) {
+                            var serverURL = "".concat(_this.serverAdd);
                             // the random guarantee that we will have multiple connections instead of using pool of connections
-                            _this.client = new server_grpc_pb_1.GameClient("".concat(_this.serverAdd, "?random=").concat(Math.random()), grpc_1.credentials.createInsecure());
+                            _this.client = new server_grpc_pb_1.GameClient(serverURL, grpc_js_1.credentials.createInsecure());
                             var deadline = new Date();
-                            deadline.setSeconds(deadline.getSeconds() + 5);
+                            deadline.setSeconds(deadline.getSeconds() + 10);
                             _this.client.waitForReady(deadline, function (err) {
                                 if (err) {
-                                    reject(new Error("failed to connect to the Game Server: ".concat(err)));
+                                    reject(new Error("failed to connect to the Game Server at '".concat(serverURL, "': ").concat(err)));
                                 }
                                 console.log("connect to the gRPC server ".concat(_this.teamSide === server_pb_js_1.Team.Side.HOME ? "HOME" : "AWAY", "-").concat(_this.number));
                                 var req = new server_pb_js_1.JoinRequest();

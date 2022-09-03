@@ -58,7 +58,7 @@ export function getScaledVector(v: Vector, scale: number): Vector {
  * @param {Vector} subV
  * @returns {Vector}
  */
-export function sub(originalV: Vector, subV: Vector): Vector {
+export function subVector(originalV: Vector, subV: Vector): Vector {
     const newX = originalV.getX() - subV.getX()
     const newY = originalV.getY() - subV.getY()
 
@@ -79,4 +79,6 @@ function isInValidateVector(v: Vector): boolean {
     return (v.getX() === 0 && v.getY() === 0)
 }
 
-
+export function distanceBetweenPoints(a: Point, b: Point) : number {
+    return Math.hypot(a.getX() - b.getX(), a.getY() - b.getY())
+}
