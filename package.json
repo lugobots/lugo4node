@@ -2,9 +2,9 @@
   "name": "@lugobots/lugo4node",
   "version": "0.0.1-beta.7",
   "description": "Lugo4Node is a NodeJS implementation of a client player for [Lugo](https://lugobots.dev/) game.",
-  "main": "dist/index.js",
+  "main": "dist/src/index.js",
   "scripts": {
-    "tsc": "rm -rf dist/* && mkdir -p dist/pb && tsc && cp pb/* dist/pb/ && cp commonjs.package.json dist/package.json",
+    "tsc": "rm -rf dist/* && mkdir -p dist/src/pb && tsc && cp src/pb/* dist/src/pb/ && cp commonjs.package.json dist/src/package.json",
     "tsconly": "tsc"
   },
   "type": "module",

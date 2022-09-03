@@ -1,6 +1,6 @@
 const {homeGoal, FIELD, directions, vectors, GameSnapshotReader, deep_learning, Mapper} = require("lugo4node");
 const tf = require("@tensorflow/tfjs-node");
-const {delay} = require("../../deep_learning/coach");
+const {delay} = require("../../src/deep_learning/coach");
 
 
 const ALL_FORWARD = 0;
