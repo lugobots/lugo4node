@@ -11,18 +11,23 @@ export { Client, NewClientFromConfig, EnvVarLoader, Goal, Mapper, Region, ORIENT
 export declare class GameSnapshotReader {
     readonly mySide: any;
     /**
-     * @type {GameSnapshot}
+     * @type {Lugo.GameSnapshot}
      */
     readonly snapshot: any;
     constructor(snapshot: Lugo.GameSnapshot, mySide: Lugo.Team.Side);
     /**
-     *
-     * @returns {Team}
+     * Returns the bot team
+     * @returns {Lugo.Team}
      */
     getMyTeam(): Lugo.Team;
     /**
+     * Returns the opponent team
+     * @returns {Lugo.Team}
+     */
+    getOpponentTeam(): Lugo.Team;
+    /**
      * @param { Lugo.Team.Side} side
-     * @returns {Team}
+     * @returns {Lugo.Team}
      */
     getTeam(side: any): Lugo.Team;
     /**
@@ -80,7 +85,7 @@ export declare class GameSnapshotReader {
      * @returns {Order}
      * @private
      */
-    private _makeOrderMoveFromVector;
+    makeOrderMoveFromVector(direction: Lugo.Vector, speed: number): Lugo.Order;
     makeOrderMoveByDirection(direction: DIRECTION): Lugo.Order;
     makeOrderJump(origin: Lugo.Point, target: Lugo.Point, speed: number): Lugo.Order;
     /**

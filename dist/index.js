@@ -45,8 +45,8 @@ var GameSnapshotReader = /** @class */ (function () {
         this.mySide = mySide;
     }
     /**
-     *
-     * @returns {Team}
+     * Returns the bot team
+     * @returns {Lugo.Team}
      */
     GameSnapshotReader.prototype.getMyTeam = function () {
         return this.getTeam(this.mySide);
@@ -60,7 +60,7 @@ var GameSnapshotReader = /** @class */ (function () {
     };
     /**
      * @param { Lugo.Team.Side} side
-     * @returns {Team}
+     * @returns {Lugo.Team}
      */
     GameSnapshotReader.prototype.getTeam = function (side) {
         if (side === Lugo.Side.HOME) {
@@ -152,11 +152,11 @@ var GameSnapshotReader = /** @class */ (function () {
     GameSnapshotReader.prototype.makeOrderMove = function (origin, target, speed) {
         if (origin.getX() === target.getX() && origin.getY() === target.getY()) {
             // a vector cannot have zeroed direction. In this case, the player will just be stopped
-            return this._makeOrderMoveFromVector(ORIENTATION.NORTH, 0);
+            return this.makeOrderMoveFromVector(ORIENTATION.NORTH, 0);
         }
         var direction = geo.NewVector(origin, target);
         direction = geo.normalize(direction);
-        return this._makeOrderMoveFromVector(direction, speed);
+        return this.makeOrderMoveFromVector(direction, speed);
     };
     /**
      *
@@ -165,7 +165,7 @@ var GameSnapshotReader = /** @class */ (function () {
      * @returns {Order}
      * @private
      */
-    GameSnapshotReader.prototype._makeOrderMoveFromVector = function (direction, speed) {
+    GameSnapshotReader.prototype.makeOrderMoveFromVector = function (direction, speed) {
         var velocity = new Lugo.Velocity();
         velocity.setDirection(direction);
         velocity.setSpeed(speed);
@@ -227,7 +227,7 @@ var GameSnapshotReader = /** @class */ (function () {
             default:
                 throw new Error("unknown direction ".concat(direction));
         }
-        return this._makeOrderMoveFromVector(directionTarget, specs_js_1.SPECS.PLAYER_MAX_SPEED);
+        return this.makeOrderMoveFromVector(directionTarget, specs_js_1.SPECS.PLAYER_MAX_SPEED);
     };
     GameSnapshotReader.prototype.makeOrderJump = function (origin, target, speed) {
         var direction = ORIENTATION.EAST;

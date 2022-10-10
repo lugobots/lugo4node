@@ -180,7 +180,7 @@ The **Game Server** must be started in _dev mode_ to run training sessions.
 Run this command below or read the Game Server `--help` instructions to find more options:
 
 ```shell
-docker run -p 8080:8080 -p 5000:5000 lugobots/lugo:v1.0.0-beta play --dev-mode --waiting-duration 1m
+docker run -p 8080:8080 -p 5000:5000 lugobots/lugo:latest play --dev-mode --waiting-duration 1m
 ```
 
 
