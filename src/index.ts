@@ -6,11 +6,11 @@ import * as ORIENTATION from './orentation.js'
 import * as Lugo from './proto_exported.js'
 import {SPECS} from "./specs.js"
 import {Bot, PLAYER_STATE} from './stub.js'
-import * as geo  from "./geo.js"
+import * as geo from "./geo.js"
 // imports actually used in this file
 
 export {
-    Client,NewClientFromConfig,
+    Client, NewClientFromConfig,
     EnvVarLoader,
     Goal,
     Mapper, Region,
@@ -52,7 +52,7 @@ export class GameSnapshotReader {
     readonly mySide;
 
     /**
-     * @type {GameSnapshot}
+     * @type {Lugo.GameSnapshot}
      */
     readonly snapshot;
 
@@ -62,16 +62,24 @@ export class GameSnapshotReader {
     }
 
     /**
-     *
-     * @returns {Team}
+     * Returns the bot team
+     * @returns {Lugo.Team}
      */
     getMyTeam(): Lugo.Team {
         return this.getTeam(this.mySide)
     }
 
     /**
+     * Returns the opponent team
+     * @returns {Lugo.Team}
+     */
+    getOpponentTeam(): Lugo.Team {
+        return this.getTeam(this.getOpponentSide())
+    }
+
+    /**
      * @param { Lugo.Team.Side} side
-     * @returns {Team}
+     * @returns {Lugo.Team}
      */
     getTeam(side): Lugo.Team {
         if (side === Lugo.Side.HOME) {
@@ -172,12 +180,12 @@ export class GameSnapshotReader {
     makeOrderMove(origin: Lugo.Point, target: Lugo.Point, speed: number): Lugo.Order {
         if (origin.getX() === target.getX() && origin.getY() === target.getY()) {
             // a vector cannot have zeroed direction. In this case, the player will just be stopped
-            return this._makeOrderMoveFromVector(ORIENTATION.NORTH, 0)
+            return this.makeOrderMoveFromVector(ORIENTATION.NORTH, 0)
         }
 
         let direction = geo.NewVector(origin, target)
         direction = geo.normalize(direction)
-        return this._makeOrderMoveFromVector(direction, speed)
+        return this.makeOrderMoveFromVector(direction, speed)
     }
 
     /**
@@ -187,7 +195,7 @@ export class GameSnapshotReader {
      * @returns {Order}
      * @private
      */
-    private _makeOrderMoveFromVector(direction: Lugo.Vector, speed: number): Lugo.Order {
+    makeOrderMoveFromVector(direction: Lugo.Vector, speed: number): Lugo.Order {
         const velocity = new Lugo.Velocity()
         velocity.setDirection(direction)
         velocity.setSpeed(speed)
@@ -252,7 +260,7 @@ export class GameSnapshotReader {
                 throw new Error(`unknown direction ${direction}`)
 
         }
-        return this._makeOrderMoveFromVector(directionTarget, SPECS.PLAYER_MAX_SPEED)
+        return this.makeOrderMoveFromVector(directionTarget, SPECS.PLAYER_MAX_SPEED)
     }
 
 
