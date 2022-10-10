@@ -52,6 +52,13 @@ var GameSnapshotReader = /** @class */ (function () {
         return this.getTeam(this.mySide);
     };
     /**
+     * Returns the opponent team
+     * @returns {Lugo.Team}
+     */
+    GameSnapshotReader.prototype.getOpponentTeam = function () {
+        return this.getTeam(this.getOpponentSide());
+    };
+    /**
      * @param { Lugo.Team.Side} side
      * @returns {Team}
      */
