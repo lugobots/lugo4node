@@ -1,9 +1,14 @@
-const tf = require('@tensorflow/tfjs-node');
+import * as tf from '@tensorflow/tfjs-node';
+import {Scalar} from "@tensorflow/tfjs-core/dist/tensor";
+import {rl} from "lugo4node";
 
 const inputCount = 3
 const outputCount = 8
 
 class PolicyNetwork {
+
+    protected policyNet;
+    private currentActions_;
 
     /**
      * Constructor of PolicyNetwork.
@@ -62,18 +67,18 @@ class PolicyNetwork {
      *   in this round of training.
      */
     async train(
-        coach, optimizer, discountRate, numGames, maxStepsPerGame) {
+        coach: rl.Trainer, optimizer, discountRate, numGames, maxStepsPerGame) {
         const allGradients = [];
         const allRewards = [];
         const gameScore = [];
         // this.policyNet .summary()
 
-        // console.log(`Starting iteration=======================`)
-        // for(const i in this.policyNet.layers) {
-            // console.log(`Layer ${i}`)
-            // this.policyNet.layers[i].getWeights()[0].print()
-        // }
-        // console.log(`=======================`)
+        console.log(`Starting iteration=======================`)
+        for(const i in this.policyNet.layers) {
+        console.log(`Layer ${i}`)
+        this.policyNet.layers[i].getWeights()[0].print()
+        }
+         console.log(`======================= ${numGames}`)
 
 
         for (let i = 0; i < numGames; ++i) {
@@ -82,22 +87,23 @@ class PolicyNetwork {
             await coach.setRandomState();
             const gameRewards = [];
             const gameGradients = [];
+            console.log(`KDQ? ${maxStepsPerGame}`)
             for (let j = 0; j < maxStepsPerGame; ++j) {
                 // For every step of the game, remember gradients of the policy
                 // network's weights with respect to the probability of the action
                 // choice that lead to the reward.
                 const gradients = tf.tidy(await asyncToSync(async () => {
-                    // console.log(`BLA BLA XXXXX`)
+                    console.log(`BLA BLA XXXXX`)
                     const inputTensor = await coach.getStateTensor();
-                    // console.log(`BLA BLA YYY`)
+                    console.log(`BLA BLA YYY`)
                     return this.getGradientsAndSaveActions(inputTensor).grads;
                 }));
                 this.pushGradients(gameGradients, gradients);
-                // console.log(`BLA BLA 2`, this.currentActions_)
+                console.log(`BLA BLA 2`, this.currentActions_)
                 // const action = [0];
                 const {done, reward} = await coach.update(this.currentActions_);
                 const isDone = done
-                // console.log(`game ${i}`, reward)
+                console.log(`game ${i}`, reward)
                 gameRewards.push(reward);
                 if (isDone) {
                     //   When the game ends before max step count is reached, a reward of
@@ -115,6 +121,7 @@ class PolicyNetwork {
             gameScore.push({game: i, score: sum(gameRewards)});
             this.pushGradients(allGradients, gameGradients);
             allRewards.push(gameRewards);
+            console.log(`ONDE??!${numGames}`)
             await tf.nextFrame();
         }
         tf.tidy(() => {
@@ -142,23 +149,25 @@ class PolicyNetwork {
         return gameScore;
     }
 
+
     getGradientsAndSaveActions(inputTensor) {
-        const f = () => tf.tidy(() => {
-            const [logits, actions] = this.getLogitsAndActions(inputTensor);
-             // console.log(`----------------------`)
-             // console.log(`TODOD`, actions.dataSync())
-             // console.log(`INDEX`, actions.argMax(-1).dataSync()[0])
+        return tf.variableGrads((): tf.Scalar => {
+            return tf.tidy(() => {
+                const [logits, actions] = this.getLogitsAndActions(inputTensor);
+                // console.log(`----------------------`)
+                // console.log(`TODOD`, actions.dataSync())
+                // console.log(`INDEX`, actions.argMax(-1).dataSync()[0])
 
 
-            this.currentActions_ = actions.argMax(-1).dataSync()[0];
-            // // console.log(`YYYYYY2`, this.currentActions_)
-            // // console.log(`YYYYYY2`, actions.dataSync())
-            const labels =
-                tf.sub(1, tf.tensor2d(actions.dataSync(), actions.shape));
-            // console.log(`YYYYYY 4`,this.currentActions_, actions.shape)
-            return tf.losses.sigmoidCrossEntropy(labels, logits);
+                this.currentActions_ = actions.argMax(-1).dataSync()[0];
+                // // console.log(`YYYYYY2`, this.currentActions_)
+                // // console.log(`YYYYYY2`, actions.dataSync())
+                const labels =
+                    tf.sub(1, tf.tensor2d(actions.dataSync(), actions.shape));
+                // console.log(`YYYYYY 4`,this.currentActions_, actions.shape)
+                return tf.losses.sigmoidCrossEntropy(labels, logits);
+            })
         });
-        return tf.variableGrads(f);
     }
 
     getCurrentActions() {
@@ -223,7 +232,7 @@ class PolicyNetwork {
 /**
  * A subclass of PolicyNetwork that supports saving and loading.
  */
-class SaveablePolicyNetwork extends PolicyNetwork {
+export class SaveablePolicyNetwork extends PolicyNetwork {
     /**
      * Constructor of SaveablePolicyNetwork
      *
@@ -383,7 +392,7 @@ function scaleAndAverageGradients(allGradients, normalizedRewards) {
     });
 }
 
-async function asyncToSync(asyncOriginalFunc) {
+export async function asyncToSync(asyncOriginalFunc) {
     const result = await asyncOriginalFunc()
     return () => {
         return result;
@@ -396,7 +405,7 @@ async function asyncToSync(asyncOriginalFunc) {
  * @param {number[]} xs
  * @returns {number} The arithmetic mean of `xs`
  */
-function mean(xs) {
+export function mean(xs) {
     return sum(xs) / xs.length;
 }
 
@@ -407,7 +416,7 @@ function mean(xs) {
  * @returns {number} The sum of `xs`.
  * @throws Error if `xs` is empty.
  */
-function sum(xs) {
+export function sum(xs) {
     if (xs.length === 0) {
         throw new Error('Expected xs to be a non-empty Array.');
     } else {

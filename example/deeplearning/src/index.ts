@@ -1,8 +1,8 @@
-const tf = require("@tensorflow/tfjs-node");
-const {Mapper, Client, deep_learning} = require("lugo4node");
+import * as tf from '@tensorflow/tfjs-node';
+import {Mapper, Client, rl, Lugo} from "lugo4node";
 
-const {MyTrainableBot} = require("./my_bot");
-const {SaveablePolicyNetwork, asyncToSync, mean, sum} = require("./model");
+import {MyTrainableBot} from "./my_bot";
+import {SaveablePolicyNetwork, asyncToSync, mean, sum} from "./model";
 
 // training settings
 const trainIterations = 50;
@@ -19,11 +19,11 @@ const model_path = `file://${__dirname}/model_output`;
 
 (async () => {
 
-    const teamSide = proto.lugo.Team.Side.HOME
+    const teamSide = Lugo.Team.Side.HOME
     const playerNumber = 5
 
     // the map will help us to see the field in quadrants (called regions) instead of working with coordinates
-    const map = new Mapper(10, 6, proto.lugo.Team.Side.HOME)
+    const map = new Mapper(10, 6, Lugo.Team.Side.HOME)
 
     // our bot strategy defines our bot initial position based on its number
     const initialRegion = map.getRegion(1, 1)
@@ -38,11 +38,12 @@ const model_path = `file://${__dirname}/model_output`;
         playerNumber,
         initialRegion.getCenter())
 
-    const rc = new deep_learning.RemoteControl();
+    const rc = new rl.RemoteControl();
     await rc.connect(grpcAddress)
     const bot = new MyTrainableBot(rc)
-
-    const gym = new deep_learning.Gym(rc, bot, myTrainingFunction, {debugging_log: false})
+    console.log(`Bla bla bla`)
+    const gym = new rl.Gym(rc, bot, myTrainingFunction, {debugging_log: false})
+    console.log(`SUPER BLA BLA BLA`)
     await gym.withZombiePlayers(grpcAddress).start(lugoClient)
 
 })();
@@ -71,11 +72,14 @@ async function myTrainingFunction(coach) {
     let iterationGamesMeans = [];
     let t0 = new Date().getTime();
     let stopRequested = false;
+    console.log(`DEBUGGING ${trainIterations}`);
     for (let i = 0; i < trainIterations; ++i) {
         try {
+            console.log(`DEBUGGING TURN ${i}`);
             const gameScores = await policyNet.train(
                 coach, optimizer, discountRate, gamesPerIteration,
                 maxStepsPerGame);
+            console.log(`DEBUGGING NEVER`);
             const t1 = new Date().getTime();
             t0 = t1;
             console.log(`iteration ${i}/${trainIterations} done, total score:`, gameScores)
