@@ -36,16 +36,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.Trainer = exports.delay = void 0;
+exports.TrainingCrl = exports.delay = void 0;
 var delay = function (ms) { return new Promise(function (resolve) { return setTimeout(resolve, ms); }); };
 exports.delay = delay;
-var Trainer = /** @class */ (function () {
+var TrainingCrl = /** @class */ (function () {
     /**
      * @param {RemoteControl} remoteControl
      * @param {TrainableBot} bot
      * @param {function} onReadyCallback
      */
-    function Trainer(remoteControl, bot, onReadyCallback) {
+    function TrainingCrl(remoteControl, bot, onReadyCallback) {
         var _this = this;
         this.trainingHasStarted = false;
         this.waitingForAction = false;
@@ -66,7 +66,7 @@ var Trainer = /** @class */ (function () {
     /**
      * Set the state of match randomly.
      */
-    Trainer.prototype.setRandomState = function () {
+    TrainingCrl.prototype.setRandomState = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _a, e_1;
             return __generator(this, function (_b) {
@@ -90,7 +90,7 @@ var Trainer = /** @class */ (function () {
             });
         });
     };
-    Trainer.prototype.getInputs = function () {
+    TrainingCrl.prototype.getInputs = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 try {
@@ -106,7 +106,7 @@ var Trainer = /** @class */ (function () {
             });
         });
     };
-    Trainer.prototype.update = function (action) {
+    TrainingCrl.prototype.update = function (action) {
         return __awaiter(this, void 0, void 0, function () {
             var previousState, _a, _b, done, reward, e_2;
             return __generator(this, function (_c) {
@@ -144,7 +144,7 @@ var Trainer = /** @class */ (function () {
             });
         });
     };
-    Trainer.prototype.onGettingReadyState = function (snapshot) {
+    TrainingCrl.prototype.onGettingReadyState = function (snapshot) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 if (!this.trainingHasStarted) {
@@ -156,7 +156,7 @@ var Trainer = /** @class */ (function () {
             });
         });
     };
-    Trainer.prototype.gameTurnHandler = function (orderSet, snapshot) {
+    TrainingCrl.prototype.gameTurnHandler = function (orderSet, snapshot) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
@@ -231,7 +231,7 @@ var Trainer = /** @class */ (function () {
             });
         });
     };
-    Trainer.prototype.stop = function () {
+    TrainingCrl.prototype.stop = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 this.stopRequested = true;
@@ -239,14 +239,14 @@ var Trainer = /** @class */ (function () {
             });
         });
     };
-    Trainer.prototype._debug = function (msg) {
+    TrainingCrl.prototype._debug = function (msg) {
         if (this.debugging_log) {
             console.log("[".concat(this.cycleSeq, "] ").concat(msg));
         }
     };
-    return Trainer;
+    return TrainingCrl;
 }());
-exports.Trainer = Trainer;
+exports.TrainingCrl = TrainingCrl;
 function asyncToSync(asyncOriginalFunc) {
     return __awaiter(this, void 0, void 0, function () {
         var result;

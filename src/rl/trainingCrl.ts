@@ -1,10 +1,10 @@
 import {RemoteControl} from "./remote_control"
-import {BotTrainer, TrainableBot, TrainingFunction} from './interfaces'
+import {TrainingController, TrainableBot, TrainingFunction} from './interfaces'
 import {GameSnapshot, OrderSet} from "../pb/server_pb"
 
 export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-export class Trainer implements BotTrainer {
+export class TrainingCrl implements TrainingController {
     /**
      * @type {RemoteControl}
      */

@@ -12,7 +12,6 @@ class PolicyNetwork {
 
     /**
      * Constructor of PolicyNetwork.
-     *
      * @param {number | number[] | tf.LayersModel} hiddenLayerSizes
      *   Can be any of the following
      *   - Size of the hidden layer, as a single number (for a single hidden
@@ -54,7 +53,7 @@ class PolicyNetwork {
     /**
      * Train the policy network's model.
      *
-     * @param {CoachStub} trainer A trainable Lugo bot.
+     * @param {rl.TrainingController} trainingCtrl A trainable Lugo bot.
      * @param {tf.train.Optimizer} optimizer An instance of TensorFlow.js
      *   Optimizer to use for training.
      * @param {number} discountRate Reward discounting rate: a number between 0
@@ -67,7 +66,7 @@ class PolicyNetwork {
      *   in this round of training.
      */
     async train(
-        trainer: rl.Trainer, optimizer, discountRate, numGames, maxStepsPerGame) {
+        trainingCtrl: rl.TrainingController, optimizer, discountRate, numGames, maxStepsPerGame) {
         const allGradients = [];
         const allRewards = [];
         const gameScore = [];
@@ -78,7 +77,7 @@ class PolicyNetwork {
         // }
         for (let i = 0; i < numGames; ++i) {
             console.log(`Starting game ${i}/${numGames}`)
-            await trainer.setRandomState();
+            await trainingCtrl.setRandomState();
             const gameRewards = [];
             const gameGradients = [];
             for (let j = 0; j < maxStepsPerGame; ++j) {
@@ -86,12 +85,12 @@ class PolicyNetwork {
                 // network's weights with respect to the probability of the action
                 // choice that lead to the reward.
                 const gradients = tf.tidy(await asyncToSync(async () => {
-                    const inputTensor = await trainer.getInputs();
+                    const inputTensor = await trainingCtrl.getInputs();
                     return this.getGradientsAndSaveActions(inputTensor).grads;
                 }));
                 this.pushGradients(gameGradients, gradients);
                 // const action = [0];
-                const {done, reward} = await trainer.update(this.currentActions_);
+                const {done, reward} = await trainingCtrl.update(this.currentActions_);
                 const isDone = done
                 console.log(`game ${i}, step ${j}, reward`, reward)
                 gameRewards.push(reward);

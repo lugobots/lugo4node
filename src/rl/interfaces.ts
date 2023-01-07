@@ -1,28 +1,33 @@
 import {GameSnapshot, OrderSet} from '../pb/server_pb.js'
 
-export type TrainingFunction = (trainer: BotTrainer) => Promise<void>;
+export type TrainingFunction = (trainingCtr: TrainingController) => Promise<void>;
 
 /**
- * The BotTrainer is passed to your Training function to give you control of the game flow.
+ * The TrainingController is passed to your Training function to give you control of the game flow.
  */
-export interface BotTrainer {
+export interface TrainingController {
     /**
      * This method should be called whenever your need to reset the game to an initial state.
      */
     setRandomState: () => Promise<void>;
 
     /**
-     * Use this method to get the inputs that will be used
+     * Use this method to get the inputs that will be used by your model. E.g. if you are using tensor flow, you may
+     * return the tensors used to feed your network.
      */
     getInputs: () => Promise<any>;
 
     /**
-     *
+     * Use this method to pass that action picked by you model. It will return the reward and `done` values got from
+     * your TrainableBot.
      * @param action
      * @returns {Promise<{reward: number, done: boolean}>}
      */
     update: (action: any) => Promise<{ reward: number, done: boolean }>;
 
+    /**
+     * Stops the training
+     */
     stop: () => Promise<void>;
 }
 
@@ -60,13 +65,13 @@ export interface TrainableBot {
      * @param {OrderSet} orderSet - used to define the orders that will be sent to the server. Your bot should set the orders
      *                      and return it to the server.
      * @param {GameSnapshot} snapshot - The current game state
-     * @param {any} action - Value passed by your training function to the Trainer `update` method
+     * @param {any} action - Value passed by your training function to the TrainingController `update` method
      *
      */
     play: (orderSet: OrderSet, snapshot: GameSnapshot, action: any) => Promise<OrderSet>;
 
     /**
-     * This method is called by the Trainer right after your bot play a turn of the game.
+     * This method is called by the TrainingController right after your bot play a turn of the game.
      * It must compare the two states and return the reward and a boolean `done` to indicate that the game each the end.
      *
      * Your bot may evaluate turn by turn, or comparing the final game state to the initial state.

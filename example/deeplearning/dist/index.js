@@ -43,7 +43,7 @@ var model_1 = require("./model");
 // training settings
 var trainIterations = 50;
 var gamesPerIteration = 5;
-var maxStepsPerGame = 30;
+var maxStepsPerGame = 15;
 var hiddenLayerSizes = [128, 256, 256, 64];
 var learningRate = 0.1;
 var discountRate = 0.95;
@@ -74,7 +74,7 @@ var model_path = "file://./model_output";
         }
     });
 }); })();
-function myTrainingFunction(trainer) {
+function myTrainingFunction(trainingCtrl) {
     return __awaiter(this, void 0, void 0, function () {
         var policyNet, optimizer, iterationGamesMeans, t0, stopRequested, i, gameScores, t1, e_1, testingScores, _loop_1, i;
         var _this = this;
@@ -107,7 +107,7 @@ function myTrainingFunction(trainer) {
                 case 6:
                     _a.trys.push([6, 10, , 11]);
                     console.log("Starting iteration ".concat(i, " of ").concat(trainIterations));
-                    return [4 /*yield*/, policyNet.train(trainer, optimizer, discountRate, gamesPerIteration, maxStepsPerGame)];
+                    return [4 /*yield*/, policyNet.train(trainingCtrl, optimizer, discountRate, gamesPerIteration, maxStepsPerGame)];
                 case 7:
                     gameScores = _a.sent();
                     t1 = new Date().getTime();
@@ -146,7 +146,7 @@ function myTrainingFunction(trainer) {
                             switch (_d.label) {
                                 case 0:
                                     _d.trys.push([0, 6, , 7]);
-                                    return [4 /*yield*/, trainer.setRandomState()];
+                                    return [4 /*yield*/, trainingCtrl.setRandomState()];
                                 case 1:
                                     _d.sent();
                                     isDone_1 = false;
@@ -161,10 +161,10 @@ function myTrainingFunction(trainer) {
                                                 switch (_d.label) {
                                                     case 0:
                                                         _b = (_a = policyNet).getActions;
-                                                        return [4 /*yield*/, trainer.getInputs()];
+                                                        return [4 /*yield*/, trainingCtrl.getInputs()];
                                                     case 1:
                                                         action = _b.apply(_a, [_d.sent()])[0];
-                                                        return [4 /*yield*/, trainer.update(action)];
+                                                        return [4 /*yield*/, trainingCtrl.update(action)];
                                                     case 2:
                                                         _c = _d.sent(), done = _c.done, reward = _c.reward;
                                                         isDone_1 = done;
@@ -203,7 +203,7 @@ function myTrainingFunction(trainer) {
                 case 15:
                     ++i;
                     return [3 /*break*/, 13];
-                case 16: return [4 /*yield*/, trainer.stop()];
+                case 16: return [4 /*yield*/, trainingCtrl.stop()];
                 case 17:
                     _a.sent();
                     console.log("Testing scores: ", testingScores);

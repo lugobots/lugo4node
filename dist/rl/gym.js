@@ -37,15 +37,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.Gym = void 0;
-var trainer_1 = require("./trainer");
+var trainingCrl_1 = require("./trainingCrl");
 var zombie_1 = require("./zombie");
 var server_pb_js_1 = require("../pb/server_pb.js");
 var Gym = /** @class */ (function () {
     function Gym(remoteControl, trainableBot, trainingFunction, options) {
         if (options === void 0) { options = { debugging_log: false }; }
         this.remoteControl = remoteControl;
-        this.trainer = new trainer_1.Trainer(remoteControl, trainableBot, trainingFunction);
-        this.trainer.debugging_log = options.debugging_log;
+        this.trainingCrl = new trainingCrl_1.TrainingCrl(remoteControl, trainableBot, trainingFunction);
+        this.trainingCrl.debugging_log = options.debugging_log;
     }
     Gym.prototype.start = function (lugoClient) {
         return __awaiter(this, void 0, void 0, function () {
@@ -53,9 +53,9 @@ var Gym = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, lugoClient.setGettingReadyHandler(function (snapshot) {
-                            return _this.trainer.onGettingReadyState(snapshot);
+                            return _this.trainingCrl.onGettingReadyState(snapshot);
                         }).play(function (orderSet, snapshot) {
-                            return _this.trainer.gameTurnHandler(orderSet, snapshot);
+                            return _this.trainingCrl.gameTurnHandler(orderSet, snapshot);
                         }, function () { return __awaiter(_this, void 0, void 0, function () {
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
@@ -96,13 +96,13 @@ function completeWithZombies(gameServerAddress) {
                     return [4 /*yield*/, (0, zombie_1.newZombiePlayer)(server_pb_js_1.Team.Side.HOME, i, gameServerAddress)];
                 case 2:
                     _a.sent();
-                    return [4 /*yield*/, (0, trainer_1.delay)(50)];
+                    return [4 /*yield*/, (0, trainingCrl_1.delay)(50)];
                 case 3:
                     _a.sent();
                     return [4 /*yield*/, (0, zombie_1.newZombiePlayer)(server_pb_js_1.Team.Side.AWAY, i, gameServerAddress)];
                 case 4:
                     _a.sent();
-                    return [4 /*yield*/, (0, trainer_1.delay)(50)];
+                    return [4 /*yield*/, (0, trainingCrl_1.delay)(50)];
                 case 5:
                     _a.sent();
                     _a.label = 6;

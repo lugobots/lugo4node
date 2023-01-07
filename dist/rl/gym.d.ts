@@ -2,7 +2,7 @@ import { RemoteControl } from "./remote_control";
 import { TrainableBot, TrainingFunction } from "./interfaces";
 import { Client } from '../client';
 export declare class Gym {
-    private trainer;
+    private trainingCrl;
     private gameServerAddress;
     private remoteControl;
     constructor(remoteControl: RemoteControl, trainableBot: TrainableBot, trainingFunction: TrainingFunction, options?: {

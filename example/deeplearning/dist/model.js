@@ -58,7 +58,6 @@ var outputCount = 8;
 var PolicyNetwork = /** @class */ (function () {
     /**
      * Constructor of PolicyNetwork.
-     *
      * @param {number | number[] | tf.LayersModel} hiddenLayerSizes
      *   Can be any of the following
      *   - Size of the hidden layer, as a single number (for a single hidden
@@ -100,7 +99,7 @@ var PolicyNetwork = /** @class */ (function () {
     /**
      * Train the policy network's model.
      *
-     * @param {CoachStub} trainer A trainable Lugo bot.
+     * @param {rl.TrainingController} trainingCtrl A trainable Lugo bot.
      * @param {tf.train.Optimizer} optimizer An instance of TensorFlow.js
      *   Optimizer to use for training.
      * @param {number} discountRate Reward discounting rate: a number between 0
@@ -112,7 +111,7 @@ var PolicyNetwork = /** @class */ (function () {
      * @returns {Promise<number[]>} The number of steps completed in the `numGames` games
      *   in this round of training.
      */
-    PolicyNetwork.prototype.train = function (trainer, optimizer, discountRate, numGames, maxStepsPerGame) {
+    PolicyNetwork.prototype.train = function (trainingCtrl, optimizer, discountRate, numGames, maxStepsPerGame) {
         return __awaiter(this, void 0, void 0, function () {
             var allGradients, allRewards, gameScore, i, gameRewards, gameGradients, j, gradients, _a, _b, _c, done, reward, isDone;
             var _this = this;
@@ -127,7 +126,7 @@ var PolicyNetwork = /** @class */ (function () {
                     case 1:
                         if (!(i < numGames)) return [3 /*break*/, 10];
                         console.log("Starting game ".concat(i, "/").concat(numGames));
-                        return [4 /*yield*/, trainer.setRandomState()];
+                        return [4 /*yield*/, trainingCtrl.setRandomState()];
                     case 2:
                         _d.sent();
                         gameRewards = [];
@@ -141,7 +140,7 @@ var PolicyNetwork = /** @class */ (function () {
                                 var inputTensor;
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {
-                                        case 0: return [4 /*yield*/, trainer.getInputs()];
+                                        case 0: return [4 /*yield*/, trainingCtrl.getInputs()];
                                         case 1:
                                             inputTensor = _a.sent();
                                             return [2 /*return*/, this.getGradientsAndSaveActions(inputTensor).grads];
@@ -151,7 +150,7 @@ var PolicyNetwork = /** @class */ (function () {
                     case 4:
                         gradients = _b.apply(_a, [_d.sent()]);
                         this.pushGradients(gameGradients, gradients);
-                        return [4 /*yield*/, trainer.update(this.currentActions_)];
+                        return [4 /*yield*/, trainingCtrl.update(this.currentActions_)];
                     case 5:
                         _c = _d.sent(), done = _c.done, reward = _c.reward;
                         isDone = done;

@@ -1,8 +1,8 @@
 import { RemoteControl } from "./remote_control";
-import { BotTrainer, TrainableBot, TrainingFunction } from './interfaces';
+import { TrainingController, TrainableBot, TrainingFunction } from './interfaces';
 import { GameSnapshot, OrderSet } from "../pb/server_pb";
 export declare const delay: (ms: any) => Promise<unknown>;
-export declare class Trainer implements BotTrainer {
+export declare class TrainingCrl implements TrainingController {
     /**
      * @type {RemoteControl}
      */

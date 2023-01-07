@@ -1,4 +1,4 @@
-import {Trainer, delay} from "./trainer";
+import {TrainingCrl, delay} from "./trainingCrl";
 import {newZombiePlayer} from "./zombie";
 import {RemoteControl} from "./remote_control"
 import {TrainableBot, TrainingFunction} from "./interfaces";
@@ -7,7 +7,7 @@ import {OrderSet, Team} from "../pb/server_pb.js"
 
 export class Gym {
 
-    private trainer : Trainer;
+    private trainingCrl : TrainingCrl;
 
     private gameServerAddress : string;
 
@@ -15,15 +15,15 @@ export class Gym {
 
     constructor(remoteControl: RemoteControl, trainableBot : TrainableBot, trainingFunction : TrainingFunction, options = {debugging_log: false}) {
         this.remoteControl = remoteControl
-        this.trainer = new Trainer(remoteControl, trainableBot, trainingFunction)
-        this.trainer.debugging_log = options.debugging_log
+        this.trainingCrl = new TrainingCrl(remoteControl, trainableBot, trainingFunction)
+        this.trainingCrl.debugging_log = options.debugging_log
     }
 
     async start(lugoClient: Client) {
         await lugoClient.setGettingReadyHandler((snapshot) => {
-            return this.trainer.onGettingReadyState(snapshot)
+            return this.trainingCrl.onGettingReadyState(snapshot)
         }).play((orderSet, snapshot) :Promise<OrderSet> => {
-            return this.trainer.gameTurnHandler(orderSet, snapshot)
+            return this.trainingCrl.gameTurnHandler(orderSet, snapshot)
         }, async () => {
             if(this.gameServerAddress) {
                 await completeWithZombies(this.gameServerAddress)

@@ -7,7 +7,7 @@ import {SaveablePolicyNetwork, asyncToSync, mean, sum} from "./model";
 // training settings
 const trainIterations = 50;
 const gamesPerIteration = 5;
-const maxStepsPerGame = 30;
+const maxStepsPerGame = 15;
 const hiddenLayerSizes = [128, 256, 256, 64]
 const learningRate = 0.1
 const discountRate = 0.95;
@@ -48,7 +48,7 @@ const model_path = `file://./model_output`;
 })();
 
 
-async function myTrainingFunction(trainer: rl.Trainer) : Promise<void> {
+async function myTrainingFunction(trainingCtrl: rl.TrainingController) : Promise<void> {
     console.log(`Let's training`)
     // first, creating the model
     let policyNet
@@ -71,7 +71,7 @@ async function myTrainingFunction(trainer: rl.Trainer) : Promise<void> {
         try {
             console.log(`Starting iteration ${i} of ${trainIterations}`)
             const gameScores = await policyNet.train(
-                trainer, optimizer, discountRate, gamesPerIteration,
+                trainingCtrl, optimizer, discountRate, gamesPerIteration,
                 maxStepsPerGame);
             const t1 = new Date().getTime();
             t0 = t1;
@@ -97,14 +97,14 @@ async function myTrainingFunction(trainer: rl.Trainer) : Promise<void> {
     const testingScores = [];
     for (let i = 0; i < testingGames; ++i) {
         try {
-            await trainer.setRandomState()
+            await trainingCtrl.setRandomState()
             let isDone = false
             const gameScores = []
             while (!isDone) {
 
                 tf.tidy(await asyncToSync(async () => {
-                    const action = policyNet.getActions(await trainer.getInputs())[0];
-                    const {done, reward} = await trainer.update(action);
+                    const action = policyNet.getActions(await trainingCtrl.getInputs())[0];
+                    const {done, reward} = await trainingCtrl.update(action);
                     isDone = done
                     gameScores.push(reward)
                 }));
@@ -118,7 +118,7 @@ async function myTrainingFunction(trainer: rl.Trainer) : Promise<void> {
             console.error(e)
         }
     }
-    await trainer.stop()
+    await trainingCtrl.stop()
     console.log(`Testing scores: `, testingScores)
 }
 
