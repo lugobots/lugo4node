@@ -1,6 +1,6 @@
 import * as tf from '@tensorflow/tfjs-node';
 import {Scalar} from "@tensorflow/tfjs-core/dist/tensor";
-import {rl} from "lugo4node";
+import {rl} from "@lugobots/lugo4node";
 
 const inputCount = 3
 const outputCount = 8
@@ -54,7 +54,7 @@ class PolicyNetwork {
     /**
      * Train the policy network's model.
      *
-     * @param {CoachStub} coach A trainable Lugo bot.
+     * @param {CoachStub} trainer A trainable Lugo bot.
      * @param {tf.train.Optimizer} optimizer An instance of TensorFlow.js
      *   Optimizer to use for training.
      * @param {number} discountRate Reward discounting rate: a number between 0
@@ -67,7 +67,7 @@ class PolicyNetwork {
      *   in this round of training.
      */
     async train(
-        coach: rl.Trainer, optimizer, discountRate, numGames, maxStepsPerGame) {
+        trainer: rl.Trainer, optimizer, discountRate, numGames, maxStepsPerGame) {
         const allGradients = [];
         const allRewards = [];
         const gameScore = [];
@@ -84,7 +84,7 @@ class PolicyNetwork {
         for (let i = 0; i < numGames; ++i) {
 
 
-            await coach.setRandomState();
+            await trainer.setRandomState();
             const gameRewards = [];
             const gameGradients = [];
             console.log(`KDQ? ${maxStepsPerGame}`)
@@ -94,14 +94,14 @@ class PolicyNetwork {
                 // choice that lead to the reward.
                 const gradients = tf.tidy(await asyncToSync(async () => {
                     console.log(`BLA BLA XXXXX`)
-                    const inputTensor = await coach.getStateTensor();
+                    const inputTensor = await trainer.getStateTensor();
                     console.log(`BLA BLA YYY`)
                     return this.getGradientsAndSaveActions(inputTensor).grads;
                 }));
                 this.pushGradients(gameGradients, gradients);
                 console.log(`BLA BLA 2`, this.currentActions_)
                 // const action = [0];
-                const {done, reward} = await coach.update(this.currentActions_);
+                const {done, reward} = await trainer.update(this.currentActions_);
                 const isDone = done
                 console.log(`game ${i}`, reward)
                 gameRewards.push(reward);

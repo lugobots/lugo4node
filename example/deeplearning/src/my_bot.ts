@@ -1,4 +1,4 @@
-import {DIRECTION, GameSnapshotReader, Lugo, Mapper, SPECS, ORIENTATION, rl} from "lugo4node";
+import {DIRECTION, GameSnapshotReader, Lugo, Mapper, SPECS, ORIENTATION, rl} from "@lugobots/lugo4node";
 import * as tf from "@tensorflow/tfjs-node";
 
 const ACTIONS = [
@@ -98,6 +98,7 @@ export class MyTrainableBot implements rl.TrainableBot {
         //  console.log(`action: `, action)
 
         const dir = reader.makeOrderMoveByDirection(action)
+        // await delay(3000)
         return orderSet.setOrdersList([dir])
     }
 

@@ -1,5 +1,5 @@
 import * as tf from '@tensorflow/tfjs-node';
-import {Mapper, Client, rl, Lugo} from "lugo4node";
+import {Mapper, Client, rl, Lugo} from "@lugobots/lugo4node";
 
 import {MyTrainableBot} from "./my_bot";
 import {SaveablePolicyNetwork, asyncToSync, mean, sum} from "./model";
@@ -42,7 +42,7 @@ const model_path = `file://${__dirname}/model_output`;
     await rc.connect(grpcAddress)
     const bot = new MyTrainableBot(rc)
     console.log(`Bla bla bla`)
-    const gym = new rl.Gym(rc, bot, myTrainingFunction, {debugging_log: false})
+    const gym = new rl.Gym(rc, bot, myTrainingFunction, {debugging_log: true})
     console.log(`SUPER BLA BLA BLA`)
     await gym.withZombiePlayers(grpcAddress).start(lugoClient)
 

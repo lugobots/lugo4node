@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "tsc": "rm -rf dist/* && tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "watch": "tsc --skipLibCheck --watch"
   },
   "type": "commonjs",
   "author": "Rubens Silva <rubens21@gmail.com>",
@@ -13,7 +14,7 @@
   "dependencies": {
     "@tensorflow/tfjs-node": "^4.2.0",
     "@types/node": "^18.11.18",
-    "lugo4node": "file:../../dist"
+    "@lugobots/lugo4node": "file:../../dist"
   },
   "devDependencies": {
     "tsc-watch": "^6.0.0"
