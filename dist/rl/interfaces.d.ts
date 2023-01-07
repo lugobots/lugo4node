@@ -1,5 +1,5 @@
 import { GameSnapshot, OrderSet } from '../pb/server_pb.js';
-export declare type TrainingFunction = (trainer: BotTrainer) => void;
+export declare type TrainingFunction = (trainer: BotTrainer) => Promise<void>;
 export interface BotTrainer {
     /**
      *

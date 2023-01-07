@@ -42,15 +42,15 @@ var my_bot_1 = require("./my_bot");
 var model_1 = require("./model");
 // training settings
 var trainIterations = 50;
-var gamesPerIteration = 20;
+var gamesPerIteration = 5;
 var maxStepsPerGame = 30;
 var hiddenLayerSizes = [128, 256, 256, 64];
-var learningRate = 0.08;
+var learningRate = 0.1;
 var discountRate = 0.95;
 var testingGames = 20;
 var grpcAddress = "localhost:5000";
 var grpcInsecure = true;
-var model_path = "file://".concat(__dirname, "/model_output");
+var model_path = "file://./model_output";
 (function () { return __awaiter(void 0, void 0, void 0, function () {
     var teamSide, playerNumber, map, initialRegion, lugoClient, rc, bot, gym;
     return __generator(this, function (_a) {
@@ -76,11 +76,6 @@ var model_path = "file://".concat(__dirname, "/model_output");
         }
     });
 }); })();
-/**
- *
- * @param {CoachStub} coach
- * @returns {Promise<void>}
- */
 function myTrainingFunction(coach) {
     return __awaiter(this, void 0, void 0, function () {
         var policyNet, optimizer, iterationGamesMeans, t0, stopRequested, i, gameScores, t1, e_1, testingScores, _loop_1, i;

@@ -3,14 +3,13 @@ import {Mapper, Client, rl, Lugo} from "@lugobots/lugo4node";
 
 import {MyTrainableBot} from "./my_bot";
 import {SaveablePolicyNetwork, asyncToSync, mean, sum} from "./model";
-import {BotTrainer} from "../../../src/rl/interfaces";
 
 // training settings
 const trainIterations = 50;
-const gamesPerIteration = 20;
+const gamesPerIteration = 5;
 const maxStepsPerGame = 30;
 const hiddenLayerSizes = [128, 256, 256, 64]
-const learningRate = 0.08
+const learningRate = 0.1
 const discountRate = 0.95;
 const testingGames = 20
 
@@ -50,7 +49,7 @@ const model_path = `file://./model_output`;
 })();
 
 
-async function myTrainingFunction(coach: BotTrainer) : Promise<void> {
+async function myTrainingFunction(coach: rl.Trainer) : Promise<void> {
     console.log(`Let's training`)
 
     // first, creating the model

@@ -1,19 +1,4 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -282,22 +267,3 @@ var Client = /** @class */ (function () {
     return Client;
 }());
 exports.Client = Client;
-var InsecureChannelCredentialsImpl = /** @class */ (function (_super) {
-    __extends(InsecureChannelCredentialsImpl, _super);
-    function InsecureChannelCredentialsImpl() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    InsecureChannelCredentialsImpl.prototype.compose = function (callCredentials) {
-        throw new Error('Cannot compose insecure credentials');
-    };
-    InsecureChannelCredentialsImpl.prototype._getConnectionOptions = function () {
-        return null;
-    };
-    InsecureChannelCredentialsImpl.prototype._isSecure = function () {
-        return false;
-    };
-    InsecureChannelCredentialsImpl.prototype._equals = function (other) {
-        return other instanceof InsecureChannelCredentialsImpl;
-    };
-    return InsecureChannelCredentialsImpl;
-}(grpc_js_1.ChannelCredentials));

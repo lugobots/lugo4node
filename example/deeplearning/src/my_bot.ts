@@ -108,7 +108,10 @@ export class MyTrainableBot implements rl.TrainableBot {
      * @param {Lugo.GameSnapshot} newSnapshot
      * @returns {Promise<{reward: number, done: boolean}>}
      */
-    async evaluate(previousSnapshot, newSnapshot) {
+    async evaluate(previousSnapshot: Lugo.GameSnapshot, newSnapshot: Lugo.GameSnapshot): Promise<{
+        reward: number;
+        done: boolean;
+    }> {
         const readerPrevious = new GameSnapshotReader(previousSnapshot, Lugo.Team.Side.HOME)
         const reader = new GameSnapshotReader(newSnapshot, Lugo.Team.Side.HOME)
         const me = reader.getPlayer(Lugo.Team.Side.HOME, 5)
