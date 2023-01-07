@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -92,27 +92,34 @@ var Client = /** @class */ (function () {
                 return [2 /*return*/, this.setGettingReadyHandler(function (s) {
                         bot.gettingReady(s);
                     })._start(function (ordersSet, snapshot) {
-                        var playerState = (0, index_js_1.defineState)(snapshot, _this.number, _this.teamSide);
-                        if (_this.number === 1) {
-                            return bot.asGoalkeeper(ordersSet, snapshot, playerState);
-                        }
-                        switch (playerState) {
-                            case stub_js_1.PLAYER_STATE.DISPUTING_THE_BALL:
-                                return bot.onDisputing(ordersSet, snapshot);
-                            case stub_js_1.PLAYER_STATE.DEFENDING:
-                                return bot.onDefending(ordersSet, snapshot);
-                            case stub_js_1.PLAYER_STATE.SUPPORTING:
-                                return bot.onSupporting(ordersSet, snapshot);
-                            case stub_js_1.PLAYER_STATE.HOLDING_THE_BALL:
-                                return bot.onHolding(ordersSet, snapshot);
-                        }
+                        return new Promise(function (resolve, reject) {
+                            var playerState = (0, index_js_1.defineState)(snapshot, _this.number, _this.teamSide);
+                            if (_this.number === 1) {
+                                resolve(bot.asGoalkeeper(ordersSet, snapshot, playerState));
+                                return;
+                            }
+                            switch (playerState) {
+                                case stub_js_1.PLAYER_STATE.DISPUTING_THE_BALL:
+                                    resolve(bot.onDisputing(ordersSet, snapshot));
+                                    break;
+                                case stub_js_1.PLAYER_STATE.DEFENDING:
+                                    resolve(bot.onDefending(ordersSet, snapshot));
+                                    break;
+                                case stub_js_1.PLAYER_STATE.SUPPORTING:
+                                    resolve(bot.onSupporting(ordersSet, snapshot));
+                                    break;
+                                case stub_js_1.PLAYER_STATE.HOLDING_THE_BALL:
+                                    resolve(bot.onHolding(ordersSet, snapshot));
+                                    break;
+                            }
+                        });
                     }, onJoin)];
             });
         });
     };
     /**
      *
-     * @param {function(OrderSet, GameSnapshot):OrderSet} raw_processor
+     * @param {function} raw_processor
      * @param {function()} onJoin
      */
     Client.prototype.play = function (raw_processor, onJoin) {
@@ -136,10 +143,10 @@ var Client = /** @class */ (function () {
     };
     /**
      *
-     * @param {function(OrderSet, GameSnapshot):OrderSet} bot
+     * @param {function(OrderSet, GameSnapshot):OrderSet} processor
      * @param {function()} onJoin
      */
-    Client.prototype._start = function (bot, onJoin) {
+    Client.prototype._start = function (processor, onJoin) {
         if (onJoin === void 0) { onJoin = function () {
         }; }
         return __awaiter(this, void 0, void 0, function () {
@@ -149,7 +156,7 @@ var Client = /** @class */ (function () {
                     case 0: return [4 /*yield*/, new Promise(function (resolve, reject) {
                             var serverURL = "".concat(_this.serverAdd);
                             // the random guarantee that we will have multiple connections instead of using pool of connections
-                            _this.client = new server_grpc_pb_1.GameClient(serverURL, grpc_js_1.credentials.createInsecure());
+                            _this.client = new server_grpc_pb_1.GameClient(serverURL, grpc_js_1.credentials.createInsecure(), { "primary_user_agent": "agent ".concat(Math.random()) });
                             var deadline = new Date();
                             deadline.setSeconds(deadline.getSeconds() + 10);
                             _this.client.waitForReady(deadline, function (err) {
@@ -183,7 +190,7 @@ var Client = /** @class */ (function () {
                                                 _b.label = 2;
                                             case 2:
                                                 _b.trys.push([2, 4, , 5]);
-                                                return [4 /*yield*/, bot(orderSet, snapshot)];
+                                                return [4 /*yield*/, processor(orderSet, snapshot)];
                                             case 3:
                                                 orderSet = _b.sent();
                                                 return [3 /*break*/, 5];
@@ -224,7 +231,7 @@ var Client = /** @class */ (function () {
                                     });
                                 }); });
                                 running.on('end', function () {
-                                    console.log('communication done');
+                                    console.log("[".concat(_this.teamSide === server_pb_js_1.Team.Side.HOME ? "HOME" : "AWAY", "-").concat(_this.number, "] communication done"));
                                     resolve(null);
                                 });
                             });
@@ -246,7 +253,8 @@ var Client = /** @class */ (function () {
             var response;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.client.sendOrders(orderSet, function () { })
+                    case 0: return [4 /*yield*/, this.client.sendOrders(orderSet, function () {
+                        })
                         // console.log(response.getPeer())
                     ];
                     case 1:

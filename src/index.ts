@@ -1,15 +1,18 @@
-import {Client, NewClientFromConfig} from './client.js'
-import {EnvVarLoader} from './configurator.js'
-import {Goal} from './goal.js'
-import {Mapper, Region} from './mapper.js'
-import * as ORIENTATION from './orentation.js'
-import * as Lugo from './proto_exported.js'
+import {Client, NewClientFromConfig} from './client'
+import {EnvVarLoader} from './configurator'
+import {Goal} from './goal'
+import {Mapper, Region} from './mapper'
+import * as ORIENTATION from './orentation'
+import * as Lugo from './proto_exported'
 import {SPECS} from "./specs.js"
-import {Bot, PLAYER_STATE} from './stub.js'
-import * as geo from "./geo.js"
+import {Bot, PLAYER_STATE} from './stub'
+import * as geo from "./geo"
+import {normalize, distanceBetweenPoints, getLength, subVector, getScaledVector, NewVector} from "./geo"
+import * as rl from "./rl/index"
 // imports actually used in this file
 
 export {
+    rl,
     Client, NewClientFromConfig,
     EnvVarLoader,
     Goal,
@@ -18,8 +21,10 @@ export {
     SPECS,
     Bot, PLAYER_STATE,
     Lugo,
-    geo,
+    geo,// keeping backward compatibility
+    normalize, distanceBetweenPoints, getLength, subVector, getScaledVector, NewVector,
 }
+
 
 const homeGoalCenter = new Lugo.Point()
 homeGoalCenter.setX(0)

@@ -16,6 +16,7 @@ interface IRemoteService extends grpc.ServiceDefinition<grpc.UntypedServiceImple
     setBallProperties: IRemoteService_ISetBallProperties;
     setPlayerProperties: IRemoteService_ISetPlayerProperties;
     setGameProperties: IRemoteService_ISetGameProperties;
+    resumeListeningPhase: IRemoteService_IResumeListeningPhase;
 }
 
 interface IRemoteService_IPauseOrResume extends grpc.MethodDefinition<remote_pb.PauseResumeRequest, remote_pb.CommandResponse> {
@@ -72,6 +73,15 @@ interface IRemoteService_ISetGameProperties extends grpc.MethodDefinition<remote
     responseSerialize: grpc.serialize<remote_pb.CommandResponse>;
     responseDeserialize: grpc.deserialize<remote_pb.CommandResponse>;
 }
+interface IRemoteService_IResumeListeningPhase extends grpc.MethodDefinition<remote_pb.ResumeListeningRequest, remote_pb.ResumeListeningResponse> {
+    path: "/lugo.Remote/ResumeListeningPhase";
+    requestStream: false;
+    responseStream: false;
+    requestSerialize: grpc.serialize<remote_pb.ResumeListeningRequest>;
+    requestDeserialize: grpc.deserialize<remote_pb.ResumeListeningRequest>;
+    responseSerialize: grpc.serialize<remote_pb.ResumeListeningResponse>;
+    responseDeserialize: grpc.deserialize<remote_pb.ResumeListeningResponse>;
+}
 
 export const RemoteService: IRemoteService;
 
@@ -82,6 +92,7 @@ export interface IRemoteServer extends grpc.UntypedServiceImplementation {
     setBallProperties: grpc.handleUnaryCall<remote_pb.BallProperties, remote_pb.CommandResponse>;
     setPlayerProperties: grpc.handleUnaryCall<remote_pb.PlayerProperties, remote_pb.CommandResponse>;
     setGameProperties: grpc.handleUnaryCall<remote_pb.GameProperties, remote_pb.CommandResponse>;
+    resumeListeningPhase: grpc.handleUnaryCall<remote_pb.ResumeListeningRequest, remote_pb.ResumeListeningResponse>;
 }
 
 export interface IRemoteClient {
@@ -103,6 +114,9 @@ export interface IRemoteClient {
     setGameProperties(request: remote_pb.GameProperties, callback: (error: grpc.ServiceError | null, response: remote_pb.CommandResponse) => void): grpc.ClientUnaryCall;
     setGameProperties(request: remote_pb.GameProperties, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: remote_pb.CommandResponse) => void): grpc.ClientUnaryCall;
     setGameProperties(request: remote_pb.GameProperties, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: remote_pb.CommandResponse) => void): grpc.ClientUnaryCall;
+    resumeListeningPhase(request: remote_pb.ResumeListeningRequest, callback: (error: grpc.ServiceError | null, response: remote_pb.ResumeListeningResponse) => void): grpc.ClientUnaryCall;
+    resumeListeningPhase(request: remote_pb.ResumeListeningRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: remote_pb.ResumeListeningResponse) => void): grpc.ClientUnaryCall;
+    resumeListeningPhase(request: remote_pb.ResumeListeningRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: remote_pb.ResumeListeningResponse) => void): grpc.ClientUnaryCall;
 }
 
 export class RemoteClient extends grpc.Client implements IRemoteClient {
@@ -125,4 +139,7 @@ export class RemoteClient extends grpc.Client implements IRemoteClient {
     public setGameProperties(request: remote_pb.GameProperties, callback: (error: grpc.ServiceError | null, response: remote_pb.CommandResponse) => void): grpc.ClientUnaryCall;
     public setGameProperties(request: remote_pb.GameProperties, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: remote_pb.CommandResponse) => void): grpc.ClientUnaryCall;
     public setGameProperties(request: remote_pb.GameProperties, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: remote_pb.CommandResponse) => void): grpc.ClientUnaryCall;
+    public resumeListeningPhase(request: remote_pb.ResumeListeningRequest, callback: (error: grpc.ServiceError | null, response: remote_pb.ResumeListeningResponse) => void): grpc.ClientUnaryCall;
+    public resumeListeningPhase(request: remote_pb.ResumeListeningRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: remote_pb.ResumeListeningResponse) => void): grpc.ClientUnaryCall;
+    public resumeListeningPhase(request: remote_pb.ResumeListeningRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: remote_pb.ResumeListeningResponse) => void): grpc.ClientUnaryCall;
 }

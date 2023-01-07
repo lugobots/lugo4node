@@ -4,8 +4,9 @@
   "description": "Lugo4Node is a NodeJS implementation of a client player for [Lugo](https://lugobots.dev/) game.",
   "main": "dist/index.js",
   "scripts": {
-    "tsc": "rm -rf dist/* && mkdir -p dist/pb && tsc && cp src/pb/* dist/pb/ && cp commonjs.package.json dist/package.json",
-    "tsconly": "tsc"
+    "tsc": "rm -rf dist/* && mkdir -p dist/pb && tsc --skipLibCheck && cp src/pb/* dist/pb/ && cp commonjs.package.json dist/package.json",
+    "tsconly": "tsc --skipLibCheck",
+    "watch": "tsc --skipLibCheck --watch"
   },
   "type": "module",
   "keywords": [],
@@ -15,9 +16,10 @@
     "@grpc/grpc-js": "^1.6.7",
     "google-protobuf": "^3.20.1",
     "process": "^0.11.10",
-    "typescript": "^4.7.4"
+    "typescript": "^4.9.4"
   },
   "devDependencies": {
+    "tsc-watch": "^6.0.0",
     "@grpc/proto-loader": "^0.6.12",
     "mocha": "^10.0.0"
   },

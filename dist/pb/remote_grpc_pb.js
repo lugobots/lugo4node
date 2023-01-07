@@ -83,6 +83,28 @@ function deserialize_lugo_PlayerProperties(buffer_arg) {
   return remote_pb.PlayerProperties.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_lugo_ResumeListeningRequest(arg) {
+  if (!(arg instanceof remote_pb.ResumeListeningRequest)) {
+    throw new Error('Expected argument of type lugo.ResumeListeningRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_lugo_ResumeListeningRequest(buffer_arg) {
+  return remote_pb.ResumeListeningRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_lugo_ResumeListeningResponse(arg) {
+  if (!(arg instanceof remote_pb.ResumeListeningResponse)) {
+    throw new Error('Expected argument of type lugo.ResumeListeningResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_lugo_ResumeListeningResponse(buffer_arg) {
+  return remote_pb.ResumeListeningResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 
 // The game server implements a Remote service that allows you to control the game flow.
 // This service may help you to control or watch the game during training sessions.
@@ -153,6 +175,17 @@ var RemoteService = exports.RemoteService = {
     requestDeserialize: deserialize_lugo_GameProperties,
     responseSerialize: serialize_lugo_CommandResponse,
     responseDeserialize: deserialize_lugo_CommandResponse,
+  },
+  resumeListeningPhase: {
+    path: '/lugo.Remote/ResumeListeningPhase',
+    requestStream: false,
+    responseStream: false,
+    requestType: remote_pb.ResumeListeningRequest,
+    responseType: remote_pb.ResumeListeningResponse,
+    requestSerialize: serialize_lugo_ResumeListeningRequest,
+    requestDeserialize: deserialize_lugo_ResumeListeningRequest,
+    responseSerialize: serialize_lugo_ResumeListeningResponse,
+    responseDeserialize: deserialize_lugo_ResumeListeningResponse,
   },
 };
 

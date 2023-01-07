@@ -1,26 +1,35 @@
 "use strict";
 exports.__esModule = true;
-exports.defineState = exports.DIRECTION = exports.homeGoal = exports.awayGoal = exports.GameSnapshotReader = exports.geo = exports.Lugo = exports.PLAYER_STATE = exports.SPECS = exports.ORIENTATION = exports.Region = exports.Mapper = exports.Goal = exports.EnvVarLoader = exports.NewClientFromConfig = exports.Client = void 0;
-var client_js_1 = require("./client.js");
-exports.Client = client_js_1.Client;
-exports.NewClientFromConfig = client_js_1.NewClientFromConfig;
-var configurator_js_1 = require("./configurator.js");
-exports.EnvVarLoader = configurator_js_1.EnvVarLoader;
-var goal_js_1 = require("./goal.js");
-exports.Goal = goal_js_1.Goal;
-var mapper_js_1 = require("./mapper.js");
-exports.Mapper = mapper_js_1.Mapper;
-exports.Region = mapper_js_1.Region;
-var ORIENTATION = require("./orentation.js");
+exports.defineState = exports.DIRECTION = exports.homeGoal = exports.awayGoal = exports.GameSnapshotReader = exports.NewVector = exports.getScaledVector = exports.subVector = exports.getLength = exports.distanceBetweenPoints = exports.normalize = exports.geo = exports.Lugo = exports.PLAYER_STATE = exports.SPECS = exports.ORIENTATION = exports.Region = exports.Mapper = exports.Goal = exports.EnvVarLoader = exports.NewClientFromConfig = exports.Client = exports.rl = void 0;
+var client_1 = require("./client");
+exports.Client = client_1.Client;
+exports.NewClientFromConfig = client_1.NewClientFromConfig;
+var configurator_1 = require("./configurator");
+exports.EnvVarLoader = configurator_1.EnvVarLoader;
+var goal_1 = require("./goal");
+exports.Goal = goal_1.Goal;
+var mapper_1 = require("./mapper");
+exports.Mapper = mapper_1.Mapper;
+exports.Region = mapper_1.Region;
+var ORIENTATION = require("./orentation");
 exports.ORIENTATION = ORIENTATION;
-var Lugo = require("./proto_exported.js");
+var Lugo = require("./proto_exported");
 exports.Lugo = Lugo;
 var specs_js_1 = require("./specs.js");
 exports.SPECS = specs_js_1.SPECS;
-var stub_js_1 = require("./stub.js");
-exports.PLAYER_STATE = stub_js_1.PLAYER_STATE;
-var geo = require("./geo.js");
+var stub_1 = require("./stub");
+exports.PLAYER_STATE = stub_1.PLAYER_STATE;
+var geo = require("./geo");
 exports.geo = geo;
+var geo_1 = require("./geo");
+exports.normalize = geo_1.normalize;
+exports.distanceBetweenPoints = geo_1.distanceBetweenPoints;
+exports.getLength = geo_1.getLength;
+exports.subVector = geo_1.subVector;
+exports.getScaledVector = geo_1.getScaledVector;
+exports.NewVector = geo_1.NewVector;
+var rl = require("./rl/index");
+exports.rl = rl;
 var homeGoalCenter = new Lugo.Point();
 homeGoalCenter.setX(0);
 homeGoalCenter.setY(specs_js_1.SPECS.MAX_Y_COORDINATE / 2);
@@ -278,8 +287,8 @@ var GameSnapshotReader = /** @class */ (function () {
     return GameSnapshotReader;
 }());
 exports.GameSnapshotReader = GameSnapshotReader;
-exports.awayGoal = new goal_js_1.Goal(Lugo.Team.Side.AWAY, awayGoalCenter, awayGoalTopPole, awayGoalBottomPole);
-exports.homeGoal = new goal_js_1.Goal(Lugo.Team.Side.HOME, homeGoalCenter, homeGoalTopPole, homeGoalBottomPole);
+exports.awayGoal = new goal_1.Goal(Lugo.Team.Side.AWAY, awayGoalCenter, awayGoalTopPole, awayGoalBottomPole);
+exports.homeGoal = new goal_1.Goal(Lugo.Team.Side.HOME, homeGoalCenter, homeGoalTopPole, homeGoalBottomPole);
 var DIRECTION;
 (function (DIRECTION) {
     DIRECTION[DIRECTION["FORWARD"] = 0] = "FORWARD";
@@ -309,14 +318,14 @@ function defineState(snapshot, playerNumber, side) {
     }
     var ballHolder = snapshot.getBall().getHolder();
     if (!ballHolder) {
-        return stub_js_1.PLAYER_STATE.DISPUTING_THE_BALL;
+        return stub_1.PLAYER_STATE.DISPUTING_THE_BALL;
     }
     else if (ballHolder.getTeamSide() === side) {
         if (ballHolder.getNumber() === playerNumber) {
-            return stub_js_1.PLAYER_STATE.HOLDING_THE_BALL;
+            return stub_1.PLAYER_STATE.HOLDING_THE_BALL;
         }
-        return stub_js_1.PLAYER_STATE.SUPPORTING;
+        return stub_1.PLAYER_STATE.SUPPORTING;
     }
-    return stub_js_1.PLAYER_STATE.DEFENDING;
+    return stub_1.PLAYER_STATE.DEFENDING;
 }
 exports.defineState = defineState;

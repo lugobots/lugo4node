@@ -10,6 +10,8 @@ import {defineState} from './index.js'
 
 export const PROTOCOL_VERSION = "1.0.0"
 
+export type RawTurnProcessor = (OrderSet, GameSnapshot) => Promise<OrderSet>
+
 /**
  *
  * @param {EnvVarLoader} config
@@ -76,30 +78,37 @@ export class Client {
     }) {
         return this.setGettingReadyHandler(s => {
             bot.gettingReady(s)
-        })._start((ordersSet, snapshot) => {
-            const playerState = defineState(snapshot, this.number, this.teamSide)
-            if (this.number === 1) {
-                return bot.asGoalkeeper(ordersSet, snapshot, playerState);
-            }
-            switch (playerState) {
-                case PLAYER_STATE.DISPUTING_THE_BALL:
-                    return bot.onDisputing(ordersSet, snapshot)
-                case PLAYER_STATE.DEFENDING:
-                    return bot.onDefending(ordersSet, snapshot)
-                case PLAYER_STATE.SUPPORTING:
-                    return bot.onSupporting(ordersSet, snapshot)
-                case PLAYER_STATE.HOLDING_THE_BALL:
-                    return bot.onHolding(ordersSet, snapshot)
-            }
+        })._start((ordersSet, snapshot): Promise<OrderSet> => {
+            return new Promise((resolve, reject) => {
+                const playerState = defineState(snapshot, this.number, this.teamSide)
+                if (this.number === 1) {
+                    resolve(bot.asGoalkeeper(ordersSet, snapshot, playerState));
+                    return
+                }
+                switch (playerState) {
+                    case PLAYER_STATE.DISPUTING_THE_BALL:
+                        resolve(bot.onDisputing(ordersSet, snapshot));
+                        break;
+                    case PLAYER_STATE.DEFENDING:
+                        resolve(bot.onDefending(ordersSet, snapshot));
+                        break;
+                    case PLAYER_STATE.SUPPORTING:
+                        resolve(bot.onSupporting(ordersSet, snapshot));
+                        break;
+                    case PLAYER_STATE.HOLDING_THE_BALL:
+                        resolve(bot.onHolding(ordersSet, snapshot));
+                        break;
+                }
+            });
         }, onJoin)
     }
 
     /**
      *
-     * @param {function(OrderSet, GameSnapshot):OrderSet} raw_processor
+     * @param {function} raw_processor
      * @param {function()} onJoin
      */
-    async play(raw_processor, onJoin = () => {
+    async play(raw_processor: RawTurnProcessor, onJoin = () => {
     }) {
         return this._start(raw_processor, onJoin)
     }
@@ -117,15 +126,15 @@ export class Client {
 
     /**
      *
-     * @param {function(OrderSet, GameSnapshot):OrderSet} bot
+     * @param {function(OrderSet, GameSnapshot):OrderSet} processor
      * @param {function()} onJoin
      */
-    async _start(bot, onJoin = () => {
+    async _start(processor: RawTurnProcessor, onJoin = () => {
     }) {
         await new Promise((resolve, reject) => {
             const serverURL = `${this.serverAdd}`
             // the random guarantee that we will have multiple connections instead of using pool of connections
-            this.client = new GameClient(serverURL, credentials.createInsecure())
+            this.client = new GameClient(serverURL, credentials.createInsecure(), {"primary_user_agent" : `agent ${Math.random()}`})
             const deadline = new Date();
 
 
@@ -152,7 +161,7 @@ export class Client {
                                 let orderSet = new OrderSet()
                                 orderSet.setTurn(snapshot.getTurn())
                                 try {
-                                    orderSet = await bot(orderSet, snapshot)
+                                    orderSet = await processor(orderSet, snapshot)
                                 } catch (e) {
                                     console.error(`bot error`, e)
                                 }
@@ -180,8 +189,8 @@ export class Client {
                 running.on('error', async (e) => {
                     reject(new Error(`error on team connection: ${e}`))
                 });
-                running.on('end', function () {
-                    console.log('communication done');
+                running.on('end',  () => {
+                    console.log(`[${this.teamSide === Team.Side.HOME ? "HOME" : "AWAY"}-${this.number}] communication done`);
                     resolve(null)
                 });
             })
@@ -195,7 +204,8 @@ export class Client {
      */
     async orderSetSender(orderSet: OrderSet) {
         /** @type {module:grpc.ClientUnaryCall} response */
-        const response = await this.client.sendOrders(orderSet, () => {})
+        const response = await this.client.sendOrders(orderSet, () => {
+        })
 
         // console.log(response.getPeer())
     }

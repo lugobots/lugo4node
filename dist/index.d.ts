@@ -1,13 +1,16 @@
-import { Client, NewClientFromConfig } from './client.js';
-import { EnvVarLoader } from './configurator.js';
-import { Goal } from './goal.js';
-import { Mapper, Region } from './mapper.js';
-import * as ORIENTATION from './orentation.js';
-import * as Lugo from './proto_exported.js';
+import { Client, NewClientFromConfig } from './client';
+import { EnvVarLoader } from './configurator';
+import { Goal } from './goal';
+import { Mapper, Region } from './mapper';
+import * as ORIENTATION from './orentation';
+import * as Lugo from './proto_exported';
 import { SPECS } from "./specs.js";
-import { Bot, PLAYER_STATE } from './stub.js';
-import * as geo from "./geo.js";
-export { Client, NewClientFromConfig, EnvVarLoader, Goal, Mapper, Region, ORIENTATION, SPECS, Bot, PLAYER_STATE, Lugo, geo, };
+import { Bot, PLAYER_STATE } from './stub';
+import * as geo from "./geo";
+import { normalize, distanceBetweenPoints, getLength, subVector, getScaledVector, NewVector } from "./geo";
+import * as rl from "./rl/index";
+export { rl, Client, NewClientFromConfig, EnvVarLoader, Goal, Mapper, Region, ORIENTATION, SPECS, Bot, PLAYER_STATE, Lugo, geo, // keeping backward compatibility
+normalize, distanceBetweenPoints, getLength, subVector, getScaledVector, NewVector, };
 export declare class GameSnapshotReader {
     readonly mySide: any;
     /**

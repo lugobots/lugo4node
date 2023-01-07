@@ -3,6 +3,7 @@ import { OrderSet } from "./pb/server_pb.js";
 import { Bot } from './stub.js';
 import { EnvVarLoader } from './configurator.js';
 export declare const PROTOCOL_VERSION = "1.0.0";
+export type RawTurnProcessor = (OrderSet: any, GameSnapshot: any) => Promise<OrderSet>;
 /**
  *
  * @param {EnvVarLoader} config
@@ -45,10 +46,10 @@ export declare class Client {
     playAsBot(bot: Bot, onJoin?: () => void): Promise<void>;
     /**
      *
-     * @param {function(OrderSet, GameSnapshot):OrderSet} raw_processor
+     * @param {function} raw_processor
      * @param {function()} onJoin
      */
-    play(raw_processor: any, onJoin?: () => void): Promise<void>;
+    play(raw_processor: RawTurnProcessor, onJoin?: () => void): Promise<void>;
     /**
      *
      * @param {function(GameSnapshot)} handler
@@ -58,10 +59,10 @@ export declare class Client {
     setGettingReadyHandler(handler: any): this;
     /**
      *
-     * @param {function(OrderSet, GameSnapshot):OrderSet} bot
+     * @param {function(OrderSet, GameSnapshot):OrderSet} processor
      * @param {function()} onJoin
      */
-    _start(bot: any, onJoin?: () => void): Promise<void>;
+    _start(processor: RawTurnProcessor, onJoin?: () => void): Promise<void>;
     /**
      *
      * @param {OrderSet} orderSet

@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -13,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -34,25 +35,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
-    if (kind === "m") throw new TypeError("Private method is not writable");
-    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
-    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
-    return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
-};
-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
-    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
-    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
-};
-var _RemoteControl_client;
-"use strict";
+exports.__esModule = true;
+exports.RemoteControl = void 0;
 var grpc = require("@grpc/grpc-js");
 var remote = require("../pb/remote_grpc_pb");
-require("../pb/server_pb");
+var remote_pb_1 = require("../pb/remote_pb");
 var RemoteControl = /** @class */ (function () {
     function RemoteControl() {
-        _RemoteControl_client.set(this, void 0);
     }
     RemoteControl.prototype.connect = function (grpcAddress) {
         return __awaiter(this, void 0, void 0, function () {
@@ -60,10 +49,10 @@ var RemoteControl = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, new Promise(function (resolve, reject) {
-                            __classPrivateFieldSet(_this, _RemoteControl_client, new remote.RemoteClient(grpcAddress, grpc.credentials.createInsecure()), "f");
+                            _this.client = new remote.RemoteClient(grpcAddress, grpc.credentials.createInsecure());
                             var deadline = new Date();
                             deadline.setSeconds(deadline.getSeconds() + 5);
-                            __classPrivateFieldGet(_this, _RemoteControl_client, "f").waitForReady(deadline, function (err) {
+                            _this.client.waitForReady(deadline, function (err) {
                                 if (err) {
                                     reject(err);
                                 }
@@ -84,9 +73,26 @@ var RemoteControl = /** @class */ (function () {
             var pauseReq;
             var _this = this;
             return __generator(this, function (_a) {
-                pauseReq = new proto.lugo.PauseResumeRequest();
+                pauseReq = new remote_pb_1.PauseResumeRequest();
                 return [2 /*return*/, new Promise(function (resolve, reject) {
-                        var resp = __classPrivateFieldGet(_this, _RemoteControl_client, "f").pauseOrResume(pauseReq, function (err) {
+                        var resp = _this.client.pauseOrResume(pauseReq, function (err) {
+                            if (err) {
+                                reject(err);
+                            }
+                            resolve();
+                        });
+                    })];
+            });
+        });
+    };
+    RemoteControl.prototype.resumeListening = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var req;
+            var _this = this;
+            return __generator(this, function (_a) {
+                req = new remote_pb_1.ResumeListeningRequest();
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        var resp = _this.client.resumeListeningPhase(req, function (err) {
                             if (err) {
                                 reject(err);
                             }
@@ -101,9 +107,9 @@ var RemoteControl = /** @class */ (function () {
             var nextTurnReq;
             var _this = this;
             return __generator(this, function (_a) {
-                nextTurnReq = new proto.lugo.NextTurnRequest();
+                nextTurnReq = new remote_pb_1.NextTurnRequest();
                 return [2 /*return*/, new Promise(function (resolve, reject) {
-                        var resp = __classPrivateFieldGet(_this, _RemoteControl_client, "f").nextTurn(nextTurnReq, function (err) {
+                        var resp = _this.client.nextTurn(nextTurnReq, function (err) {
                             if (err) {
                                 reject(err);
                             }
@@ -113,26 +119,20 @@ var RemoteControl = /** @class */ (function () {
             });
         });
     };
-    /**
-     *
-     * @param {proto.lugo.Point} position
-     * @param {proto.lugo.Velocity} velocity
-     * @returns {Promise<proto.lugo.GameSnapshot>}
-     */
     RemoteControl.prototype.setBallProps = function (position, velocity) {
         return __awaiter(this, void 0, void 0, function () {
             var ballPropReq;
             var _this = this;
             return __generator(this, function (_a) {
-                ballPropReq = new proto.lugo.BallProperties();
+                ballPropReq = new remote_pb_1.BallProperties();
                 ballPropReq.setVelocity(velocity);
                 ballPropReq.setPosition(position);
                 return [2 /*return*/, new Promise(function (resolve, reject) {
-                        var resp = __classPrivateFieldGet(_this, _RemoteControl_client, "f").setBallProperties(ballPropReq, function (err, commandResponsee) {
+                        var resp = _this.client.setBallProperties(ballPropReq, function (err, commandResponse) {
                             if (err) {
                                 reject(err);
                             }
-                            resolve(commandResponsee.getGameSnapshot());
+                            resolve(commandResponse.getGameSnapshot());
                         });
                     })];
             });
@@ -143,17 +143,17 @@ var RemoteControl = /** @class */ (function () {
             var playerProperties;
             var _this = this;
             return __generator(this, function (_a) {
-                playerProperties = new proto.lugo.PlayerProperties();
+                playerProperties = new remote_pb_1.PlayerProperties();
                 playerProperties.setVelocity(newVelocity);
                 playerProperties.setPosition(newPosition);
                 playerProperties.setSide(teamSide);
                 playerProperties.setNumber(playerNumber);
                 return [2 /*return*/, new Promise(function (resolve, reject) {
-                        var resp = __classPrivateFieldGet(_this, _RemoteControl_client, "f").setPlayerProperties(playerProperties, function (err, commandResponsee) {
+                        var resp = _this.client.setPlayerProperties(playerProperties, function (err, commandResponse) {
                             if (err) {
                                 reject(err);
                             }
-                            resolve(commandResponsee.getGameSnapshot());
+                            resolve(commandResponse.getGameSnapshot());
                         });
                     })];
             });
@@ -164,14 +164,14 @@ var RemoteControl = /** @class */ (function () {
             var gameProp;
             var _this = this;
             return __generator(this, function (_a) {
-                gameProp = new proto.lugo.GameProperties();
+                gameProp = new remote_pb_1.GameProperties();
                 gameProp.setTurn(turnNumber);
                 return [2 /*return*/, new Promise(function (resolve, reject) {
-                        var resp = __classPrivateFieldGet(_this, _RemoteControl_client, "f").setGameProperties(gameProp, function (err, commandResponsee) {
+                        var resp = _this.client.setGameProperties(gameProp, function (err, commandResponse) {
                             if (err) {
                                 reject(err);
                             }
-                            resolve(commandResponsee.getGameSnapshot());
+                            resolve(commandResponse.getGameSnapshot());
                         });
                     })];
             });
@@ -179,5 +179,4 @@ var RemoteControl = /** @class */ (function () {
     };
     return RemoteControl;
 }());
-_RemoteControl_client = new WeakMap();
-module.exports = { RemoteControl: RemoteControl };
+exports.RemoteControl = RemoteControl;

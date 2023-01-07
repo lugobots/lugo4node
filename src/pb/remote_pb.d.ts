@@ -200,3 +200,37 @@ export namespace CommandResponse {
     }
 
 }
+
+export class ResumeListeningRequest extends jspb.Message { 
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): ResumeListeningRequest.AsObject;
+    static toObject(includeInstance: boolean, msg: ResumeListeningRequest): ResumeListeningRequest.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: ResumeListeningRequest, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): ResumeListeningRequest;
+    static deserializeBinaryFromReader(message: ResumeListeningRequest, reader: jspb.BinaryReader): ResumeListeningRequest;
+}
+
+export namespace ResumeListeningRequest {
+    export type AsObject = {
+    }
+}
+
+export class ResumeListeningResponse extends jspb.Message { 
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): ResumeListeningResponse.AsObject;
+    static toObject(includeInstance: boolean, msg: ResumeListeningResponse): ResumeListeningResponse.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: ResumeListeningResponse, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): ResumeListeningResponse;
+    static deserializeBinaryFromReader(message: ResumeListeningResponse, reader: jspb.BinaryReader): ResumeListeningResponse;
+}
+
+export namespace ResumeListeningResponse {
+    export type AsObject = {
+    }
+}

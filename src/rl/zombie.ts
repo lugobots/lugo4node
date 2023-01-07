@@ -1,5 +1,6 @@
-const Mapperper = require('../mapper').Mapper
-const {Client} = require('../client')
+import {Mapper} from '../mapper';
+import {Client} from '../client'
+import {GameSnapshot, OrderSet} from "../pb/server_pb";
 
 const PLAYER_POSITIONS = {
     1: {Col: 0, Row: 1},
@@ -15,8 +16,8 @@ const PLAYER_POSITIONS = {
     11: {Col: 10, Row: 1},
 }
 
-function newZombiePlayer(teamSide, playerNumber, gameServerAddress) {
-    return new Promise((resolve, reject) => {
+export function newZombiePlayer(teamSide, playerNumber, gameServerAddress) {
+    return new Promise<void>((resolve, reject) => {
         const map = new Mapper(22, 5, teamSide)
         const initialRegion = map.getRegion(PLAYER_POSITIONS[playerNumber].Col, PLAYER_POSITIONS[playerNumber].Row)
         const lugoClient = new Client(
@@ -27,12 +28,17 @@ function newZombiePlayer(teamSide, playerNumber, gameServerAddress) {
             playerNumber
             , initialRegion.getCenter())
 
-        const turnHandler = (orderSet, snapshot) => orderSet
+        const turnHandler = (orderSet: OrderSet, snapshot: GameSnapshot) : Promise<OrderSet> => {
+            return new Promise((r, j ) => {
+                orderSet.setDebugMessage(`${teamSide === 0 ? 'HOME' : 'AWAY'}-${playerNumber} #${snapshot.getTurn()}`)
+                r(orderSet);
+            });
+        }
         lugoClient.play(turnHandler, resolve).catch(e => {
-            console.log(`Zombie player ${teamSide === 0 ? 'HOME' : 'AWAY'}-${playerNumber} said: ${e.toString()}`)
+          //  console.log(`[PLay] Zombie player ${teamSide === 0 ? 'HOME' : 'AWAY'}-${playerNumber} said: ${e.toString()}`)
+            reject();
         })
     })
 
 }
 
-module.exports = {newZombiePlayer}

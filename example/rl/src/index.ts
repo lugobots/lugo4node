@@ -1,29 +1,29 @@
-const tf = require("@tensorflow/tfjs-node");
-const {Mapper, Client, deep_learning} = require("lugo4node");
+import * as tf from '@tensorflow/tfjs-node';
+import {Mapper, Client, rl, Lugo} from "@lugobots/lugo4node";
 
-const {MyTrainableBot} = require("./my_bot");
-const {SaveablePolicyNetwork, asyncToSync, mean, sum} = require("./model");
+import {MyBotTrainer} from "./my_bot";
+import {SaveablePolicyNetwork, asyncToSync, mean, sum} from "./model";
 
 // training settings
 const trainIterations = 50;
-const gamesPerIteration = 20;
-const maxStepsPerGame = 30;
+const gamesPerIteration = 5;
+const maxStepsPerGame = 15;
 const hiddenLayerSizes = [128, 256, 256, 64]
-const learningRate = 0.08
+const learningRate = 0.1
 const discountRate = 0.95;
 const testingGames = 20
 
 const grpcAddress = "localhost:5000"
 const grpcInsecure = true
-const model_path = `file://${__dirname}/model_output`;
+const model_path = `file://./model_output`;
 
 (async () => {
 
-    const teamSide = proto.lugo.Team.Side.HOME
+    const teamSide = Lugo.Team.Side.HOME
     const playerNumber = 5
 
     // the map will help us to see the field in quadrants (called regions) instead of working with coordinates
-    const map = new Mapper(10, 6, proto.lugo.Team.Side.HOME)
+    const map = new Mapper(10, 6, Lugo.Team.Side.HOME)
 
     // our bot strategy defines our bot initial position based on its number
     const initialRegion = map.getRegion(1, 1)
@@ -38,23 +38,18 @@ const model_path = `file://${__dirname}/model_output`;
         playerNumber,
         initialRegion.getCenter())
 
-    const rc = new deep_learning.RemoteControl();
+    const rc = new rl.RemoteControl();
     await rc.connect(grpcAddress)
-    const bot = new MyTrainableBot(rc)
 
-    const gym = new deep_learning.Gym(rc, bot, myTrainingFunction, {debugging_log: false})
+    const bot = new MyBotTrainer(rc)
+    const gym = new rl.Gym(rc, bot, myTrainingFunction, {debugging_log: false})
+
     await gym.withZombiePlayers(grpcAddress).start(lugoClient)
-
 })();
 
-/**
- *
- * @param {CoachStub} coach
- * @returns {Promise<void>}
- */
-async function myTrainingFunction(coach) {
-    console.log(`Let's training`)
 
+async function myTrainingFunction(trainingCtrl: rl.TrainingController) : Promise<void> {
+    console.log(`Let's training`)
     // first, creating the model
     let policyNet
     if (await SaveablePolicyNetwork.checkStoredModelStatus(`${model_path}/model.json`) != null) {
@@ -71,16 +66,18 @@ async function myTrainingFunction(coach) {
     let iterationGamesMeans = [];
     let t0 = new Date().getTime();
     let stopRequested = false;
+
     for (let i = 0; i < trainIterations; ++i) {
         try {
+            console.log(`Starting iteration ${i} of ${trainIterations}`)
             const gameScores = await policyNet.train(
-                coach, optimizer, discountRate, gamesPerIteration,
+                trainingCtrl, optimizer, discountRate, gamesPerIteration,
                 maxStepsPerGame);
             const t1 = new Date().getTime();
             t0 = t1;
             console.log(`iteration ${i}/${trainIterations} done, total score:`, gameScores)
             iterationGamesMeans.push({iteration: i + 1, means: gameScores});
-            console.log(`# of tensors: ${tf.memory().numTensors}`);
+            // console.log(`# of tensors: ${tf.memory().numTensors}`);
 
             await tf.nextFrame();
             await policyNet.saveModel(model_path);
@@ -100,17 +97,16 @@ async function myTrainingFunction(coach) {
     const testingScores = [];
     for (let i = 0; i < testingGames; ++i) {
         try {
-            await coach.setRandomState()
+            await trainingCtrl.setRandomState()
             let isDone = false
             const gameScores = []
             while (!isDone) {
 
                 tf.tidy(await asyncToSync(async () => {
-                    const action = policyNet.getActions(await coach.getStateTensor())[0];
-                    const {done, reward} = await coach.update(action);
+                    const action = policyNet.getActions(await trainingCtrl.getInputs())[0];
+                    const {done, reward} = await trainingCtrl.update(action);
                     isDone = done
                     gameScores.push(reward)
-                    // console.log(`Testing Means: `, gameScores)
                 }));
                 await tf.nextFrame();  // Unblock UI thread.
 
@@ -122,7 +118,7 @@ async function myTrainingFunction(coach) {
             console.error(e)
         }
     }
-    await coach.stop()
+    await trainingCtrl.stop()
     console.log(`Testing scores: `, testingScores)
 }
 
