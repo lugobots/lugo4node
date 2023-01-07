@@ -4,7 +4,7 @@
 
 The RL lib has a class called `Gym` that will require 3 params:
 
-### Remote control
+### The Remote control
 
 The RC allow you to control the game server flow by pausing, changing the elements' position, etc. (see
 the [Remove Service in the Game protocol definition](https://github.com/lugobots/protos/blob/master/doc/docs.md#remote))
@@ -15,25 +15,28 @@ The remote control is already implemented in **Lugo4Node** package.:
     await rc.connect(grpcAddress)
 ```
 
-### Bot Trainer
+### The Bot Trainer
 
 You should create a class that implements the interface `rl.BotTrainer`.
 
 The BotTrainer is used by the Gym class to play the game as a bot and to control the game state when needed.
 It is NOT your learning agent! You should create your agent inside the training function.
 
-Please read the [interface documentation](../../src/rl/interfaces.ts:38) to learn what each method is expected to do.
+Please read the [interface documentation](interfaces.ts#L38) to learn what each method is expected to do.
 
 **Important**: You can train only one player at once. So, your bot trainer must play as a single play (defined by the
 player number). See in the next steps how add more players to the game.
 
 ### The training function
 
-The training function will receive a `rl.TrainingController` that will allow you to control the training flow.
+You should to implement a training function:
 
-You should train your model inside the training function. 
+```typescript
+    type TrainingFunction = (trainingCtr: TrainingController) => Promise<void>;
+```
+The training function will receive a `rl.TrainingController` interface that will allow you to control the training flow.
 
-
+You should train your model inside the training function.
 
 ## How to start the training
 

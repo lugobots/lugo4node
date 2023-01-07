@@ -15,9 +15,9 @@ support your strategy (see the project [exampe](./example/simple) folder).
 # Table of Contents
 * [Requirements](#requirements)
 * [Usage](#usage)
-* [First option: Implementing a Bot class (simpler and recommended)](#first-option--implementing-a-bot-class--simpler-and-recommended-)
-* [Second option: Implementing the turn handler (a little more work)](#second-option--implementing-the-turn-handler--a-little-more-work-)
-* [Third option: Using reinforcement learning :brain:](#third-option--using-reinforcement-learning--brain-)
+* [First option: Implementing a Bot class (simpler and recommended)](#first-option-implementing-a-bot-class-simpler-and-recommended)
+* [Second option: Implementing the turn handler (a little more work)](#second-option-implementing-the-turn-handler-a-little-more-work)
+* [Third option: Using reinforcement learning :brain:](#third-option-using-reinforcement-learning-brain)
 - [Helpers](#helpers)
   * [Snapshot reader](#snapshot-reader)
   * [Mapper and Region classes](#mapper-and-region-classes)
@@ -65,7 +65,7 @@ If you are a **machine learning** enthusiastic you may want to use the Lugo rein
 
 **Lugo bots** is an asynchronous game, so you will need to use the **Lugo4Node Gym** library to create your model:
 
-See example and documentation at [RL example project](example/rl/Readme.md)
+See example and documentation at [RL example project](src/rl/Readme.md)
 
 
 ## Helpers
