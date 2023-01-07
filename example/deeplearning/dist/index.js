@@ -65,7 +65,7 @@ var model_path = "file://./model_output";
                 return [4 /*yield*/, rc.connect(grpcAddress)];
             case 1:
                 _a.sent();
-                bot = new my_bot_1.MyTrainableBot(rc);
+                bot = new my_bot_1.MyBotTrainer(rc);
                 gym = new lugo4node_1.rl.Gym(rc, bot, myTrainingFunction, { debugging_log: false });
                 return [4 /*yield*/, gym.withZombiePlayers(grpcAddress).start(lugoClient)];
             case 2:

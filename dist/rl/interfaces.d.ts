@@ -15,7 +15,7 @@ export interface TrainingController {
     getInputs: () => Promise<any>;
     /**
      * Use this method to pass that action picked by you model. It will return the reward and `done` values got from
-     * your TrainableBot.
+     * your BotTrainer.
      * @param action
      * @returns {Promise<{reward: number, done: boolean}>}
      */
@@ -29,9 +29,10 @@ export interface TrainingController {
     stop: () => Promise<void>;
 }
 /**
- * The TrainableBot is used by the Gym class to play the game as a bot and to control the game state when needed.
+ * The BotTrainer is used by the Gym class to play the game as a bot and to control the game state when needed.
+ * It is NOT your learning agent!
  */
-export interface TrainableBot {
+export interface BotTrainer {
     /**
      * createNewInitialState should create the initial scenario for each game.
      *
@@ -68,7 +69,7 @@ export interface TrainableBot {
      * It must compare the two states and return the reward and a boolean `done` to indicate that the game each the end.
      *
      * Your bot may evaluate turn by turn, or comparing the final game state to the initial state.
-     * However, if you want to compare with the initial state, your trainable bot will have to store the initial
+     * However, if you want to compare with the initial state, your bot trainer will have to store the initial
      * state when the method `createNewInitialState` is called.
      *
      * @param {GameSnapshot} previousSnapshot - The current game state

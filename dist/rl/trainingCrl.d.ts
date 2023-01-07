@@ -1,5 +1,5 @@
-import { RemoteControl } from "./remote_control";
-import { TrainingController, TrainableBot, TrainingFunction } from './interfaces';
+import { RemoteControl } from "./remoteControl";
+import { TrainingController, BotTrainer, TrainingFunction } from './interfaces';
 import { GameSnapshot, OrderSet } from "../pb/server_pb";
 export declare const delay: (ms: any) => Promise<unknown>;
 export declare class TrainingCrl implements TrainingController {
@@ -13,7 +13,7 @@ export declare class TrainingCrl implements TrainingController {
     private waitingForAction;
     private cycleSeq;
     /**
-     * @type {TrainableBot}
+     * @type {BotTrainer}
      */
     private bot;
     debugging_log: boolean;
@@ -21,10 +21,10 @@ export declare class TrainingCrl implements TrainingController {
     private gotNewAction;
     /**
      * @param {RemoteControl} remoteControl
-     * @param {TrainableBot} bot
+     * @param {BotTrainer} bot
      * @param {function} onReadyCallback
      */
-    constructor(remoteControl: RemoteControl, bot: TrainableBot, onReadyCallback: TrainingFunction);
+    constructor(remoteControl: RemoteControl, bot: BotTrainer, onReadyCallback: TrainingFunction);
     /**
      * Set the state of match randomly.
      */

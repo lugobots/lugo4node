@@ -53,7 +53,7 @@ class PolicyNetwork {
     /**
      * Train the policy network's model.
      *
-     * @param {rl.TrainingController} trainingCtrl A trainable Lugo bot.
+     * @param {rl.TrainingController} trainingCtrl
      * @param {tf.train.Optimizer} optimizer An instance of TensorFlow.js
      *   Optimizer to use for training.
      * @param {number} discountRate Reward discounting rate: a number between 0

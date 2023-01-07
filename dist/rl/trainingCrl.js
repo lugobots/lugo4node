@@ -42,7 +42,7 @@ exports.delay = delay;
 var TrainingCrl = /** @class */ (function () {
     /**
      * @param {RemoteControl} remoteControl
-     * @param {TrainableBot} bot
+     * @param {BotTrainer} bot
      * @param {function} onReadyCallback
      */
     function TrainingCrl(remoteControl, bot, onReadyCallback) {
@@ -83,7 +83,7 @@ var TrainingCrl = /** @class */ (function () {
                         return [3 /*break*/, 4];
                     case 3:
                         e_1 = _b.sent();
-                        console.error("trainable bot failed to create initial state", e_1);
+                        console.error("bot trainer failed to create initial state", e_1);
                         throw e_1;
                     case 4: return [2 /*return*/];
                 }
@@ -99,7 +99,7 @@ var TrainingCrl = /** @class */ (function () {
                     return [2 /*return*/, this.bot.getInputs(this.lastSnapshot)];
                 }
                 catch (e) {
-                    console.error("trainable bot failed to return inputs from a particular state", e);
+                    console.error("bot trainer failed to return inputs from a particular state", e);
                     throw e;
                 }
                 return [2 /*return*/];
@@ -137,7 +137,7 @@ var TrainingCrl = /** @class */ (function () {
                         return [2 /*return*/, { done: done, reward: reward }];
                     case 4:
                         e_2 = _c.sent();
-                        console.error("trainable bot failed to evaluate game state", e_2);
+                        console.error("bot trainer failed to evaluate game state", e_2);
                         throw e_2;
                     case 5: return [2 /*return*/];
                 }

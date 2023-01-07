@@ -41,10 +41,10 @@ var trainingCrl_1 = require("./trainingCrl");
 var zombie_1 = require("./zombie");
 var server_pb_js_1 = require("../pb/server_pb.js");
 var Gym = /** @class */ (function () {
-    function Gym(remoteControl, trainableBot, trainingFunction, options) {
+    function Gym(remoteControl, trainer, trainingFunction, options) {
         if (options === void 0) { options = { debugging_log: false }; }
         this.remoteControl = remoteControl;
-        this.trainingCrl = new trainingCrl_1.TrainingCrl(remoteControl, trainableBot, trainingFunction);
+        this.trainingCrl = new trainingCrl_1.TrainingCrl(remoteControl, trainer, trainingFunction);
         this.trainingCrl.debugging_log = options.debugging_log;
     }
     Gym.prototype.start = function (lugoClient) {

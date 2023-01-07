@@ -1,7 +1,7 @@
 import * as tf from '@tensorflow/tfjs-node';
 import {Mapper, Client, rl, Lugo} from "@lugobots/lugo4node";
 
-import {MyTrainableBot} from "./my_bot";
+import {MyBotTrainer} from "./my_bot";
 import {SaveablePolicyNetwork, asyncToSync, mean, sum} from "./model";
 
 // training settings
@@ -41,7 +41,7 @@ const model_path = `file://./model_output`;
     const rc = new rl.RemoteControl();
     await rc.connect(grpcAddress)
 
-    const bot = new MyTrainableBot(rc)
+    const bot = new MyBotTrainer(rc)
     const gym = new rl.Gym(rc, bot, myTrainingFunction, {debugging_log: false})
 
     await gym.withZombiePlayers(grpcAddress).start(lugoClient)

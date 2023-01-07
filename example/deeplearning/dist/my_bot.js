@@ -36,14 +36,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.delay = exports.MyTrainableBot = void 0;
+exports.delay = exports.MyBotTrainer = void 0;
 var lugo4node_1 = require("@lugobots/lugo4node");
 var tf = require("@tensorflow/tfjs-node");
-var MyTrainableBot = /** @class */ (function () {
-    function MyTrainableBot(remoteControl) {
+var MyBotTrainer = /** @class */ (function () {
+    function MyBotTrainer(remoteControl) {
         this.remoteControl = remoteControl;
     }
-    MyTrainableBot.prototype.createNewInitialState = function () {
+    MyBotTrainer.prototype.createNewInitialState = function () {
         return __awaiter(this, void 0, void 0, function () {
             var i, randomVelocity, ballPos, newVelocity;
             return __generator(this, function (_a) {
@@ -86,7 +86,7 @@ var MyTrainableBot = /** @class */ (function () {
             });
         });
     };
-    MyTrainableBot.prototype.getInputs = function (snapshot) {
+    MyBotTrainer.prototype.getInputs = function (snapshot) {
         return __awaiter(this, void 0, void 0, function () {
             var reader, me, mappedOpponents, myPosition, sensorFront, sensorLeft, sensorRight;
             return __generator(this, function (_a) {
@@ -126,7 +126,7 @@ var MyTrainableBot = /** @class */ (function () {
             });
         });
     };
-    MyTrainableBot.prototype.play = function (orderSet, snapshot, action) {
+    MyBotTrainer.prototype.play = function (orderSet, snapshot, action) {
         return __awaiter(this, void 0, void 0, function () {
             var reader, me, interval, dir;
             return __generator(this, function (_a) {
@@ -150,7 +150,7 @@ var MyTrainableBot = /** @class */ (function () {
      * @param {Lugo.GameSnapshot} newSnapshot
      * @returns {Promise<{reward: number, done: boolean}>}
      */
-    MyTrainableBot.prototype.evaluate = function (previousSnapshot, newSnapshot) {
+    MyBotTrainer.prototype.evaluate = function (previousSnapshot, newSnapshot) {
         return __awaiter(this, void 0, void 0, function () {
             var readerPrevious, reader, me, mePreviously, mappedOpponents, opponentGoal, previousDist, actualDist, myPosition, reward, done;
             return __generator(this, function (_a) {
@@ -190,7 +190,7 @@ var MyTrainableBot = /** @class */ (function () {
             });
         });
     };
-    MyTrainableBot.prototype._randomPlayerPos = function (mapper, side, number) {
+    MyBotTrainer.prototype._randomPlayerPos = function (mapper, side, number) {
         return __awaiter(this, void 0, void 0, function () {
             var minCol, maxCol, minRow, maxRow, randomVelocity, randomCol, randomRow, randomPosition;
             return __generator(this, function (_a) {
@@ -219,7 +219,7 @@ var MyTrainableBot = /** @class */ (function () {
      * @param {GameSnapshotReader} reader
      * @private
      */
-    MyTrainableBot.prototype._findOpponent = function (reader) {
+    MyBotTrainer.prototype._findOpponent = function (reader) {
         var getOpponents = reader.getTeam(reader.getOpponentSide()).getPlayersList();
         var mappedOpponents = [];
         for (var _i = 0, getOpponents_1 = getOpponents; _i < getOpponents_1.length; _i++) {
@@ -239,12 +239,12 @@ var MyTrainableBot = /** @class */ (function () {
      * @returns {boolean}
      * @private
      */
-    MyTrainableBot.prototype._hasOpponent = function (mappedOpponents, region) {
+    MyBotTrainer.prototype._hasOpponent = function (mappedOpponents, region) {
         return mappedOpponents[region.getCol()] !== undefined && mappedOpponents[region.getCol()][region.getRow()] === true;
     };
-    return MyTrainableBot;
+    return MyBotTrainer;
 }());
-exports.MyTrainableBot = MyTrainableBot;
+exports.MyBotTrainer = MyBotTrainer;
 function randomInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }

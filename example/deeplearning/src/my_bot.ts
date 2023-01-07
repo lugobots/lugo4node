@@ -1,7 +1,7 @@
 import {GameSnapshotReader, Lugo, Mapper, SPECS, ORIENTATION, rl} from "@lugobots/lugo4node";
 import * as tf from "@tensorflow/tfjs-node";
 
-export class MyTrainableBot implements rl.TrainableBot {
+export class MyBotTrainer implements rl.BotTrainer {
 
     private remoteControl: rl.RemoteControl;
 

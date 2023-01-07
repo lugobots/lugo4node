@@ -1,5 +1,5 @@
-import {RemoteControl} from "./remote_control"
-import {TrainingController, TrainableBot, TrainingFunction} from './interfaces'
+import {RemoteControl} from "./remoteControl"
+import {TrainingController, BotTrainer, TrainingFunction} from './interfaces'
 import {GameSnapshot, OrderSet} from "../pb/server_pb"
 
 export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
@@ -21,9 +21,9 @@ export class TrainingCrl implements TrainingController {
     private cycleSeq: number = 0
 
     /**
-     * @type {TrainableBot}
+     * @type {BotTrainer}
      */
-    private bot: TrainableBot;
+    private bot: BotTrainer;
 
     debugging_log = true
     private stopRequested = false
@@ -35,10 +35,10 @@ export class TrainingCrl implements TrainingController {
 
     /**
      * @param {RemoteControl} remoteControl
-     * @param {TrainableBot} bot
+     * @param {BotTrainer} bot
      * @param {function} onReadyCallback
      */
-    constructor(remoteControl: RemoteControl, bot: TrainableBot, onReadyCallback: TrainingFunction) {
+    constructor(remoteControl: RemoteControl, bot: BotTrainer, onReadyCallback: TrainingFunction) {
         this.onReady = onReadyCallback
         this.bot = bot
         this.remoteControl = remoteControl
@@ -52,7 +52,7 @@ export class TrainingCrl implements TrainingController {
         try {
             this.lastSnapshot = await this.bot.createNewInitialState()
         } catch (e) {
-            console.error(`trainable bot failed to create initial state`, e)
+            console.error(`bot trainer failed to create initial state`, e)
             throw e;
         }
     }
@@ -63,7 +63,7 @@ export class TrainingCrl implements TrainingController {
             this._debug(`get state`)
             return this.bot.getInputs(this.lastSnapshot)
         } catch (e) {
-            console.error(`trainable bot failed to return inputs from a particular state`, e)
+            console.error(`bot trainer failed to return inputs from a particular state`, e)
             throw e
         }
     }
@@ -89,7 +89,7 @@ export class TrainingCrl implements TrainingController {
             const {done, reward} = await this.bot.evaluate(previousState, this.lastSnapshot)
             return {done, reward};
         } catch (e) {
-            console.error(`trainable bot failed to evaluate game state`, e)
+            console.error(`bot trainer failed to evaluate game state`, e)
             throw e
         }
     }

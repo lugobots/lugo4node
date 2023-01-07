@@ -1,7 +1,7 @@
 import {TrainingCrl, delay} from "./trainingCrl";
 import {newZombiePlayer} from "./zombie";
-import {RemoteControl} from "./remote_control"
-import {TrainableBot, TrainingFunction} from "./interfaces";
+import {RemoteControl} from "./remoteControl"
+import {BotTrainer, TrainingFunction} from "./interfaces";
 import {Client} from '../client'
 import {OrderSet, Team} from "../pb/server_pb.js"
 
@@ -13,9 +13,9 @@ export class Gym {
 
     private remoteControl : RemoteControl
 
-    constructor(remoteControl: RemoteControl, trainableBot : TrainableBot, trainingFunction : TrainingFunction, options = {debugging_log: false}) {
+    constructor(remoteControl: RemoteControl, trainer : BotTrainer, trainingFunction : TrainingFunction, options = {debugging_log: false}) {
         this.remoteControl = remoteControl
-        this.trainingCrl = new TrainingCrl(remoteControl, trainableBot, trainingFunction)
+        this.trainingCrl = new TrainingCrl(remoteControl, trainer, trainingFunction)
         this.trainingCrl.debugging_log = options.debugging_log
     }
 

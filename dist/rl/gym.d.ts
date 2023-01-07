@@ -1,11 +1,11 @@
-import { RemoteControl } from "./remote_control";
-import { TrainableBot, TrainingFunction } from "./interfaces";
+import { RemoteControl } from "./remoteControl";
+import { BotTrainer, TrainingFunction } from "./interfaces";
 import { Client } from '../client';
 export declare class Gym {
     private trainingCrl;
     private gameServerAddress;
     private remoteControl;
-    constructor(remoteControl: RemoteControl, trainableBot: TrainableBot, trainingFunction: TrainingFunction, options?: {
+    constructor(remoteControl: RemoteControl, trainer: BotTrainer, trainingFunction: TrainingFunction, options?: {
         debugging_log: boolean;
     });
     start(lugoClient: Client): Promise<void>;
