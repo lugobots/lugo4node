@@ -3,6 +3,7 @@ import {Mapper, Client, rl, Lugo} from "@lugobots/lugo4node";
 
 import {MyTrainableBot} from "./my_bot";
 import {SaveablePolicyNetwork, asyncToSync, mean, sum} from "./model";
+import {BotTrainer} from "../../../src/rl/interfaces";
 
 // training settings
 const trainIterations = 50;
@@ -15,7 +16,7 @@ const testingGames = 20
 
 const grpcAddress = "localhost:5000"
 const grpcInsecure = true
-const model_path = `file://${__dirname}/model_output`;
+const model_path = `file://./model_output`;
 
 (async () => {
 
@@ -48,12 +49,8 @@ const model_path = `file://${__dirname}/model_output`;
 
 })();
 
-/**
- *
- * @param {CoachStub} coach
- * @returns {Promise<void>}
- */
-async function myTrainingFunction(coach) {
+
+async function myTrainingFunction(coach: BotTrainer) : Promise<void> {
     console.log(`Let's training`)
 
     // first, creating the model

@@ -7,7 +7,7 @@ import {GameSnapshot, OrderSet} from '../pb/server_pb.js'
 //     JUMP = "jump"
 // }
 
-export type TrainingFunction = (trainer: BotTrainer) => void;
+export type TrainingFunction = (trainer: BotTrainer) => Promise<void>;
 
 export interface BotTrainer {
     /**
