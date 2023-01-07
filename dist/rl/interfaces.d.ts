@@ -1,16 +1,17 @@
 import { GameSnapshot, OrderSet } from '../pb/server_pb.js';
 export type TrainingFunction = (trainer: BotTrainer) => Promise<void>;
+/**
+ * The BotTrainer is passed to your Training function to give you control of the game flow.
+ */
 export interface BotTrainer {
     /**
-     *
-     * @returns {Promise<void>}
+     * This method should be called whenever your need to reset the game to an initial state.
      */
     setRandomState: () => Promise<void>;
     /**
-     *
-     * TODO Any will be defined by the coach?
+     * Use this method to get the inputs that will be used
      */
-    getStateTensor: () => Promise<any>;
+    getInputs: () => Promise<any>;
     /**
      *
      * @param action
@@ -22,16 +23,52 @@ export interface BotTrainer {
     }>;
     stop: () => Promise<void>;
 }
+/**
+ * The TrainableBot is used by the Gym class to play the game as a bot and to control the game state when needed.
+ */
 export interface TrainableBot {
+    /**
+     * createNewInitialState should create the initial scenario for each game.
+     *
+     * IMPORTANT!! Note that this method should define the new state directly on the game server. So you MUST
+     * use the remote control client to change the game elements' position/state
+     */
     createNewInitialState: () => Promise<GameSnapshot>;
     /**
-     * TODO Any dependents on your frame work?
+     * getInputs is called in each training step.
+     * The training function will call this method to receive whatever inputs you want to use in your neural network.
+     * Example, if you have 3 sensors, or 3 tensors, etc.
+     *
+     * This method must read the game snapshot and define input values and return it
+     *
+     * @param {GameSnapshot} snapshot - The current game state
      */
     getInputs: (snapshot: GameSnapshot) => Promise<any>;
     /**
-     * TODO confirm it should be any
+     * play define the orders that will be sent to the game server based on the `action` sent by your training function.
+     *
+     * IMPORTANT:
+     * Do not confuse this method role with an agent! Your agent will define the `action` inside your training function.
+     * This method is only responsible to translate the action to orders and send them
+     *
+     * @param {OrderSet} orderSet - used to define the orders that will be sent to the server. Your bot should set the orders
+     *                      and return it to the server.
+     * @param {GameSnapshot} snapshot - The current game state
+     * @param {any} action - Value passed by your training function to the Trainer `update` method
+     *
      */
     play: (orderSet: OrderSet, snapshot: GameSnapshot, action: any) => Promise<OrderSet>;
+    /**
+     * This method is called by the Trainer right after your bot play a turn of the game.
+     * It must compare the two states and return the reward and a boolean `done` to indicate that the game each the end.
+     *
+     * Your bot may evaluate turn by turn, or comparing the final game state to the initial state.
+     * However, if you want to compare with the initial state, your trainable bot will have to store the initial
+     * state when the method `createNewInitialState` is called.
+     *
+     * @param {GameSnapshot} previousSnapshot - The current game state
+     * @param {GameSnapshot} newSnapshot - The current game state
+     */
     evaluate: (previousSnapshot: GameSnapshot, newSnapshot: GameSnapshot) => Promise<{
         reward: number;
         done: boolean;

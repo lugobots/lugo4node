@@ -114,7 +114,7 @@ var PolicyNetwork = /** @class */ (function () {
      */
     PolicyNetwork.prototype.train = function (trainer, optimizer, discountRate, numGames, maxStepsPerGame) {
         return __awaiter(this, void 0, void 0, function () {
-            var allGradients, allRewards, gameScore, i, i, gameRewards, gameGradients, j, gradients, _a, _b, _c, done, reward, isDone;
+            var allGradients, allRewards, gameScore, i, gameRewards, gameGradients, j, gradients, _a, _b, _c, done, reward, isDone;
             var _this = this;
             return __generator(this, function (_d) {
                 switch (_d.label) {
@@ -122,23 +122,16 @@ var PolicyNetwork = /** @class */ (function () {
                         allGradients = [];
                         allRewards = [];
                         gameScore = [];
-                        // this.policyNet .summary()
-                        console.log("Starting iteration=======================");
-                        for (i in this.policyNet.layers) {
-                            console.log("Layer ".concat(i));
-                            this.policyNet.layers[i].getWeights()[0].print();
-                        }
-                        console.log("======================= ".concat(numGames));
                         i = 0;
                         _d.label = 1;
                     case 1:
                         if (!(i < numGames)) return [3 /*break*/, 10];
+                        console.log("Starting game ".concat(i, "/").concat(numGames));
                         return [4 /*yield*/, trainer.setRandomState()];
                     case 2:
                         _d.sent();
                         gameRewards = [];
                         gameGradients = [];
-                        console.log("KDQ? ".concat(maxStepsPerGame));
                         j = 0;
                         _d.label = 3;
                     case 3:
@@ -148,12 +141,9 @@ var PolicyNetwork = /** @class */ (function () {
                                 var inputTensor;
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {
-                                        case 0:
-                                            console.log("BLA BLA XXXXX");
-                                            return [4 /*yield*/, trainer.getStateTensor()];
+                                        case 0: return [4 /*yield*/, trainer.getInputs()];
                                         case 1:
                                             inputTensor = _a.sent();
-                                            console.log("BLA BLA YYY");
                                             return [2 /*return*/, this.getGradientsAndSaveActions(inputTensor).grads];
                                     }
                                 });
@@ -161,12 +151,11 @@ var PolicyNetwork = /** @class */ (function () {
                     case 4:
                         gradients = _b.apply(_a, [_d.sent()]);
                         this.pushGradients(gameGradients, gradients);
-                        console.log("BLA BLA 2", this.currentActions_);
                         return [4 /*yield*/, trainer.update(this.currentActions_)];
                     case 5:
                         _c = _d.sent(), done = _c.done, reward = _c.reward;
                         isDone = done;
-                        console.log("game ".concat(i), reward);
+                        console.log("game ".concat(i, ", step ").concat(j, ", reward"), reward);
                         gameRewards.push(reward);
                         if (isDone) {
                             //   When the game ends before max step count is reached, a reward of
@@ -181,7 +170,6 @@ var PolicyNetwork = /** @class */ (function () {
                         gameScore.push({ game: i, score: sum(gameRewards) });
                         this.pushGradients(allGradients, gameGradients);
                         allRewards.push(gameRewards);
-                        console.log("ONDE??!".concat(numGames));
                         return [4 /*yield*/, tf.nextFrame()];
                     case 8:
                         _d.sent();
@@ -220,14 +208,8 @@ var PolicyNetwork = /** @class */ (function () {
         return tf.variableGrads(function () {
             return tf.tidy(function () {
                 var _a = _this.getLogitsAndActions(inputTensor), logits = _a[0], actions = _a[1];
-                // console.log(`----------------------`)
-                // console.log(`TODOD`, actions.dataSync())
-                // console.log(`INDEX`, actions.argMax(-1).dataSync()[0])
                 _this.currentActions_ = actions.argMax(-1).dataSync()[0];
-                // // console.log(`YYYYYY2`, this.currentActions_)
-                // // console.log(`YYYYYY2`, actions.dataSync())
                 var labels = tf.sub(1, tf.tensor2d(actions.dataSync(), actions.shape));
-                // console.log(`YYYYYY 4`,this.currentActions_, actions.shape)
                 return tf.losses.sigmoidCrossEntropy(labels, logits);
             });
         });
@@ -246,16 +228,12 @@ var PolicyNetwork = /** @class */ (function () {
     PolicyNetwork.prototype.getLogitsAndActions = function (inputs) {
         var _this = this;
         return tf.tidy(function () {
-            // console.log(`XXXX 1`, inputs.arraySync())
             var logits = _this.policyNet.predict(inputs);
             // Get the probability of the leftward action.
             var probabilities = tf.sigmoid(logits);
-            // // console.log(`XXXX 3`, )
             // Probabilites of the left and right actions.
             // const leftRightProbs = tf.concat([leftProb, tf.sub(1, leftProb)], 1);
-            // // console.log(`XXXX 4`)
             // const actions = tf.multinomial(leftRightProbs, 1, null, false);
-            // // console.log(`XXXX 5`)
             return [logits, probabilities];
         });
     };

@@ -29,7 +29,7 @@ export declare class Trainer implements BotTrainer {
      * Set the state of match randomly.
      */
     setRandomState(): Promise<void>;
-    getStateTensor(): Promise<any>;
+    getInputs(): Promise<any>;
     update(action: any): Promise<{
         reward: number;
         done: boolean;

@@ -39,16 +39,6 @@ exports.__esModule = true;
 exports.delay = exports.MyTrainableBot = void 0;
 var lugo4node_1 = require("@lugobots/lugo4node");
 var tf = require("@tensorflow/tfjs-node");
-var ACTIONS = [
-    lugo4node_1.DIRECTION.FORWARD,
-    lugo4node_1.DIRECTION.BACKWARD,
-    lugo4node_1.DIRECTION.LEFT,
-    lugo4node_1.DIRECTION.RIGHT,
-    lugo4node_1.DIRECTION.FORWARD_RIGHT,
-    lugo4node_1.DIRECTION.FORWARD_LEFT,
-    lugo4node_1.DIRECTION.BACKWARD_RIGHT,
-    lugo4node_1.DIRECTION.BACKWARD_LEFT,
-];
 var MyTrainableBot = /** @class */ (function () {
     function MyTrainableBot(remoteControl) {
         this.remoteControl = remoteControl;
@@ -146,6 +136,8 @@ var MyTrainableBot = /** @class */ (function () {
                     throw new Error("did not find myself in the game");
                 }
                 interval = 1 / 8;
+                // action = action.argMax(-1).dataSync()
+                console.log("action: ", action);
                 dir = reader.makeOrderMoveByDirection(action);
                 // await delay(3000)
                 return [2 /*return*/, orderSet.setOrdersList([dir])];

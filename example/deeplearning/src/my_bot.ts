@@ -1,16 +1,5 @@
-import {DIRECTION, GameSnapshotReader, Lugo, Mapper, SPECS, ORIENTATION, rl} from "@lugobots/lugo4node";
+import {GameSnapshotReader, Lugo, Mapper, SPECS, ORIENTATION, rl} from "@lugobots/lugo4node";
 import * as tf from "@tensorflow/tfjs-node";
-
-const ACTIONS = [
-    DIRECTION.FORWARD,
-    DIRECTION.BACKWARD,
-    DIRECTION.LEFT,
-    DIRECTION.RIGHT,
-    DIRECTION.FORWARD_RIGHT,
-    DIRECTION.FORWARD_LEFT,
-    DIRECTION.BACKWARD_RIGHT,
-    DIRECTION.BACKWARD_LEFT,
-]
 
 export class MyTrainableBot implements rl.TrainableBot {
 
@@ -90,12 +79,10 @@ export class MyTrainableBot implements rl.TrainableBot {
         if (!me) {
             throw new Error("did not find myself in the game")
         }
-        // .argMax(-1).dataSync()
 
-        // console.log(action)
         const interval = 1 / 8;
         // action = action.argMax(-1).dataSync()
-        //  console.log(`action: `, action)
+        console.log(`action: `, action)
 
         const dir = reader.makeOrderMoveByDirection(action)
         // await delay(3000)

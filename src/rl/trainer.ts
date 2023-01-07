@@ -57,7 +57,7 @@ export class Trainer implements BotTrainer {
         }
     }
 
-    async getStateTensor(): Promise<any> {
+    async getInputs(): Promise<any> {
         try {
             this.cycleSeq++
             this._debug(`get state`)

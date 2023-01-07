@@ -40,18 +40,16 @@ const model_path = `file://./model_output`;
 
     const rc = new rl.RemoteControl();
     await rc.connect(grpcAddress)
-    const bot = new MyTrainableBot(rc)
-    console.log(`Bla bla bla`)
-    const gym = new rl.Gym(rc, bot, myTrainingFunction, {debugging_log: true})
-    console.log(`SUPER BLA BLA BLA`)
-    await gym.withZombiePlayers(grpcAddress).start(lugoClient)
 
+    const bot = new MyTrainableBot(rc)
+    const gym = new rl.Gym(rc, bot, myTrainingFunction, {debugging_log: false})
+
+    await gym.withZombiePlayers(grpcAddress).start(lugoClient)
 })();
 
 
-async function myTrainingFunction(coach: rl.Trainer) : Promise<void> {
+async function myTrainingFunction(trainer: rl.Trainer) : Promise<void> {
     console.log(`Let's training`)
-
     // first, creating the model
     let policyNet
     if (await SaveablePolicyNetwork.checkStoredModelStatus(`${model_path}/model.json`) != null) {
@@ -68,19 +66,18 @@ async function myTrainingFunction(coach: rl.Trainer) : Promise<void> {
     let iterationGamesMeans = [];
     let t0 = new Date().getTime();
     let stopRequested = false;
-    console.log(`DEBUGGING ${trainIterations}`);
+
     for (let i = 0; i < trainIterations; ++i) {
         try {
-            console.log(`DEBUGGING TURN ${i}`);
+            console.log(`Starting iteration ${i} of ${trainIterations}`)
             const gameScores = await policyNet.train(
-                coach, optimizer, discountRate, gamesPerIteration,
+                trainer, optimizer, discountRate, gamesPerIteration,
                 maxStepsPerGame);
-            console.log(`DEBUGGING NEVER`);
             const t1 = new Date().getTime();
             t0 = t1;
             console.log(`iteration ${i}/${trainIterations} done, total score:`, gameScores)
             iterationGamesMeans.push({iteration: i + 1, means: gameScores});
-            console.log(`# of tensors: ${tf.memory().numTensors}`);
+            // console.log(`# of tensors: ${tf.memory().numTensors}`);
 
             await tf.nextFrame();
             await policyNet.saveModel(model_path);
@@ -100,17 +97,16 @@ async function myTrainingFunction(coach: rl.Trainer) : Promise<void> {
     const testingScores = [];
     for (let i = 0; i < testingGames; ++i) {
         try {
-            await coach.setRandomState()
+            await trainer.setRandomState()
             let isDone = false
             const gameScores = []
             while (!isDone) {
 
                 tf.tidy(await asyncToSync(async () => {
-                    const action = policyNet.getActions(await coach.getStateTensor())[0];
-                    const {done, reward} = await coach.update(action);
+                    const action = policyNet.getActions(await trainer.getInputs())[0];
+                    const {done, reward} = await trainer.update(action);
                     isDone = done
                     gameScores.push(reward)
-                    // console.log(`Testing Means: `, gameScores)
                 }));
                 await tf.nextFrame();  // Unblock UI thread.
 
@@ -122,7 +118,7 @@ async function myTrainingFunction(coach: rl.Trainer) : Promise<void> {
             console.error(e)
         }
     }
-    await coach.stop()
+    await trainer.stop()
     console.log(`Testing scores: `, testingScores)
 }
 

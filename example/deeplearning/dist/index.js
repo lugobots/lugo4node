@@ -66,9 +66,7 @@ var model_path = "file://./model_output";
             case 1:
                 _a.sent();
                 bot = new my_bot_1.MyTrainableBot(rc);
-                console.log("Bla bla bla");
-                gym = new lugo4node_1.rl.Gym(rc, bot, myTrainingFunction, { debugging_log: true });
-                console.log("SUPER BLA BLA BLA");
+                gym = new lugo4node_1.rl.Gym(rc, bot, myTrainingFunction, { debugging_log: false });
                 return [4 /*yield*/, gym.withZombiePlayers(grpcAddress).start(lugoClient)];
             case 2:
                 _a.sent();
@@ -76,7 +74,7 @@ var model_path = "file://./model_output";
         }
     });
 }); })();
-function myTrainingFunction(coach) {
+function myTrainingFunction(trainer) {
     return __awaiter(this, void 0, void 0, function () {
         var policyNet, optimizer, iterationGamesMeans, t0, stopRequested, i, gameScores, t1, e_1, testingScores, _loop_1, i;
         var _this = this;
@@ -101,7 +99,6 @@ function myTrainingFunction(coach) {
                     iterationGamesMeans = [];
                     t0 = new Date().getTime();
                     stopRequested = false;
-                    console.log("DEBUGGING ".concat(trainIterations));
                     i = 0;
                     _a.label = 5;
                 case 5:
@@ -109,18 +106,18 @@ function myTrainingFunction(coach) {
                     _a.label = 6;
                 case 6:
                     _a.trys.push([6, 10, , 11]);
-                    console.log("DEBUGGING TURN ".concat(i));
-                    return [4 /*yield*/, policyNet.train(coach, optimizer, discountRate, gamesPerIteration, maxStepsPerGame)];
+                    console.log("Starting iteration ".concat(i, " of ").concat(trainIterations));
+                    return [4 /*yield*/, policyNet.train(trainer, optimizer, discountRate, gamesPerIteration, maxStepsPerGame)];
                 case 7:
                     gameScores = _a.sent();
-                    console.log("DEBUGGING NEVER");
                     t1 = new Date().getTime();
                     t0 = t1;
                     console.log("iteration ".concat(i, "/").concat(trainIterations, " done, total score:"), gameScores);
                     iterationGamesMeans.push({ iteration: i + 1, means: gameScores });
-                    console.log("# of tensors: ".concat(tf.memory().numTensors));
+                    // console.log(`# of tensors: ${tf.memory().numTensors}`);
                     return [4 /*yield*/, tf.nextFrame()];
                 case 8:
+                    // console.log(`# of tensors: ${tf.memory().numTensors}`);
                     _a.sent();
                     return [4 /*yield*/, policyNet.saveModel(model_path)];
                 case 9:
@@ -149,7 +146,7 @@ function myTrainingFunction(coach) {
                             switch (_d.label) {
                                 case 0:
                                     _d.trys.push([0, 6, , 7]);
-                                    return [4 /*yield*/, coach.setRandomState()];
+                                    return [4 /*yield*/, trainer.setRandomState()];
                                 case 1:
                                     _d.sent();
                                     isDone_1 = false;
@@ -164,10 +161,10 @@ function myTrainingFunction(coach) {
                                                 switch (_d.label) {
                                                     case 0:
                                                         _b = (_a = policyNet).getActions;
-                                                        return [4 /*yield*/, coach.getStateTensor()];
+                                                        return [4 /*yield*/, trainer.getInputs()];
                                                     case 1:
                                                         action = _b.apply(_a, [_d.sent()])[0];
-                                                        return [4 /*yield*/, coach.update(action)];
+                                                        return [4 /*yield*/, trainer.update(action)];
                                                     case 2:
                                                         _c = _d.sent(), done = _c.done, reward = _c.reward;
                                                         isDone_1 = done;
@@ -206,7 +203,7 @@ function myTrainingFunction(coach) {
                 case 15:
                     ++i;
                     return [3 /*break*/, 13];
-                case 16: return [4 /*yield*/, coach.stop()];
+                case 16: return [4 /*yield*/, trainer.stop()];
                 case 17:
                     _a.sent();
                     console.log("Testing scores: ", testingScores);

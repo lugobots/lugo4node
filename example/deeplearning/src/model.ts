@@ -73,37 +73,27 @@ class PolicyNetwork {
         const gameScore = [];
         // this.policyNet .summary()
 
-        console.log(`Starting iteration=======================`)
-        for(const i in this.policyNet.layers) {
-        console.log(`Layer ${i}`)
-        this.policyNet.layers[i].getWeights()[0].print()
-        }
-         console.log(`======================= ${numGames}`)
-
-
+        // for(const i in this.policyNet.layers) {
+        //     this.policyNet.layers[i].getWeights()[0].print()
+        // }
         for (let i = 0; i < numGames; ++i) {
-
-
+            console.log(`Starting game ${i}/${numGames}`)
             await trainer.setRandomState();
             const gameRewards = [];
             const gameGradients = [];
-            console.log(`KDQ? ${maxStepsPerGame}`)
             for (let j = 0; j < maxStepsPerGame; ++j) {
                 // For every step of the game, remember gradients of the policy
                 // network's weights with respect to the probability of the action
                 // choice that lead to the reward.
                 const gradients = tf.tidy(await asyncToSync(async () => {
-                    console.log(`BLA BLA XXXXX`)
-                    const inputTensor = await trainer.getStateTensor();
-                    console.log(`BLA BLA YYY`)
+                    const inputTensor = await trainer.getInputs();
                     return this.getGradientsAndSaveActions(inputTensor).grads;
                 }));
                 this.pushGradients(gameGradients, gradients);
-                console.log(`BLA BLA 2`, this.currentActions_)
                 // const action = [0];
                 const {done, reward} = await trainer.update(this.currentActions_);
                 const isDone = done
-                console.log(`game ${i}`, reward)
+                console.log(`game ${i}, step ${j}, reward`, reward)
                 gameRewards.push(reward);
                 if (isDone) {
                     //   When the game ends before max step count is reached, a reward of
@@ -121,7 +111,6 @@ class PolicyNetwork {
             gameScore.push({game: i, score: sum(gameRewards)});
             this.pushGradients(allGradients, gameGradients);
             allRewards.push(gameRewards);
-            console.log(`ONDE??!${numGames}`)
             await tf.nextFrame();
         }
         tf.tidy(() => {
@@ -154,17 +143,11 @@ class PolicyNetwork {
         return tf.variableGrads((): tf.Scalar => {
             return tf.tidy(() => {
                 const [logits, actions] = this.getLogitsAndActions(inputTensor);
-                // console.log(`----------------------`)
-                // console.log(`TODOD`, actions.dataSync())
-                // console.log(`INDEX`, actions.argMax(-1).dataSync()[0])
 
 
                 this.currentActions_ = actions.argMax(-1).dataSync()[0];
-                // // console.log(`YYYYYY2`, this.currentActions_)
-                // // console.log(`YYYYYY2`, actions.dataSync())
                 const labels =
                     tf.sub(1, tf.tensor2d(actions.dataSync(), actions.shape));
-                // console.log(`YYYYYY 4`,this.currentActions_, actions.shape)
                 return tf.losses.sigmoidCrossEntropy(labels, logits);
             })
         });
@@ -184,16 +167,12 @@ class PolicyNetwork {
      */
     getLogitsAndActions(inputs) {
         return tf.tidy(() => {
-            // console.log(`XXXX 1`, inputs.arraySync())
             const logits = this.policyNet.predict(inputs);
             // Get the probability of the leftward action.
             const probabilities = tf.sigmoid(logits);
-            // // console.log(`XXXX 3`, )
             // Probabilites of the left and right actions.
             // const leftRightProbs = tf.concat([leftProb, tf.sub(1, leftProb)], 1);
-            // // console.log(`XXXX 4`)
             // const actions = tf.multinomial(leftRightProbs, 1, null, false);
-            // // console.log(`XXXX 5`)
             return [logits, probabilities];
         });
     }

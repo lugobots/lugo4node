@@ -90,7 +90,7 @@ var Trainer = /** @class */ (function () {
             });
         });
     };
-    Trainer.prototype.getStateTensor = function () {
+    Trainer.prototype.getInputs = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 try {
