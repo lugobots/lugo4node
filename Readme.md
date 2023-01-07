@@ -65,7 +65,7 @@ If you are a **machine learning** enthusiastic you may want to use the Lugo rein
 
 **Lugo bots** is an asynchronous game, so you will need to use the **Lugo4Node Gym** library to create your model:
 
-See example and documentation at [RL example project](src/rl/Readme.md)
+See example and documentation at [RL lib readme file](src/rl/Readme.md)
 
 
 ## Helpers

@@ -1,5 +1,7 @@
 # Lugo Reinforcement Learning 
 
+See example at the [RL example](../../example/rl)
+
 ## How to use the RL lib?
 
 The RL lib has a class called `Gym` that will require 3 params:
@@ -7,7 +9,7 @@ The RL lib has a class called `Gym` that will require 3 params:
 ### The Remote control
 
 The RC allow you to control the game server flow by pausing, changing the elements' position, etc. (see
-the [Remove Service in the Game protocol definition](https://github.com/lugobots/protos/blob/master/doc/docs.md#remote))
+the [Remote Service in the Game protocol definition](https://github.com/lugobots/protos/blob/master/doc/docs.md#remote))
 
 The remote control is already implemented in **Lugo4Node** package.:
 ```typescript
