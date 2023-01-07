@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -52,27 +52,23 @@ var Gym = /** @class */ (function () {
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        console.log("START1");
-                        return [4 /*yield*/, lugoClient.setGettingReadyHandler(function (snapshot) {
-                                console.log("START vai handler");
-                                return _this.trainer.onGettingReadyState(snapshot);
-                            }).play(function (orderSet, snapshot) {
-                                console.log("PLAY PLAY PLAY");
-                                return _this.trainer.gameTurnHandler(orderSet, snapshot);
-                            }, function () { return __awaiter(_this, void 0, void 0, function () {
-                                return __generator(this, function (_a) {
-                                    switch (_a.label) {
-                                        case 0:
-                                            if (!this.gameServerAddress) return [3 /*break*/, 2];
-                                            return [4 /*yield*/, completeWithZombies(this.gameServerAddress)];
-                                        case 1:
-                                            _a.sent();
-                                            _a.label = 2;
-                                        case 2: return [2 /*return*/];
-                                    }
-                                });
-                            }); })];
+                    case 0: return [4 /*yield*/, lugoClient.setGettingReadyHandler(function (snapshot) {
+                            return _this.trainer.onGettingReadyState(snapshot);
+                        }).play(function (orderSet, snapshot) {
+                            return _this.trainer.gameTurnHandler(orderSet, snapshot);
+                        }, function () { return __awaiter(_this, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        if (!this.gameServerAddress) return [3 /*break*/, 2];
+                                        return [4 /*yield*/, completeWithZombies(this.gameServerAddress)];
+                                    case 1:
+                                        _a.sent();
+                                        _a.label = 2;
+                                    case 2: return [2 /*return*/];
+                                }
+                            });
+                        }); })];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
@@ -82,7 +78,6 @@ var Gym = /** @class */ (function () {
     };
     Gym.prototype.withZombiePlayers = function (gameServerAddress) {
         this.gameServerAddress = gameServerAddress;
-        console.log("WAHT???");
         return this;
     };
     return Gym;
@@ -94,24 +89,20 @@ function completeWithZombies(gameServerAddress) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    console.log("W CHAAAAAMA@@@");
                     i = 1;
                     _a.label = 1;
                 case 1:
                     if (!(i <= 11)) return [3 /*break*/, 7];
-                    console.log("Connected ".concat(i));
                     return [4 /*yield*/, (0, zombie_1.newZombiePlayer)(server_pb_js_1.Team.Side.HOME, i, gameServerAddress)];
                 case 2:
                     _a.sent();
-                    console.log("WAIT 1");
-                    return [4 /*yield*/, (0, trainer_1.delay)(100)];
+                    return [4 /*yield*/, (0, trainer_1.delay)(50)];
                 case 3:
                     _a.sent();
                     return [4 /*yield*/, (0, zombie_1.newZombiePlayer)(server_pb_js_1.Team.Side.AWAY, i, gameServerAddress)];
                 case 4:
                     _a.sent();
-                    console.log("WAIT 2");
-                    return [4 /*yield*/, (0, trainer_1.delay)(100)];
+                    return [4 /*yield*/, (0, trainer_1.delay)(50)];
                 case 5:
                     _a.sent();
                     _a.label = 6;
