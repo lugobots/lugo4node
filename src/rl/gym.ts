@@ -20,14 +20,21 @@ export class Gym {
     }
 
     async start(lugoClient: Client) {
-        await lugoClient.setGettingReadyHandler((snapshot) => {
-            return this.trainingCrl.onGettingReadyState(snapshot)
-        }).play((orderSet, snapshot) :Promise<OrderSet> => {
+        // If the game was started in a previous training session, the game server will be stuck on the listening phase.
+        // so we check if the game has started, if now, we try to resume the server
+        let hasStarted = false;
+        await lugoClient.play((orderSet, snapshot) :Promise<OrderSet> => {
+            hasStarted = true;
             return this.trainingCrl.gameTurnHandler(orderSet, snapshot)
         }, async () => {
             if(this.gameServerAddress) {
                 await completeWithZombies(this.gameServerAddress)
             }
+            setTimeout(() => {
+                if(!hasStarted) {
+                    this.remoteControl.resumeListening()
+                }
+            }, 1000);
         })
     }
 

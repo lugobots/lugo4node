@@ -144,18 +144,13 @@ var TrainingCrl = /** @class */ (function () {
             });
         });
     };
-    TrainingCrl.prototype.onGettingReadyState = function (snapshot) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                if (!this.trainingHasStarted) {
-                    // await this.remoteControl.nextTurn().catch(e => {
-                    //     console.error(`could not request next turn`, e)
-                    // })
-                }
-                return [2 /*return*/];
-            });
-        });
-    };
+    // async onGettingReadyState(snapshot) {
+    //     if (!this.trainingHasStarted) {
+    //         // await this.remoteControl.nextTurn().catch(e => {
+    //         //     console.error(`could not request next turn`, e)
+    //         // })
+    //     }
+    // }
     TrainingCrl.prototype.gameTurnHandler = function (orderSet, snapshot) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;

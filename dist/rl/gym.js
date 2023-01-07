@@ -49,26 +49,35 @@ var Gym = /** @class */ (function () {
     }
     Gym.prototype.start = function (lugoClient) {
         return __awaiter(this, void 0, void 0, function () {
+            var hasStarted;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, lugoClient.setGettingReadyHandler(function (snapshot) {
-                            return _this.trainingCrl.onGettingReadyState(snapshot);
-                        }).play(function (orderSet, snapshot) {
-                            return _this.trainingCrl.gameTurnHandler(orderSet, snapshot);
-                        }, function () { return __awaiter(_this, void 0, void 0, function () {
-                            return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0:
-                                        if (!this.gameServerAddress) return [3 /*break*/, 2];
-                                        return [4 /*yield*/, completeWithZombies(this.gameServerAddress)];
-                                    case 1:
-                                        _a.sent();
-                                        _a.label = 2;
-                                    case 2: return [2 /*return*/];
-                                }
-                            });
-                        }); })];
+                    case 0:
+                        hasStarted = false;
+                        return [4 /*yield*/, lugoClient.play(function (orderSet, snapshot) {
+                                hasStarted = true;
+                                return _this.trainingCrl.gameTurnHandler(orderSet, snapshot);
+                            }, function () { return __awaiter(_this, void 0, void 0, function () {
+                                var _this = this;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            if (!this.gameServerAddress) return [3 /*break*/, 2];
+                                            return [4 /*yield*/, completeWithZombies(this.gameServerAddress)];
+                                        case 1:
+                                            _a.sent();
+                                            _a.label = 2;
+                                        case 2:
+                                            setTimeout(function () {
+                                                if (!hasStarted) {
+                                                    _this.remoteControl.resumeListening();
+                                                }
+                                            }, 1000);
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); })];
                     case 1:
                         _a.sent();
                         return [2 /*return*/];

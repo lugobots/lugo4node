@@ -8,7 +8,7 @@ export declare class TrainingCrl implements TrainingController {
      */
     private remoteControl;
     private readonly onReady;
-    private trainingHasStarted;
+    protected trainingHasStarted: boolean;
     private lastSnapshot;
     private waitingForAction;
     private cycleSeq;
@@ -35,7 +35,6 @@ export declare class TrainingCrl implements TrainingController {
         done: boolean;
     }>;
     _gotNextState: (newState: GameSnapshot) => void;
-    onGettingReadyState(snapshot: any): Promise<void>;
     gameTurnHandler(orderSet: any, snapshot: any): Promise<OrderSet>;
     stop(): Promise<void>;
     _debug(msg: any): void;

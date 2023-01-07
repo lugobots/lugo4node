@@ -12,7 +12,7 @@ export class TrainingCrl implements TrainingController {
 
     private readonly onReady;
 
-    private trainingHasStarted: boolean = false;
+    protected trainingHasStarted: boolean = false;
 
     private lastSnapshot: GameSnapshot;
 
@@ -98,13 +98,13 @@ export class TrainingCrl implements TrainingController {
         this._debug(`No one waiting for the next state`)
     };
 
-    async onGettingReadyState(snapshot) {
-        if (!this.trainingHasStarted) {
-            // await this.remoteControl.nextTurn().catch(e => {
-            //     console.error(`could not request next turn`, e)
-            // })
-        }
-    }
+    // async onGettingReadyState(snapshot) {
+    //     if (!this.trainingHasStarted) {
+    //         // await this.remoteControl.nextTurn().catch(e => {
+    //         //     console.error(`could not request next turn`, e)
+    //         // })
+    //     }
+    // }
 
     async gameTurnHandler(orderSet, snapshot): Promise<OrderSet> {
         this._debug(`new turn`)
