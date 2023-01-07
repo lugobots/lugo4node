@@ -1,7 +1,7 @@
 {
-  "name": "deeplearning",
+  "name": "reinforcement_learning",
   "version": "1.0.0",
-  "description": "Example of using the Deep Learning helpers using Tensorflow",
+  "description": "Example of using the Reinforcement Learning helpers using Tensorflow",
   "main": "dist/index.js",
   "scripts": {
     "tsc": "rm -rf dist/* && tsc",
