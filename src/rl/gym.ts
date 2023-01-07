@@ -1,10 +1,9 @@
-import {Trainer} from "./trainer";
+import {Trainer, delay} from "./trainer";
 import {newZombiePlayer} from "./zombie";
 import {RemoteControl} from "./remote_control"
 import {TrainableBot, TrainingFunction} from "./interfaces";
 import {Client} from '../client'
 import {OrderSet, Team} from "../pb/server_pb.js"
-import {delay} from "../../example/deeplearning/src/my_bot";
 
 export class Gym {
 
@@ -32,7 +31,7 @@ export class Gym {
             if(this.gameServerAddress) {
                 await completeWithZombies(this.gameServerAddress)
             }
-            await this.remoteControl.nextTurn()
+            // await this.remoteControl.pauseResume()
         })
     }
 
@@ -45,14 +44,13 @@ export class Gym {
 
 async function completeWithZombies(gameServerAddress) {
     console.log(`W CHAAAAAMA@@@`)
-    await delay(10000)
     for (let i = 1; i <= 11; i++) {
         console.log(`Connected ${i}`)
         await newZombiePlayer(Team.Side.HOME, i, gameServerAddress)
         console.log(`WAIT 1`)
-        await delay(1000)
+        await delay(100)
         await newZombiePlayer(Team.Side.AWAY, i, gameServerAddress)
         console.log(`WAIT 2`)
-        await delay(1000)
+        await delay(100)
     }
 }

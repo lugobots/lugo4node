@@ -102,9 +102,9 @@ export class Trainer implements BotTrainer {
         console.log(`BLa bla`);
         if (!this.trainingHasStarted) {
             console.log(`BLa bla22222`);
-            await this.remoteControl.nextTurn().catch(e => {
-                console.error(`could not request next turn`, e)
-            })
+            // await this.remoteControl.nextTurn().catch(e => {
+            //     console.error(`could not request next turn`, e)
+            // })
         }
     }
 
@@ -142,11 +142,14 @@ export class Trainer implements BotTrainer {
                         }
                         this._debug(`sending order for turn ${snapshot.getTurn()} based on action`)
                         this.bot.play(orderSet, snapshot, newAction).then((orderSet) => {
-                            resolve(orderSet)
+                            resolve(orderSet)// sending the orders wh
                             this._debug(`order sent, calling next turn`)
-                            return delay(80)// WHY? Waiting the PLAYING PHASE? maybe we should change it in the server?
+                            return delay(80)// why? ensure the server got the order?
                         }).then(() => {
-                            this.remoteControl.nextTurn()
+                            this._debug(`RESUME NOW!`)
+                            return this.remoteControl.resumeListening();
+                        }).then(() => {
+                            this._debug(`listening resumed`)
                         })
                     } catch (e) {
                         reject()

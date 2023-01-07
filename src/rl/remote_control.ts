@@ -1,7 +1,14 @@
 `use strict`;
 import * as grpc from "@grpc/grpc-js";
 import * as remote from "../pb/remote_grpc_pb"
-import {PauseResumeRequest, BallProperties, NextTurnRequest, PlayerProperties, GameProperties} from "../pb/remote_pb"
+import {
+    PauseResumeRequest,
+    BallProperties,
+    NextTurnRequest,
+    PlayerProperties,
+    GameProperties,
+    ResumeListeningRequest
+} from "../pb/remote_pb"
 import {Point, Velocity} from "../pb/physics_pb"
 import {GameSnapshot, Team} from "../pb/server_pb"
 
@@ -40,8 +47,20 @@ export class RemoteControl {
         })
     }
 
+    async resumeListening(): Promise<void> {
+        const req = new ResumeListeningRequest()
+        return new Promise<void>((resolve, reject) => {
+            const resp = this.client.resumeListeningPhase(req, (err) => {
+                if (err) {
+                    reject(err)
+                }
+                resolve()
+            })
+        })
+    }
+
     async nextTurn(): Promise<void> {
-        const nextTurnReq = new NextTurnRequest()
+        const nextTurnReq = new NextTurnRequest();
         return new Promise<void>((resolve, reject) => {
             const resp = this.client.nextTurn(nextTurnReq, (err) => {
                 if (err) {
