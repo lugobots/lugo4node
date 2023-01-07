@@ -134,7 +134,7 @@ export class Client {
         await new Promise((resolve, reject) => {
             const serverURL = `${this.serverAdd}`
             // the random guarantee that we will have multiple connections instead of using pool of connections
-            this.client = new GameClient(serverURL, credentials.createInsecure())
+            this.client = new GameClient(serverURL, credentials.createInsecure(), {"primary_user_agent" : `agent ${Math.random()}`})
             const deadline = new Date();
 
 
