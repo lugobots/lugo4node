@@ -99,9 +99,7 @@ export class Trainer implements BotTrainer {
     };
 
     async onGettingReadyState(snapshot) {
-        console.log(`BLa bla`);
         if (!this.trainingHasStarted) {
-            console.log(`BLa bla22222`);
             // await this.remoteControl.nextTurn().catch(e => {
             //     console.error(`could not request next turn`, e)
             // })
@@ -120,7 +118,7 @@ export class Trainer implements BotTrainer {
                 if (this.stopRequested) {
                     return resolve(orderSet)
                 }
-                console.log(`max wait for a new action`)
+                console.error(`max wait for a new action`)
                 reject()
             }, 5000)
             if (this.stopRequested) {

@@ -189,8 +189,8 @@ export class Client {
                 running.on('error', async (e) => {
                     reject(new Error(`error on team connection: ${e}`))
                 });
-                running.on('end', function () {
-                    console.log('communication done');
+                running.on('end',  () => {
+                    console.log(`[${this.teamSide === Team.Side.HOME ? "HOME" : "AWAY"}-${this.number}] communication done`);
                     resolve(null)
                 });
             })

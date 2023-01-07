@@ -30,13 +30,12 @@ export function newZombiePlayer(teamSide, playerNumber, gameServerAddress) {
 
         const turnHandler = (orderSet: OrderSet, snapshot: GameSnapshot) : Promise<OrderSet> => {
             return new Promise((r, j ) => {
-                console.log(`Zombie got ${snapshot.getTurn()}`)
                 orderSet.setDebugMessage(`${teamSide === 0 ? 'HOME' : 'AWAY'}-${playerNumber} #${snapshot.getTurn()}`)
                 r(orderSet);
             });
         }
         lugoClient.play(turnHandler, resolve).catch(e => {
-            console.log(`[PLay] Zombie player ${teamSide === 0 ? 'HOME' : 'AWAY'}-${playerNumber} said: ${e.toString()}`)
+          //  console.log(`[PLay] Zombie player ${teamSide === 0 ? 'HOME' : 'AWAY'}-${playerNumber} said: ${e.toString()}`)
             reject();
         })
     })

@@ -3,7 +3,7 @@ import { OrderSet } from "./pb/server_pb.js";
 import { Bot } from './stub.js';
 import { EnvVarLoader } from './configurator.js';
 export declare const PROTOCOL_VERSION = "1.0.0";
-export declare type RawTurnProcessor = (OrderSet: any, GameSnapshot: any) => Promise<OrderSet>;
+export type RawTurnProcessor = (OrderSet: any, GameSnapshot: any) => Promise<OrderSet>;
 /**
  *
  * @param {EnvVarLoader} config

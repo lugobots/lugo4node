@@ -23,13 +23,12 @@ function newZombiePlayer(teamSide, playerNumber, gameServerAddress) {
         var lugoClient = new client_1.Client(gameServerAddress, true, "", teamSide, playerNumber, initialRegion.getCenter());
         var turnHandler = function (orderSet, snapshot) {
             return new Promise(function (r, j) {
-                console.log("Zombie got ".concat(snapshot.getTurn()));
                 orderSet.setDebugMessage("".concat(teamSide === 0 ? 'HOME' : 'AWAY', "-").concat(playerNumber, " #").concat(snapshot.getTurn()));
                 r(orderSet);
             });
         };
         lugoClient.play(turnHandler, resolve)["catch"](function (e) {
-            console.log("[PLay] Zombie player ".concat(teamSide === 0 ? 'HOME' : 'AWAY', "-").concat(playerNumber, " said: ").concat(e.toString()));
+            //  console.log(`[PLay] Zombie player ${teamSide === 0 ? 'HOME' : 'AWAY'}-${playerNumber} said: ${e.toString()}`)
             reject();
         });
     });
