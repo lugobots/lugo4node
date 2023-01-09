@@ -3,7 +3,7 @@ import {Scalar} from "@tensorflow/tfjs-core/dist/tensor";
 import {rl} from "@lugobots/lugo4node";
 
 const inputCount = 3
-const outputCount = 8
+const outputCount = 4
 
 class PolicyNetwork {
 
@@ -89,6 +89,7 @@ class PolicyNetwork {
                     return this.getGradientsAndSaveActions(inputTensor).grads;
                 }));
                 this.pushGradients(gameGradients, gradients);
+                // console.log(`CUMA?? `, this.currentActions_)
                 // const action = [0];
                 const {done, reward} = await trainingCtrl.update(this.currentActions_);
                 const isDone = done
@@ -143,6 +144,8 @@ class PolicyNetwork {
             return tf.tidy(() => {
                 const [logits, actions] = this.getLogitsAndActions(inputTensor);
 
+
+              //  console.log(`ACTION: `, actions, logits)
 
                 this.currentActions_ = actions.argMax(-1).dataSync()[0];
                 const labels =

@@ -207,7 +207,7 @@ var PolicyNetwork = /** @class */ (function () {
         return tf.variableGrads(function () {
             return tf.tidy(function () {
                 var _a = _this.getLogitsAndActions(inputTensor), logits = _a[0], actions = _a[1];
-                //  console.log(`ACTION: `, actions, logits)
+                console.log("ACTION: ", actions.argMax(-1).dataSync());
                 _this.currentActions_ = actions.argMax(-1).dataSync()[0];
                 var labels = tf.sub(1, tf.tensor2d(actions.dataSync(), actions.shape));
                 return tf.losses.sigmoidCrossEntropy(labels, logits);

@@ -98,26 +98,17 @@ var MyBotTrainer = /** @class */ (function () {
                 mappedOpponents = this._findOpponent(reader);
                 myPosition = this.mapper.getRegionFromPoint(me.getPosition());
                 sensorFront = 0;
-                if (this._hasOpponent(mappedOpponents, myPosition.front()) ||
-                    this._hasOpponent(mappedOpponents, myPosition.front().left()) ||
-                    this._hasOpponent(mappedOpponents, myPosition.front().right())) {
-                    sensorFront = 3;
-                }
-                else if (this._hasOpponent(mappedOpponents, myPosition.front().front()) ||
-                    this._hasOpponent(mappedOpponents, myPosition.front().front().left()) ||
-                    this._hasOpponent(mappedOpponents, myPosition.front().front().right())) {
+                if (this._hasOpponent(mappedOpponents, myPosition.front())) {
                     sensorFront = 2;
                 }
-                else if (this._hasOpponent(mappedOpponents, myPosition.front().front().front()) ||
-                    this._hasOpponent(mappedOpponents, myPosition.front().front().front().left()) ||
-                    this._hasOpponent(mappedOpponents, myPosition.front().front().front().right())) {
+                else if (this._hasOpponent(mappedOpponents, myPosition.front().front())) {
+                    sensorFront = 1;
+                }
+                else if (this._hasOpponent(mappedOpponents, myPosition.front().left()) || this._hasOpponent(mappedOpponents, myPosition.front().right())) {
                     sensorFront = 1;
                 }
                 sensorLeft = 0;
                 if (this._hasOpponent(mappedOpponents, myPosition.left())) {
-                    sensorLeft = 3;
-                }
-                else if (this._hasOpponent(mappedOpponents, myPosition.left().left())) {
                     sensorLeft = 2;
                 }
                 else if (this._hasOpponent(mappedOpponents, myPosition.left().left())) {
@@ -125,12 +116,9 @@ var MyBotTrainer = /** @class */ (function () {
                 }
                 sensorRight = 0;
                 if (this._hasOpponent(mappedOpponents, myPosition.right())) {
-                    sensorRight = 3;
-                }
-                else if (this._hasOpponent(mappedOpponents, myPosition.right().right())) {
                     sensorRight = 2;
                 }
-                else if (this._hasOpponent(mappedOpponents, myPosition.right().right().right())) {
+                else if (this._hasOpponent(mappedOpponents, myPosition.right().right())) {
                     sensorRight = 1;
                 }
                 // console.log(`Sensorres: `, [sensorFront, sensorLeft, sensorRight])
@@ -196,9 +184,6 @@ var MyBotTrainer = /** @class */ (function () {
                 else if (mePreviously.getPosition().getX() > lugo4node_1.SPECS.MAX_X_COORDINATE * 0.9) {
                     done = true;
                     // console.log(`Done because it is too far ${mePreviously.getPosition().getX()}`)
-                }
-                if (reward < 0) {
-                    reward = 0;
                 }
                 // console.log(`Reward : `, reward)
                 return [2 /*return*/, { done: done, reward: reward }];
