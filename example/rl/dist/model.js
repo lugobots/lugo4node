@@ -70,6 +70,7 @@ var PolicyNetwork = /** @class */ (function () {
             this.policyNet = hiddenLayerSizesOrModel;
         }
         else {
+            console.log("CREAD TE");
             this.createPolicyNetwork(hiddenLayerSizesOrModel);
         }
     }
@@ -89,12 +90,12 @@ var PolicyNetwork = /** @class */ (function () {
         hiddenLayerSizes.forEach(function (hiddenLayerSize, i) {
             _this.policyNet.add(tf.layers.dense({
                 units: hiddenLayerSize,
-                activation: 'elu',
+                activation: 'relu',
                 // `inputShape` is required only for the first layer.
                 inputShape: i === 0 ? [inputCount] : undefined
             }));
         });
-        this.policyNet.add(tf.layers.dense({ units: outputCount }));
+        this.policyNet.add(tf.layers.dense({ units: outputCount, activation: 'softmax' }));
     };
     /**
      * Train the policy network's model.

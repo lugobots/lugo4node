@@ -23,6 +23,7 @@ class PolicyNetwork {
         if (hiddenLayerSizesOrModel instanceof tf.LayersModel) {
             this.policyNet = hiddenLayerSizesOrModel;
         } else {
+            console.log(`CREAD TE`)
             this.createPolicyNetwork(hiddenLayerSizesOrModel);
         }
     }
@@ -42,12 +43,12 @@ class PolicyNetwork {
         hiddenLayerSizes.forEach((hiddenLayerSize, i) => {
             this.policyNet.add(tf.layers.dense({
                 units: hiddenLayerSize,
-                activation: 'elu',
+                activation: 'relu',
                 // `inputShape` is required only for the first layer.
                 inputShape: i === 0 ? [inputCount] : undefined
             }));
         });
-        this.policyNet.add(tf.layers.dense({units: outputCount}));
+        this.policyNet.add(tf.layers.dense({units: outputCount, activation: 'softmax'}));
     }
 
     /**

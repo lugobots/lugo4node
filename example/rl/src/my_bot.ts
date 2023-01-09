@@ -67,6 +67,7 @@ export class MyBotTrainer implements rl.BotTrainer {
         ) {
             sensorFront = 1
         }
+
         let sensorLeft = 0
         if (this._hasOpponent(mappedOpponents, myPosition.left())) {
             sensorLeft = 3
@@ -96,11 +97,7 @@ export class MyBotTrainer implements rl.BotTrainer {
             throw new Error("did not find myself in the game")
         }
 
-        const interval = 1 / 8;
-        // action = action.argMax(-1).dataSync()
-        console.log(`action: `, action)
         const dir = reader.makeOrderMoveByDirection(action)
-        // await delay(3000)
         return orderSet.setOrdersList([dir])
     }
 
@@ -137,7 +134,7 @@ export class MyBotTrainer implements rl.BotTrainer {
         const myPosition = this.mapper.getRegionFromPoint(me.getPosition())
         let reward = 0;
         // if ( actualDist < previousDist) {
-        reward = (previousDist - actualDist) / SPECS.PLAYER_MAX_SPEED
+        reward = ((previousDist - actualDist) / SPECS.PLAYER_MAX_SPEED) * 2
         // }
         let done = false
 
@@ -146,14 +143,15 @@ export class MyBotTrainer implements rl.BotTrainer {
             this._hasOpponent(mappedOpponents, myPosition.front()) ||
             this._hasOpponent(mappedOpponents, myPosition)) {
             done = true
-            reward = -2
+            reward = -5
             // console.log(`Done because got to close to an opponent`)
         } else if (mePreviously.getPosition().getX() > SPECS.MAX_X_COORDINATE * 0.9) {
             done = true
             // console.log(`Done because it is too far ${mePreviously.getPosition().getX()}`)
         }
-        if (reward < 0) {
-            reward = 0;
+
+        if (reward === 0) {
+            reward = -1
         }
         // console.log(`Reward : `, reward)
         return {done, reward}
