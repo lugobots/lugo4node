@@ -54,7 +54,7 @@ exports.__esModule = true;
 exports.sum = exports.mean = exports.asyncToSync = exports.SaveablePolicyNetwork = void 0;
 var tf = require("@tensorflow/tfjs-node");
 var inputCount = 3;
-var outputCount = 8;
+var outputCount = 4;
 var PolicyNetwork = /** @class */ (function () {
     /**
      * Constructor of PolicyNetwork.
@@ -70,6 +70,7 @@ var PolicyNetwork = /** @class */ (function () {
             this.policyNet = hiddenLayerSizesOrModel;
         }
         else {
+            console.log("CREAD TE");
             this.createPolicyNetwork(hiddenLayerSizesOrModel);
         }
     }
@@ -89,12 +90,12 @@ var PolicyNetwork = /** @class */ (function () {
         hiddenLayerSizes.forEach(function (hiddenLayerSize, i) {
             _this.policyNet.add(tf.layers.dense({
                 units: hiddenLayerSize,
-                activation: 'elu',
+                activation: 'relu',
                 // `inputShape` is required only for the first layer.
                 inputShape: i === 0 ? [inputCount] : undefined
             }));
         });
-        this.policyNet.add(tf.layers.dense({ units: outputCount }));
+        this.policyNet.add(tf.layers.dense({ units: outputCount, activation: 'softmax' }));
     };
     /**
      * Train the policy network's model.
@@ -207,6 +208,7 @@ var PolicyNetwork = /** @class */ (function () {
         return tf.variableGrads(function () {
             return tf.tidy(function () {
                 var _a = _this.getLogitsAndActions(inputTensor), logits = _a[0], actions = _a[1];
+                //  console.log(`ACTION: `, actions, logits)
                 _this.currentActions_ = actions.argMax(-1).dataSync()[0];
                 var labels = tf.sub(1, tf.tensor2d(actions.dataSync(), actions.shape));
                 return tf.losses.sigmoidCrossEntropy(labels, logits);

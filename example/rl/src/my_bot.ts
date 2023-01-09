@@ -1,4 +1,4 @@
-import {GameSnapshotReader, Lugo, Mapper, SPECS, ORIENTATION, rl} from "@lugobots/lugo4node";
+import {GameSnapshotReader, Lugo, Mapper, DIRECTION, SPECS, ORIENTATION, rl} from "@lugobots/lugo4node";
 import * as tf from "@tensorflow/tfjs-node";
 
 export class MyBotTrainer implements rl.BotTrainer {
@@ -48,15 +48,30 @@ export class MyBotTrainer implements rl.BotTrainer {
         const myPosition = this.mapper.getRegionFromPoint(me.getPosition())
 
         let sensorFront = 0
-        if (this._hasOpponent(mappedOpponents, myPosition.front())) {
+        if (
+            this._hasOpponent(mappedOpponents, myPosition.front()) ||
+            this._hasOpponent(mappedOpponents, myPosition.front().left()) ||
+            this._hasOpponent(mappedOpponents, myPosition.front().right())
+        ) {
+            sensorFront = 3
+        } else if (
+            this._hasOpponent(mappedOpponents, myPosition.front().front()) ||
+            this._hasOpponent(mappedOpponents, myPosition.front().front().left()) ||
+            this._hasOpponent(mappedOpponents, myPosition.front().front().right())
+        ) {
             sensorFront = 2
-        } else if (this._hasOpponent(mappedOpponents, myPosition.front().front())) {
-            sensorFront = 1
-        } else if (this._hasOpponent(mappedOpponents, myPosition.front().left()) || this._hasOpponent(mappedOpponents, myPosition.front().right())) {
+        } else if (
+            this._hasOpponent(mappedOpponents, myPosition.front().front().front()) ||
+            this._hasOpponent(mappedOpponents, myPosition.front().front().front().left()) ||
+            this._hasOpponent(mappedOpponents, myPosition.front().front().front().right())
+        ) {
             sensorFront = 1
         }
+
         let sensorLeft = 0
         if (this._hasOpponent(mappedOpponents, myPosition.left())) {
+            sensorLeft = 3
+        } else if (this._hasOpponent(mappedOpponents, myPosition.left().left())) {
             sensorLeft = 2
         } else if (this._hasOpponent(mappedOpponents, myPosition.left().left())) {
             sensorLeft = 1
@@ -64,8 +79,10 @@ export class MyBotTrainer implements rl.BotTrainer {
 
         let sensorRight = 0
         if (this._hasOpponent(mappedOpponents, myPosition.right())) {
-            sensorRight = 2
+            sensorRight = 3
         } else if (this._hasOpponent(mappedOpponents, myPosition.right().right())) {
+            sensorRight = 2
+        } else if (this._hasOpponent(mappedOpponents, myPosition.right().right().right())) {
             sensorRight = 1
         }
 
@@ -80,12 +97,7 @@ export class MyBotTrainer implements rl.BotTrainer {
             throw new Error("did not find myself in the game")
         }
 
-        const interval = 1 / 8;
-        // action = action.argMax(-1).dataSync()
-        console.log(`action: `, action)
-
         const dir = reader.makeOrderMoveByDirection(action)
-        // await delay(3000)
         return orderSet.setOrdersList([dir])
     }
 
@@ -122,7 +134,7 @@ export class MyBotTrainer implements rl.BotTrainer {
         const myPosition = this.mapper.getRegionFromPoint(me.getPosition())
         let reward = 0;
         // if ( actualDist < previousDist) {
-        reward = (previousDist - actualDist) / SPECS.PLAYER_MAX_SPEED
+        reward = ((previousDist - actualDist) / SPECS.PLAYER_MAX_SPEED) * 2
         // }
         let done = false
 
@@ -131,11 +143,15 @@ export class MyBotTrainer implements rl.BotTrainer {
             this._hasOpponent(mappedOpponents, myPosition.front()) ||
             this._hasOpponent(mappedOpponents, myPosition)) {
             done = true
-            reward = -2
+            reward = -5
             // console.log(`Done because got to close to an opponent`)
         } else if (mePreviously.getPosition().getX() > SPECS.MAX_X_COORDINATE * 0.9) {
             done = true
             // console.log(`Done because it is too far ${mePreviously.getPosition().getX()}`)
+        }
+
+        if (reward === 0) {
+            reward = -1
         }
         // console.log(`Reward : `, reward)
         return {done, reward}

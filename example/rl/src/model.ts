@@ -3,7 +3,7 @@ import {Scalar} from "@tensorflow/tfjs-core/dist/tensor";
 import {rl} from "@lugobots/lugo4node";
 
 const inputCount = 3
-const outputCount = 8
+const outputCount = 4
 
 class PolicyNetwork {
 
@@ -23,6 +23,7 @@ class PolicyNetwork {
         if (hiddenLayerSizesOrModel instanceof tf.LayersModel) {
             this.policyNet = hiddenLayerSizesOrModel;
         } else {
+            console.log(`CREAD TE`)
             this.createPolicyNetwork(hiddenLayerSizesOrModel);
         }
     }
@@ -42,12 +43,12 @@ class PolicyNetwork {
         hiddenLayerSizes.forEach((hiddenLayerSize, i) => {
             this.policyNet.add(tf.layers.dense({
                 units: hiddenLayerSize,
-                activation: 'elu',
+                activation: 'relu',
                 // `inputShape` is required only for the first layer.
                 inputShape: i === 0 ? [inputCount] : undefined
             }));
         });
-        this.policyNet.add(tf.layers.dense({units: outputCount}));
+        this.policyNet.add(tf.layers.dense({units: outputCount, activation: 'softmax'}));
     }
 
     /**
@@ -89,6 +90,7 @@ class PolicyNetwork {
                     return this.getGradientsAndSaveActions(inputTensor).grads;
                 }));
                 this.pushGradients(gameGradients, gradients);
+                // console.log(`CUMA?? `, this.currentActions_)
                 // const action = [0];
                 const {done, reward} = await trainingCtrl.update(this.currentActions_);
                 const isDone = done
@@ -143,6 +145,8 @@ class PolicyNetwork {
             return tf.tidy(() => {
                 const [logits, actions] = this.getLogitsAndActions(inputTensor);
 
+
+              //  console.log(`ACTION: `, actions, logits)
 
                 this.currentActions_ = actions.argMax(-1).dataSync()[0];
                 const labels =

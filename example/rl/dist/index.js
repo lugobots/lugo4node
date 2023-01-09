@@ -41,11 +41,11 @@ var lugo4node_1 = require("@lugobots/lugo4node");
 var my_bot_1 = require("./my_bot");
 var model_1 = require("./model");
 // training settings
-var trainIterations = 50;
-var gamesPerIteration = 5;
-var maxStepsPerGame = 15;
-var hiddenLayerSizes = [128, 256, 256, 64];
-var learningRate = 0.1;
+var trainIterations = 100;
+var gamesPerIteration = 15;
+var maxStepsPerGame = 60;
+var hiddenLayerSizes = [16, 16];
+var learningRate = 0.01;
 var discountRate = 0.95;
 var testingGames = 20;
 var grpcAddress = "localhost:5000";
