@@ -5,12 +5,12 @@ import {MyBotTrainer} from "./my_bot";
 import {SaveablePolicyNetwork, asyncToSync, mean, sum} from "./model";
 
 // training settings
-const trainIterations = 100;
-const gamesPerIteration = 15;
+const trainIterations = 10000;
+const gamesPerIteration = 30;
 const maxStepsPerGame = 60;
 const hiddenLayerSizes = [16, 16]
-const learningRate = 0.01
-const discountRate = 0.95;
+const learningRate = 0.3
+const discountRate = 0.70;
 const testingGames = 20
 
 const grpcAddress = "localhost:5000"

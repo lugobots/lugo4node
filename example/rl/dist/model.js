@@ -155,7 +155,7 @@ var PolicyNetwork = /** @class */ (function () {
                     case 5:
                         _c = _d.sent(), done = _c.done, reward = _c.reward;
                         isDone = done;
-                        console.log("game ".concat(i, ", step ").concat(j, ", reward"), reward);
+                        // console.log(`game ${i}, step ${j}, reward`, reward)
                         gameRewards.push(reward);
                         if (isDone) {
                             //   When the game ends before max step count is reached, a reward of

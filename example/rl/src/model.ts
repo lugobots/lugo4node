@@ -94,7 +94,7 @@ class PolicyNetwork {
                 // const action = [0];
                 const {done, reward} = await trainingCtrl.update(this.currentActions_);
                 const isDone = done
-                console.log(`game ${i}, step ${j}, reward`, reward)
+                // console.log(`game ${i}, step ${j}, reward`, reward)
                 gameRewards.push(reward);
                 if (isDone) {
                     //   When the game ends before max step count is reached, a reward of
