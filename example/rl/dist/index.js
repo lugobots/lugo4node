@@ -41,12 +41,12 @@ var lugo4node_1 = require("@lugobots/lugo4node");
 var my_bot_1 = require("./my_bot");
 var model_1 = require("./model");
 // training settings
-var trainIterations = 10000;
-var gamesPerIteration = 30;
+var trainIterations = 500;
+var gamesPerIteration = 10;
 var maxStepsPerGame = 60;
-var hiddenLayerSizes = [16, 16];
-var learningRate = 0.3;
-var discountRate = 0.70;
+var hiddenLayerSizes = [4, 4];
+var learningRate = 0.95;
+var discountRate = 0.05;
 var testingGames = 20;
 var grpcAddress = "localhost:5000";
 var grpcInsecure = true;
@@ -57,7 +57,7 @@ var model_path = "file://./model_output";
         switch (_a.label) {
             case 0:
                 teamSide = lugo4node_1.Lugo.Team.Side.HOME;
-                playerNumber = 5;
+                playerNumber = my_bot_1.PLAYER_NUM;
                 map = new lugo4node_1.Mapper(10, 6, lugo4node_1.Lugo.Team.Side.HOME);
                 initialRegion = map.getRegion(1, 1);
                 lugoClient = new lugo4node_1.Client(grpcAddress, grpcInsecure, "", teamSide, playerNumber, initialRegion.getCenter());
@@ -76,8 +76,7 @@ var model_path = "file://./model_output";
 }); })();
 function myTrainingFunction(trainingCtrl) {
     return __awaiter(this, void 0, void 0, function () {
-        var policyNet, optimizer, iterationGamesMeans, t0, stopRequested, i, gameScores, t1, e_1, testingScores, _loop_1, i;
-        var _this = this;
+        var policyNet, optimizer, meanStepValues, t0, i, gameSteps, t1, stepsPerSecond;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -91,122 +90,90 @@ function myTrainingFunction(trainingCtrl) {
                     policyNet = _a.sent();
                     return [3 /*break*/, 4];
                 case 3:
+                    hiddenLayerSizes.unshift(4); // adds the first layer
                     policyNet = new model_1.SaveablePolicyNetwork(hiddenLayerSizes);
                     console.log('DONE constructing new instance of SaveablePolicyNetwork');
                     _a.label = 4;
                 case 4:
                     optimizer = tf.train.adam(learningRate);
-                    iterationGamesMeans = [];
+                    meanStepValues = [];
                     t0 = new Date().getTime();
-                    stopRequested = false;
                     i = 0;
                     _a.label = 5;
                 case 5:
-                    if (!(i < trainIterations)) return [3 /*break*/, 12];
-                    _a.label = 6;
-                case 6:
-                    _a.trys.push([6, 10, , 11]);
-                    console.log("Starting iteration ".concat(i, " of ").concat(trainIterations));
+                    if (!(i < trainIterations)) return [3 /*break*/, 10];
+                    console.log('train iteration ', i);
                     return [4 /*yield*/, policyNet.train(trainingCtrl, optimizer, discountRate, gamesPerIteration, maxStepsPerGame)];
-                case 7:
-                    gameScores = _a.sent();
+                case 6:
+                    gameSteps = _a.sent();
                     t1 = new Date().getTime();
+                    stepsPerSecond = (0, model_1.sum)(gameSteps) / ((t1 - t0) / 1e3);
                     t0 = t1;
-                    console.log("iteration ".concat(i, "/").concat(trainIterations, " done, total score:"), gameScores);
-                    iterationGamesMeans.push({ iteration: i + 1, means: gameScores });
-                    // console.log(`# of tensors: ${tf.memory().numTensors}`);
+                    // trainSpeed.textContent = `${stepsPerSecond.toFixed(1)} steps/s`
+                    meanStepValues.push({ x: i + 1, y: (0, model_1.mean)(gameSteps) });
+                    //   console.log(`# of tensors: ${tf.memory().numTensors}`);
+                    // plotSteps();
+                    // onIterationEnd(i + 1, trainIterations);
                     return [4 /*yield*/, tf.nextFrame()];
-                case 8:
-                    // console.log(`# of tensors: ${tf.memory().numTensors}`);
-                    _a.sent();
+                case 7:
+                    //   console.log(`# of tensors: ${tf.memory().numTensors}`);
+                    // plotSteps();
+                    // onIterationEnd(i + 1, trainIterations);
+                    _a.sent(); // Unblock UI thread.
                     return [4 /*yield*/, policyNet.saveModel(model_path)];
-                case 9:
+                case 8:
                     _a.sent();
-                    if (stopRequested) {
-                        console.log('Training stopped by user.');
-                        return [3 /*break*/, 12];
-                    }
-                    return [3 /*break*/, 11];
-                case 10:
-                    e_1 = _a.sent();
-                    console.error(e_1);
-                    return [3 /*break*/, 11];
-                case 11:
+                    _a.label = 9;
+                case 9:
                     ++i;
                     return [3 /*break*/, 5];
-                case 12:
-                    if (!stopRequested) {
-                        console.log('Training completed.');
-                    }
+                case 10:
                     console.log('Starting tests');
-                    testingScores = [];
-                    _loop_1 = function (i) {
-                        var isDone_1, gameScores_1, _b, _c, testScore, e_2;
-                        return __generator(this, function (_d) {
-                            switch (_d.label) {
-                                case 0:
-                                    _d.trys.push([0, 6, , 7]);
-                                    return [4 /*yield*/, trainingCtrl.setRandomState()];
-                                case 1:
-                                    _d.sent();
-                                    isDone_1 = false;
-                                    gameScores_1 = [];
-                                    _d.label = 2;
-                                case 2:
-                                    if (!!isDone_1) return [3 /*break*/, 5];
-                                    _c = (_b = tf).tidy;
-                                    return [4 /*yield*/, (0, model_1.asyncToSync)(function () { return __awaiter(_this, void 0, void 0, function () {
-                                            var action, _a, _b, _c, done, reward;
-                                            return __generator(this, function (_d) {
-                                                switch (_d.label) {
-                                                    case 0:
-                                                        _b = (_a = policyNet).getActions;
-                                                        return [4 /*yield*/, trainingCtrl.getInputs()];
-                                                    case 1:
-                                                        action = _b.apply(_a, [_d.sent()])[0];
-                                                        return [4 /*yield*/, trainingCtrl.update(action)];
-                                                    case 2:
-                                                        _c = _d.sent(), done = _c.done, reward = _c.reward;
-                                                        isDone_1 = done;
-                                                        gameScores_1.push(reward);
-                                                        return [2 /*return*/];
-                                                }
-                                            });
-                                        }); })];
-                                case 3:
-                                    _c.apply(_b, [_d.sent()]);
-                                    return [4 /*yield*/, tf.nextFrame()];
-                                case 4:
-                                    _d.sent(); // Unblock UI thread.
-                                    return [3 /*break*/, 2];
-                                case 5:
-                                    testScore = (0, model_1.sum)(gameScores_1);
-                                    testingScores.push({ test: i, mean: testScore.toFixed(2) });
-                                    console.log("Test done, Score: ", testScore.toFixed(2));
-                                    return [3 /*break*/, 7];
-                                case 6:
-                                    e_2 = _d.sent();
-                                    console.error(e_2);
-                                    return [3 /*break*/, 7];
-                                case 7: return [2 /*return*/];
-                            }
-                        });
-                    };
-                    i = 0;
-                    _a.label = 13;
-                case 13:
-                    if (!(i < testingGames)) return [3 /*break*/, 16];
-                    return [5 /*yield**/, _loop_1(i)];
-                case 14:
+                    // let isDone = false;
+                    // const cartPole = new CartPole(true);
+                    // cartPole.setRandomState();
+                    // let steps = 0;
+                    // stopRequested = false;
+                    // while (!isDone) {
+                    //     steps++;
+                    //     tf.tidy(() => {
+                    //         const action = policyNet.getActions(cartPole.getStateTensor())[0];
+                    //         logStatus(
+                    //             `Test in progress. ` +
+                    //             `Action: ${action === 1 ? '<--' : ' -->'} (Step ${steps})`);
+                    //         isDone = cartPole.update(action);
+                    //         renderCartPole(cartPole, cartPoleCanvas);
+                    //     });
+                    //     await tf.nextFrame();  // Unblock UI thread.
+                    //     if (stopRequested) {
+                    //         break;
+                    //     }
+                    // }
+                    return [4 /*yield*/, trainingCtrl.stop()
+                        // console.log(`Testing scores: `, testingScores)
+                    ];
+                case 11:
+                    // let isDone = false;
+                    // const cartPole = new CartPole(true);
+                    // cartPole.setRandomState();
+                    // let steps = 0;
+                    // stopRequested = false;
+                    // while (!isDone) {
+                    //     steps++;
+                    //     tf.tidy(() => {
+                    //         const action = policyNet.getActions(cartPole.getStateTensor())[0];
+                    //         logStatus(
+                    //             `Test in progress. ` +
+                    //             `Action: ${action === 1 ? '<--' : ' -->'} (Step ${steps})`);
+                    //         isDone = cartPole.update(action);
+                    //         renderCartPole(cartPole, cartPoleCanvas);
+                    //     });
+                    //     await tf.nextFrame();  // Unblock UI thread.
+                    //     if (stopRequested) {
+                    //         break;
+                    //     }
+                    // }
                     _a.sent();
-                    _a.label = 15;
-                case 15:
-                    ++i;
-                    return [3 /*break*/, 13];
-                case 16: return [4 /*yield*/, trainingCtrl.stop()];
-                case 17:
-                    _a.sent();
-                    console.log("Testing scores: ", testingScores);
                     return [2 /*return*/];
             }
         });
