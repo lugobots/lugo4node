@@ -91,20 +91,15 @@ var TrainingCrl = /** @class */ (function () {
         });
     };
     TrainingCrl.prototype.getInputs = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                try {
-                    this.cycleSeq++;
-                    this._debug("get state");
-                    return [2 /*return*/, this.bot.getInputs(this.lastSnapshot)];
-                }
-                catch (e) {
-                    console.error("bot trainer failed to return inputs from a particular state", e);
-                    throw e;
-                }
-                return [2 /*return*/];
-            });
-        });
+        try {
+            this.cycleSeq++;
+            this._debug("get state");
+            return this.bot.getInputs(this.lastSnapshot);
+        }
+        catch (e) {
+            console.error("bot trainer failed to return inputs from a particular state", e);
+            throw e;
+        }
     };
     TrainingCrl.prototype.update = function (action) {
         return __awaiter(this, void 0, void 0, function () {
@@ -192,6 +187,7 @@ var TrainingCrl = /** @class */ (function () {
                                                             resolveTurn(newState);
                                                         };
                                                         _this._debug("sending order for turn ".concat(snapshot.getTurn(), " based on action"));
+                                                        orderSet.setTurn(_this.lastSnapshot.getTurn());
                                                         _this.bot.play(orderSet, snapshot, newAction).then(function (orderSet) {
                                                             resolve(orderSet); // sending the orders wh
                                                             _this._debug("order sent, calling next turn");
