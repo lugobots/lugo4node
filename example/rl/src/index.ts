@@ -1,16 +1,16 @@
 import * as tf from '@tensorflow/tfjs-node';
 import {Mapper, Client, rl, Lugo} from "@lugobots/lugo4node";
 
-import {MyBotTrainer} from "./my_bot";
-import {SaveablePolicyNetwork, asyncToSync, mean, sum} from "./model";
+import {MyBotTrainer, PLAYER_NUM} from "./my_bot";
+import {SaveablePolicyNetwork, mean, sum} from "./model";
 
 // training settings
-const trainIterations = 100;
-const gamesPerIteration = 15;
+const trainIterations = 500;
+const gamesPerIteration = 10;
 const maxStepsPerGame = 60;
-const hiddenLayerSizes = [16, 16]
-const learningRate = 0.01
-const discountRate = 0.95;
+const hiddenLayerSizes = [4, 4]
+const learningRate = 0.95;
+const discountRate = 0.05;
 const testingGames = 20
 
 const grpcAddress = "localhost:5000"
@@ -20,7 +20,7 @@ const model_path = `file://./model_output`;
 (async () => {
 
     const teamSide = Lugo.Team.Side.HOME
-    const playerNumber = 5
+    const playerNumber = PLAYER_NUM
 
     // the map will help us to see the field in quadrants (called regions) instead of working with coordinates
     const map = new Mapper(10, 6, Lugo.Team.Side.HOME)
@@ -56,6 +56,7 @@ async function myTrainingFunction(trainingCtrl: rl.TrainingController) : Promise
         console.log('Reloading model')
         policyNet = await SaveablePolicyNetwork.loadModel(model_path);
     } else {
+        hiddenLayerSizes.unshift(4);// adds the first layer
         policyNet = new SaveablePolicyNetwork(hiddenLayerSizes);
         console.log('DONE constructing new instance of SaveablePolicyNetwork');
     }
@@ -63,62 +64,56 @@ async function myTrainingFunction(trainingCtrl: rl.TrainingController) : Promise
     // ready to train
     const optimizer = tf.train.adam(learningRate);
 
-    let iterationGamesMeans = [];
+    let meanStepValues = [];
+    // onIterationEnd(0, trainIterations);
     let t0 = new Date().getTime();
-    let stopRequested = false;
-
+    // stopRequested = false;
     for (let i = 0; i < trainIterations; ++i) {
-        try {
-            console.log(`Starting iteration ${i} of ${trainIterations}`)
-            const gameScores = await policyNet.train(
-                trainingCtrl, optimizer, discountRate, gamesPerIteration,
-                maxStepsPerGame);
-            const t1 = new Date().getTime();
-            t0 = t1;
-            console.log(`iteration ${i}/${trainIterations} done, total score:`, gameScores)
-            iterationGamesMeans.push({iteration: i + 1, means: gameScores});
-            // console.log(`# of tensors: ${tf.memory().numTensors}`);
+        console.log('train iteration ', i);
+        const gameSteps = await policyNet.train(
+            trainingCtrl, optimizer, discountRate, gamesPerIteration,
+            maxStepsPerGame);
+        const t1 = new Date().getTime();
+        const stepsPerSecond = sum(gameSteps) / ((t1 - t0) / 1e3);
+        t0 = t1;
+        // trainSpeed.textContent = `${stepsPerSecond.toFixed(1)} steps/s`
+        meanStepValues.push({x: i + 1, y: mean(gameSteps)});
+     //   console.log(`# of tensors: ${tf.memory().numTensors}`);
+        // plotSteps();
+        // onIterationEnd(i + 1, trainIterations);
+        await tf.nextFrame();  // Unblock UI thread.
+        await policyNet.saveModel(model_path);
+        // await updateUIControlState();
 
-            await tf.nextFrame();
-            await policyNet.saveModel(model_path);
-            if (stopRequested) {
-                console.log('Training stopped by user.');
-                break;
-            }
-        }catch (e) {
-            console.error(e);
-        }
+        // if (stopRequested) {
+        //     logStatus('Training stopped by user.');
+        //     break;
+        // }
     }
-    if (!stopRequested) {
-        console.log('Training completed.');
-    }
+
 
     console.log('Starting tests');
-    const testingScores = [];
-    for (let i = 0; i < testingGames; ++i) {
-        try {
-            await trainingCtrl.setRandomState()
-            let isDone = false
-            const gameScores = []
-            while (!isDone) {
-
-                tf.tidy(await asyncToSync(async () => {
-                    const action = policyNet.getActions(await trainingCtrl.getInputs())[0];
-                    const {done, reward} = await trainingCtrl.update(action);
-                    isDone = done
-                    gameScores.push(reward)
-                }));
-                await tf.nextFrame();  // Unblock UI thread.
-
-            }
-            const testScore = sum(gameScores)
-            testingScores.push({test: i, mean: testScore.toFixed(2)})
-            console.log(`Test done, Score: `, testScore.toFixed(2))
-        } catch (e) {
-            console.error(e)
-        }
-    }
+    // let isDone = false;
+    // const cartPole = new CartPole(true);
+    // cartPole.setRandomState();
+    // let steps = 0;
+    // stopRequested = false;
+    // while (!isDone) {
+    //     steps++;
+    //     tf.tidy(() => {
+    //         const action = policyNet.getActions(cartPole.getStateTensor())[0];
+    //         logStatus(
+    //             `Test in progress. ` +
+    //             `Action: ${action === 1 ? '<--' : ' -->'} (Step ${steps})`);
+    //         isDone = cartPole.update(action);
+    //         renderCartPole(cartPole, cartPoleCanvas);
+    //     });
+    //     await tf.nextFrame();  // Unblock UI thread.
+    //     if (stopRequested) {
+    //         break;
+    //     }
+    // }
     await trainingCtrl.stop()
-    console.log(`Testing scores: `, testingScores)
+    // console.log(`Testing scores: `, testingScores)
 }
 

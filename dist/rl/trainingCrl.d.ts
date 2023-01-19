@@ -29,7 +29,7 @@ export declare class TrainingCrl implements TrainingController {
      * Set the state of match randomly.
      */
     setRandomState(): Promise<void>;
-    getInputs(): Promise<any>;
+    getInputs(): any;
     update(action: any): Promise<{
         reward: number;
         done: boolean;

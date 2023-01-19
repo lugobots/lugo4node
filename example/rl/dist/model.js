@@ -51,13 +51,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.sum = exports.mean = exports.asyncToSync = exports.SaveablePolicyNetwork = void 0;
+exports.sum = exports.mean = exports.SaveablePolicyNetwork = void 0;
 var tf = require("@tensorflow/tfjs-node");
-var inputCount = 3;
-var outputCount = 4;
+var console = require("console");
+/**
+ * Policy network for controlling the cart-pole system.
+ *
+ * The role of the policy network is to select an action based on the observed
+ * state of the system. In this case, the action is the leftward or rightward
+ * force and the observed system state is a four-dimensional vector, consisting
+ * of cart position, cart velocity, pole angle and pole angular velocity.
+ *
+ */
 var PolicyNetwork = /** @class */ (function () {
     /**
      * Constructor of PolicyNetwork.
+     *
      * @param {number | number[] | tf.LayersModel} hiddenLayerSizes
      *   Can be any of the following
      *   - Size of the hidden layer, as a single number (for a single hidden
@@ -70,7 +79,6 @@ var PolicyNetwork = /** @class */ (function () {
             this.policyNet = hiddenLayerSizesOrModel;
         }
         else {
-            console.log("CREAD TE");
             this.createPolicyNetwork(hiddenLayerSizesOrModel);
         }
     }
@@ -88,19 +96,23 @@ var PolicyNetwork = /** @class */ (function () {
         }
         this.policyNet = tf.sequential();
         hiddenLayerSizes.forEach(function (hiddenLayerSize, i) {
+            console.log('LAYERS, ', i, hiddenLayerSize);
             _this.policyNet.add(tf.layers.dense({
                 units: hiddenLayerSize,
-                activation: 'relu',
+                activation: 'elu',
                 // `inputShape` is required only for the first layer.
-                inputShape: i === 0 ? [inputCount] : undefined
+                inputShape: i === 0 ? [4] : undefined
             }));
         });
-        this.policyNet.add(tf.layers.dense({ units: outputCount, activation: 'softmax' }));
+        // The last layer has only one unit. The single output number will be
+        // converted to a probability of selecting the leftward-force action.
+        this.policyNet.add(tf.layers.dense({ units: 1 }));
     };
     /**
      * Train the policy network's model.
      *
-     * @param {rl.TrainingController} trainingCtrl
+     * @param {CartPole} cartPoleSystem The cart-pole system object to use during
+     *   training.
      * @param {tf.train.Optimizer} optimizer An instance of TensorFlow.js
      *   Optimizer to use for training.
      * @param {number} discountRate Reward discounting rate: a number between 0
@@ -109,75 +121,73 @@ var PolicyNetwork = /** @class */ (function () {
      *   update.
      * @param {number} maxStepsPerGame Maximum number of steps to perform during
      *   a game. If this number is reached, the game will end immediately.
-     * @returns {Promise<number[]>} The number of steps completed in the `numGames` games
+     * @returns {number[]} The number of steps completed in the `numGames` games
      *   in this round of training.
      */
-    PolicyNetwork.prototype.train = function (trainingCtrl, optimizer, discountRate, numGames, maxStepsPerGame) {
+    PolicyNetwork.prototype.train = function (cartPoleSystem, optimizer, discountRate, numGames, maxStepsPerGame) {
         return __awaiter(this, void 0, void 0, function () {
-            var allGradients, allRewards, gameScore, i, gameRewards, gameGradients, j, gradients, _a, _b, _c, done, reward, isDone;
+            var allGradients, allRewards, gameSteps, i, gameRewards, gameGradients, j, gradients, action, _a, done, reward;
             var _this = this;
-            return __generator(this, function (_d) {
-                switch (_d.label) {
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
                         allGradients = [];
                         allRewards = [];
-                        gameScore = [];
+                        gameSteps = [];
                         i = 0;
-                        _d.label = 1;
+                        _b.label = 1;
                     case 1:
-                        if (!(i < numGames)) return [3 /*break*/, 10];
-                        console.log("Starting game ".concat(i, "/").concat(numGames));
-                        return [4 /*yield*/, trainingCtrl.setRandomState()];
+                        if (!(i < numGames)) return [3 /*break*/, 9];
+                        // Randomly initialize the state of the cart-pole system at the beginning
+                        // of every game.
+                        return [4 /*yield*/, cartPoleSystem.setRandomState()];
                     case 2:
-                        _d.sent();
+                        // Randomly initialize the state of the cart-pole system at the beginning
+                        // of every game.
+                        _b.sent();
                         gameRewards = [];
                         gameGradients = [];
                         j = 0;
-                        _d.label = 3;
+                        _b.label = 3;
                     case 3:
-                        if (!(j < maxStepsPerGame)) return [3 /*break*/, 7];
-                        _b = (_a = tf).tidy;
-                        return [4 /*yield*/, asyncToSync(function () { return __awaiter(_this, void 0, void 0, function () {
-                                var inputTensor;
-                                return __generator(this, function (_a) {
-                                    switch (_a.label) {
-                                        case 0: return [4 /*yield*/, trainingCtrl.getInputs()];
-                                        case 1:
-                                            inputTensor = _a.sent();
-                                            return [2 /*return*/, this.getGradientsAndSaveActions(inputTensor).grads];
-                                    }
-                                });
-                            }); })];
-                    case 4:
-                        gradients = _b.apply(_a, [_d.sent()]);
+                        if (!(j < maxStepsPerGame)) return [3 /*break*/, 6];
+                        gradients = tf.tidy(function () {
+                            var inputTensor = cartPoleSystem.getInputs();
+                            // console.log(`What I god?`, inputTensor)
+                            return _this.getGradientsAndSaveActions(inputTensor).grads;
+                        });
                         this.pushGradients(gameGradients, gradients);
-                        return [4 /*yield*/, trainingCtrl.update(this.currentActions_)];
-                    case 5:
-                        _c = _d.sent(), done = _c.done, reward = _c.reward;
-                        isDone = done;
-                        console.log("game ".concat(i, ", step ").concat(j, ", reward"), reward);
+                        action = this.currentActions_[0];
+                        return [4 /*yield*/, cartPoleSystem.update(action)];
+                    case 4:
+                        _a = _b.sent(), done = _a.done, reward = _a.reward;
+                        // await maybeRenderDuringTraining(cartPoleSystem);
                         gameRewards.push(reward);
-                        if (isDone) {
-                            //   When the game ends before max step count is reached, a reward of
-                            //   0 is given.
-                            return [3 /*break*/, 7];
+                        if (done) {
+                            // When the game ends before max step count is reached, a reward of
+                            // 0 is given.
+                            return [3 /*break*/, 6];
                         }
-                        _d.label = 6;
-                    case 6:
+                        _b.label = 5;
+                    case 5:
                         ++j;
                         return [3 /*break*/, 3];
-                    case 7:
-                        gameScore.push({ game: i, score: sum(gameRewards) });
+                    case 6:
+                        // onGameEnd(i + 1, numGames);
+                        gameSteps.push(gameRewards.length);
                         this.pushGradients(allGradients, gameGradients);
                         allRewards.push(gameRewards);
+                        console.log("AVG game ".concat(i, "/").concat(numGames, " score: "), mean(gameRewards));
+                        // await delay(2000);
                         return [4 /*yield*/, tf.nextFrame()];
+                    case 7:
+                        // await delay(2000);
+                        _b.sent();
+                        _b.label = 8;
                     case 8:
-                        _d.sent();
-                        _d.label = 9;
-                    case 9:
                         ++i;
                         return [3 /*break*/, 1];
-                    case 10:
+                    case 9:
                         tf.tidy(function () {
                             // The following line does three things:
                             // 1. Performs reward discounting, i.e., make recent rewards count more
@@ -198,22 +208,20 @@ var PolicyNetwork = /** @class */ (function () {
                             optimizer.applyGradients(scaleAndAverageGradients(allGradients, normalizedRewards));
                         });
                         tf.dispose(allGradients);
-                        return [2 /*return*/, gameScore];
+                        return [2 /*return*/, gameSteps];
                 }
             });
         });
     };
     PolicyNetwork.prototype.getGradientsAndSaveActions = function (inputTensor) {
         var _this = this;
-        return tf.variableGrads(function () {
-            return tf.tidy(function () {
-                var _a = _this.getLogitsAndActions(inputTensor), logits = _a[0], actions = _a[1];
-                //  console.log(`ACTION: `, actions, logits)
-                _this.currentActions_ = actions.argMax(-1).dataSync()[0];
-                var labels = tf.sub(1, tf.tensor2d(actions.dataSync(), actions.shape));
-                return tf.losses.sigmoidCrossEntropy(labels, logits);
-            });
-        });
+        var f = function () { return tf.tidy(function () {
+            var _a = _this.getLogitsAndActions(inputTensor), logits = _a[0], actions = _a[1];
+            _this.currentActions_ = actions.dataSync();
+            var labels = tf.sub(1, tf.tensor2d(_this.currentActions_, actions.shape));
+            return tf.losses.sigmoidCrossEntropy(labels, logits).asScalar();
+        }); };
+        return tf.variableGrads(f);
     };
     PolicyNetwork.prototype.getCurrentActions = function () {
         return this.currentActions_;
@@ -231,11 +239,13 @@ var PolicyNetwork = /** @class */ (function () {
         return tf.tidy(function () {
             var logits = _this.policyNet.predict(inputs);
             // Get the probability of the leftward action.
-            var probabilities = tf.sigmoid(logits);
+            var leftProb = tf.sigmoid(logits);
             // Probabilites of the left and right actions.
             // const leftRightProbs = tf.concat([leftProb, tf.sub(1, leftProb)], 1);
-            // const actions = tf.multinomial(leftRightProbs, 1, null, false);
-            return [logits, probabilities];
+            // console.log(leftRightProbs)
+            // const actions = tf.multinomial(leftRightProbs, 1, null, true);
+            // return [logits, actions];
+            return [logits, leftProb];
         });
     };
     /**
@@ -269,6 +279,8 @@ var PolicyNetwork = /** @class */ (function () {
     };
     return PolicyNetwork;
 }());
+// The IndexedDB path where the model of the policy network will be saved.
+var MODEL_SAVE_PATH_ = 'indexeddb://cart-pole-v1';
 /**
  * A subclass of PolicyNetwork that supports saving and loading.
  */
@@ -460,28 +472,6 @@ function scaleAndAverageGradients(allGradients, normalizedRewards) {
         return gradients;
     });
 }
-function asyncToSync(asyncOriginalFunc) {
-    return __awaiter(this, void 0, void 0, function () {
-        var result;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, asyncOriginalFunc()];
-                case 1:
-                    result = _a.sent();
-                    return [2 /*return*/, function () {
-                            return result;
-                        }];
-            }
-        });
-    });
-}
-exports.asyncToSync = asyncToSync;
-/**
- * Calculate the mean of an Array of numbers.
- *
- * @param {number[]} xs
- * @returns {number} The arithmetic mean of `xs`
- */
 function mean(xs) {
     return sum(xs) / xs.length;
 }
@@ -502,4 +492,18 @@ function sum(xs) {
     }
 }
 exports.sum = sum;
-module.exports = { SaveablePolicyNetwork: SaveablePolicyNetwork, asyncToSync: asyncToSync, mean: mean, sum: sum };
+function asyncToSync(asyncOriginalFunc) {
+    return __awaiter(this, void 0, void 0, function () {
+        var result;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, asyncOriginalFunc()];
+                case 1:
+                    result = _a.sent();
+                    return [2 /*return*/, function () {
+                            return result;
+                        }];
+            }
+        });
+    });
+}

@@ -1,10 +1,17 @@
 import * as tf from '@tensorflow/tfjs-node';
-import {Scalar} from "@tensorflow/tfjs-core/dist/tensor";
 import {rl} from "@lugobots/lugo4node";
+import * as console from "console";
+import {delay} from "./my_bot";
 
-const inputCount = 3
-const outputCount = 4
-
+/**
+ * Policy network for controlling the cart-pole system.
+ *
+ * The role of the policy network is to select an action based on the observed
+ * state of the system. In this case, the action is the leftward or rightward
+ * force and the observed system state is a four-dimensional vector, consisting
+ * of cart position, cart velocity, pole angle and pole angular velocity.
+ *
+ */
 class PolicyNetwork {
 
     protected policyNet;
@@ -12,6 +19,7 @@ class PolicyNetwork {
 
     /**
      * Constructor of PolicyNetwork.
+     *
      * @param {number | number[] | tf.LayersModel} hiddenLayerSizes
      *   Can be any of the following
      *   - Size of the hidden layer, as a single number (for a single hidden
@@ -23,7 +31,6 @@ class PolicyNetwork {
         if (hiddenLayerSizesOrModel instanceof tf.LayersModel) {
             this.policyNet = hiddenLayerSizesOrModel;
         } else {
-            console.log(`CREAD TE`)
             this.createPolicyNetwork(hiddenLayerSizesOrModel);
         }
     }
@@ -41,20 +48,24 @@ class PolicyNetwork {
         }
         this.policyNet = tf.sequential();
         hiddenLayerSizes.forEach((hiddenLayerSize, i) => {
+            console.log('LAYERS, ', i, hiddenLayerSize)
             this.policyNet.add(tf.layers.dense({
                 units: hiddenLayerSize,
-                activation: 'relu',
+                activation: 'elu',
                 // `inputShape` is required only for the first layer.
-                inputShape: i === 0 ? [inputCount] : undefined
+                inputShape: i === 0 ? [4] : undefined
             }));
         });
-        this.policyNet.add(tf.layers.dense({units: outputCount, activation: 'softmax'}));
+        // The last layer has only one unit. The single output number will be
+        // converted to a probability of selecting the leftward-force action.
+        this.policyNet.add(tf.layers.dense({units: 1}));
     }
 
     /**
      * Train the policy network's model.
      *
-     * @param {rl.TrainingController} trainingCtrl
+     * @param {CartPole} cartPoleSystem The cart-pole system object to use during
+     *   training.
      * @param {tf.train.Optimizer} optimizer An instance of TensorFlow.js
      *   Optimizer to use for training.
      * @param {number} discountRate Reward discounting rate: a number between 0
@@ -63,57 +74,55 @@ class PolicyNetwork {
      *   update.
      * @param {number} maxStepsPerGame Maximum number of steps to perform during
      *   a game. If this number is reached, the game will end immediately.
-     * @returns {Promise<number[]>} The number of steps completed in the `numGames` games
+     * @returns {number[]} The number of steps completed in the `numGames` games
      *   in this round of training.
      */
     async train(
-        trainingCtrl: rl.TrainingController, optimizer, discountRate, numGames, maxStepsPerGame) {
+        cartPoleSystem: rl.TrainingController, optimizer, discountRate, numGames, maxStepsPerGame) {
         const allGradients = [];
         const allRewards = [];
-        const gameScore = [];
-        // this.policyNet .summary()
-
-        // for(const i in this.policyNet.layers) {
-        //     this.policyNet.layers[i].getWeights()[0].print()
-        // }
+        const gameSteps = [];
+        // onGameEnd(0, numGames);
         for (let i = 0; i < numGames; ++i) {
-            console.log(`Starting game ${i}/${numGames}`)
-            await trainingCtrl.setRandomState();
+            // Randomly initialize the state of the cart-pole system at the beginning
+            // of every game.
+            await cartPoleSystem.setRandomState();
             const gameRewards = [];
             const gameGradients = [];
             for (let j = 0; j < maxStepsPerGame; ++j) {
                 // For every step of the game, remember gradients of the policy
                 // network's weights with respect to the probability of the action
                 // choice that lead to the reward.
-                const gradients = tf.tidy(await asyncToSync(async () => {
-                    const inputTensor = await trainingCtrl.getInputs();
+                const gradients = tf.tidy(() => {
+                    const inputTensor = cartPoleSystem.getInputs();
+
+                    // console.log(`What I god?`, inputTensor)
                     return this.getGradientsAndSaveActions(inputTensor).grads;
-                }));
+                });
+
+
                 this.pushGradients(gameGradients, gradients);
-                // console.log(`CUMA?? `, this.currentActions_)
-                // const action = [0];
-                const {done, reward} = await trainingCtrl.update(this.currentActions_);
-                const isDone = done
-                console.log(`game ${i}, step ${j}, reward`, reward)
+                const action = this.currentActions_[0];
+                const {done, reward} = await cartPoleSystem.update(action);
+
+                // await maybeRenderDuringTraining(cartPoleSystem);
                 gameRewards.push(reward);
-                if (isDone) {
-                    //   When the game ends before max step count is reached, a reward of
-                    //   0 is given.
+                if (done) {
+                    // When the game ends before max step count is reached, a reward of
+                    // 0 is given.
 
                     break;
                 }
-                // As long as the game doesn't end, each step leads to a reward of 1.
-                // These reward values will later be "discounted", leading to
-                // higher reward values for longer-lasting games.
-                // gameRewards.push(1);
-                // }
             }
-
-            gameScore.push({game: i, score: sum(gameRewards)});
+            // onGameEnd(i + 1, numGames);
+            gameSteps.push(gameRewards.length);
             this.pushGradients(allGradients, gameGradients);
             allRewards.push(gameRewards);
+            console.log(`AVG game ${i}/${numGames} score: `, mean(gameRewards))
+            // await delay(2000);
             await tf.nextFrame();
         }
+
         tf.tidy(() => {
             // The following line does three things:
             // 1. Performs reward discounting, i.e., make recent rewards count more
@@ -136,24 +145,18 @@ class PolicyNetwork {
                 scaleAndAverageGradients(allGradients, normalizedRewards));
         });
         tf.dispose(allGradients);
-        return gameScore;
+        return gameSteps;
     }
 
-
     getGradientsAndSaveActions(inputTensor) {
-        return tf.variableGrads((): tf.Scalar => {
-            return tf.tidy(() => {
-                const [logits, actions] = this.getLogitsAndActions(inputTensor);
-
-
-              //  console.log(`ACTION: `, actions, logits)
-
-                this.currentActions_ = actions.argMax(-1).dataSync()[0];
-                const labels =
-                    tf.sub(1, tf.tensor2d(actions.dataSync(), actions.shape));
-                return tf.losses.sigmoidCrossEntropy(labels, logits);
-            })
+        const f = () => tf.tidy(() => {
+            const [logits, actions] = this.getLogitsAndActions(inputTensor);
+            this.currentActions_ = actions.dataSync();
+            const labels =
+                tf.sub(1, tf.tensor2d(this.currentActions_, actions.shape));
+            return tf.losses.sigmoidCrossEntropy(labels, logits).asScalar();
         });
+        return tf.variableGrads(f);
     }
 
     getCurrentActions() {
@@ -171,12 +174,15 @@ class PolicyNetwork {
     getLogitsAndActions(inputs) {
         return tf.tidy(() => {
             const logits = this.policyNet.predict(inputs);
+
             // Get the probability of the leftward action.
-            const probabilities = tf.sigmoid(logits);
+            const leftProb = tf.sigmoid(logits);
             // Probabilites of the left and right actions.
             // const leftRightProbs = tf.concat([leftProb, tf.sub(1, leftProb)], 1);
-            // const actions = tf.multinomial(leftRightProbs, 1, null, false);
-            return [logits, probabilities];
+            // console.log(leftRightProbs)
+            // const actions = tf.multinomial(leftRightProbs, 1, null, true);
+            // return [logits, actions];
+            return [logits, leftProb];
         });
     }
 
@@ -210,6 +216,9 @@ class PolicyNetwork {
         }
     }
 }
+
+// The IndexedDB path where the model of the policy network will be saved.
+const MODEL_SAVE_PATH_ = 'indexeddb://cart-pole-v1';
 
 /**
  * A subclass of PolicyNetwork that supports saving and loading.
@@ -374,19 +383,6 @@ function scaleAndAverageGradients(allGradients, normalizedRewards) {
     });
 }
 
-export async function asyncToSync(asyncOriginalFunc) {
-    const result = await asyncOriginalFunc()
-    return () => {
-        return result;
-    }
-}
-
-/**
- * Calculate the mean of an Array of numbers.
- *
- * @param {number[]} xs
- * @returns {number} The arithmetic mean of `xs`
- */
 export function mean(xs) {
     return sum(xs) / xs.length;
 }
@@ -406,7 +402,9 @@ export function sum(xs) {
     }
 }
 
-module.exports = {SaveablePolicyNetwork, asyncToSync, mean, sum}
-
-
-
+async function asyncToSync(asyncOriginalFunc) {
+    const result = await asyncOriginalFunc()
+    return () => {
+        return result;
+    }
+}

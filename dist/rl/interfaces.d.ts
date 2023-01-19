@@ -12,7 +12,7 @@ export interface TrainingController {
      * Use this method to get the inputs that will be used by your model. E.g. if you are using tensor flow, you may
      * return the tensors used to feed your network.
      */
-    getInputs: () => Promise<any>;
+    getInputs: () => any;
     /**
      * Use this method to pass that action picked by you model. It will return the reward and `done` values got from
      * your BotTrainer.
@@ -49,7 +49,7 @@ export interface BotTrainer {
      *
      * @param {GameSnapshot} snapshot - The current game state
      */
-    getInputs: (snapshot: GameSnapshot) => Promise<any>;
+    getInputs: (snapshot: GameSnapshot) => any;
     /**
      * play define the orders that will be sent to the game server based on the `action` sent by your training function.
      *

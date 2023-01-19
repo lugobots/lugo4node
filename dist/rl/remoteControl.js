@@ -54,11 +54,11 @@ var RemoteControl = /** @class */ (function () {
                             deadline.setSeconds(deadline.getSeconds() + 5);
                             _this.client.waitForReady(deadline, function (err) {
                                 if (err) {
+                                    console.log("ERROR: ", err);
                                     reject(err);
+                                    return;
                                 }
-                                else {
-                                    resolve();
-                                }
+                                resolve();
                             });
                         })];
                     case 1:
@@ -77,7 +77,9 @@ var RemoteControl = /** @class */ (function () {
                 return [2 /*return*/, new Promise(function (resolve, reject) {
                         var resp = _this.client.pauseOrResume(pauseReq, function (err) {
                             if (err) {
+                                console.log("ERROR: ", err);
                                 reject(err);
+                                return;
                             }
                             resolve();
                         });
@@ -94,7 +96,9 @@ var RemoteControl = /** @class */ (function () {
                 return [2 /*return*/, new Promise(function (resolve, reject) {
                         var resp = _this.client.resumeListeningPhase(req, function (err) {
                             if (err) {
+                                console.log("ERROR: ", err);
                                 reject(err);
+                                return;
                             }
                             resolve();
                         });
@@ -111,7 +115,9 @@ var RemoteControl = /** @class */ (function () {
                 return [2 /*return*/, new Promise(function (resolve, reject) {
                         var resp = _this.client.nextTurn(nextTurnReq, function (err) {
                             if (err) {
+                                console.log("ERROR: ", err);
                                 reject(err);
+                                return;
                             }
                             resolve();
                         });
@@ -130,7 +136,9 @@ var RemoteControl = /** @class */ (function () {
                 return [2 /*return*/, new Promise(function (resolve, reject) {
                         var resp = _this.client.setBallProperties(ballPropReq, function (err, commandResponse) {
                             if (err) {
+                                console.log("ERROR: ballPropReq", ballPropReq, err);
                                 reject(err);
+                                return;
                             }
                             resolve(commandResponse.getGameSnapshot());
                         });
@@ -151,7 +159,9 @@ var RemoteControl = /** @class */ (function () {
                 return [2 /*return*/, new Promise(function (resolve, reject) {
                         var resp = _this.client.setPlayerProperties(playerProperties, function (err, commandResponse) {
                             if (err) {
+                                console.log("ERROR: (playerProperties)", err);
                                 reject(err);
+                                return;
                             }
                             resolve(commandResponse.getGameSnapshot());
                         });
@@ -169,7 +179,9 @@ var RemoteControl = /** @class */ (function () {
                 return [2 /*return*/, new Promise(function (resolve, reject) {
                         var resp = _this.client.setGameProperties(gameProp, function (err, commandResponse) {
                             if (err) {
+                                console.log("ERROR: ", err);
                                 reject(err);
+                                return;
                             }
                             resolve(commandResponse.getGameSnapshot());
                         });

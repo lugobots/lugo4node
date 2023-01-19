@@ -27,10 +27,11 @@ export class RemoteControl {
             deadline.setSeconds(deadline.getSeconds() + 5);
             this.client.waitForReady(deadline, (err) => {
                 if (err) {
+                    console.log(`ERROR: `, err)
                     reject(err)
-                } else {
-                    resolve()
+                    return
                 }
+                resolve()
             })
         })
     }
@@ -40,7 +41,9 @@ export class RemoteControl {
         return new Promise<void>((resolve, reject) => {
             const resp = this.client.pauseOrResume(pauseReq, (err) => {
                 if (err) {
+                    console.log(`ERROR: `, err)
                     reject(err)
+                    return
                 }
                 resolve()
             })
@@ -52,7 +55,9 @@ export class RemoteControl {
         return new Promise<void>((resolve, reject) => {
             const resp = this.client.resumeListeningPhase(req, (err) => {
                 if (err) {
+                    console.log(`ERROR: `, err)
                     reject(err)
+                    return
                 }
                 resolve()
             })
@@ -64,7 +69,9 @@ export class RemoteControl {
         return new Promise<void>((resolve, reject) => {
             const resp = this.client.nextTurn(nextTurnReq, (err) => {
                 if (err) {
+                    console.log(`ERROR: `, err)
                     reject(err)
+                    return
                 }
                 resolve()
             })
@@ -78,7 +85,9 @@ export class RemoteControl {
         return new Promise<GameSnapshot>((resolve, reject) => {
             const resp = this.client.setBallProperties(ballPropReq, (err, commandResponse) => {
                 if (err) {
+                    console.log(`ERROR: ballPropReq`, ballPropReq, err)
                     reject(err)
+                    return
                 }
                 resolve(commandResponse.getGameSnapshot())
             })
@@ -94,7 +103,9 @@ export class RemoteControl {
         return new Promise<GameSnapshot>((resolve, reject) => {
             const resp = this.client.setPlayerProperties(playerProperties, (err, commandResponse) => {
                 if (err) {
+                    console.log(`ERROR: (playerProperties)`, err)
                     reject(err)
+                    return
                 }
                 resolve(commandResponse.getGameSnapshot())
             })
@@ -107,7 +118,9 @@ export class RemoteControl {
         return new Promise<GameSnapshot>((resolve, reject) => {
             const resp = this.client.setGameProperties(gameProp, (err, commandResponse) => {
                 if (err) {
+                    console.log(`ERROR: `, err)
                     reject(err)
+                    return
                 }
                 resolve(commandResponse.getGameSnapshot())
             })

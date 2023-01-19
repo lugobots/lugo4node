@@ -57,7 +57,7 @@ export class TrainingCrl implements TrainingController {
         }
     }
 
-    async getInputs(): Promise<any> {
+    getInputs(): any {
         try {
             this.cycleSeq++
             this._debug(`get state`)
@@ -139,6 +139,7 @@ export class TrainingCrl implements TrainingController {
                             resolveTurn(newState)
                         }
                         this._debug(`sending order for turn ${snapshot.getTurn()} based on action`)
+                        orderSet.setTurn(this.lastSnapshot.getTurn());
                         this.bot.play(orderSet, snapshot, newAction).then((orderSet) => {
                             resolve(orderSet)// sending the orders wh
                             this._debug(`order sent, calling next turn`)
