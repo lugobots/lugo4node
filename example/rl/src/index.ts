@@ -72,10 +72,10 @@ async function myTrainingFunction(trainingCtrl: rl.TrainingController): Promise<
     for (let i = 0; i < trainIterations; ++i) {
         try {
             scores[i] = 0
-            await trainingCtrl.setRandomState();
+            await trainingCtrl.setEnvironment({iteration: i})
 
             for (let j = 0; j < stepsPerIteration; ++j) {
-                const sensors = await trainingCtrl.getInputs();
+                const sensors = await trainingCtrl.getState();
 
                 // the sensors would feed or training model, which would return the next action
                 const action = possibleAction[Math.floor(Math.random() * possibleAction.length)];

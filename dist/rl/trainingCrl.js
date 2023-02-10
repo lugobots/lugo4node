@@ -66,7 +66,7 @@ var TrainingCrl = /** @class */ (function () {
     /**
      * Set the state of match randomly.
      */
-    TrainingCrl.prototype.setRandomState = function () {
+    TrainingCrl.prototype.setEnvironment = function (data) {
         return __awaiter(this, void 0, void 0, function () {
             var _a, e_1;
             return __generator(this, function (_b) {
@@ -77,7 +77,7 @@ var TrainingCrl = /** @class */ (function () {
                     case 1:
                         _b.trys.push([1, 3, , 4]);
                         _a = this;
-                        return [4 /*yield*/, this.bot.createNewInitialState()];
+                        return [4 /*yield*/, this.bot.createNewInitialState(data)];
                     case 2:
                         _a.lastSnapshot = _b.sent();
                         return [3 /*break*/, 4];
@@ -90,11 +90,11 @@ var TrainingCrl = /** @class */ (function () {
             });
         });
     };
-    TrainingCrl.prototype.getInputs = function () {
+    TrainingCrl.prototype.getState = function () {
         try {
             this.cycleSeq++;
             this._debug("get state");
-            return this.bot.getInputs(this.lastSnapshot);
+            return this.bot.getState(this.lastSnapshot);
         }
         catch (e) {
             console.error("bot trainer failed to return inputs from a particular state", e);
@@ -139,13 +139,6 @@ var TrainingCrl = /** @class */ (function () {
             });
         });
     };
-    // async onGettingReadyState(snapshot) {
-    //     if (!this.trainingHasStarted) {
-    //         // await this.remoteControl.nextTurn().catch(e => {
-    //         //     console.error(`could not request next turn`, e)
-    //         // })
-    //     }
-    // }
     TrainingCrl.prototype.gameTurnHandler = function (orderSet, snapshot) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;

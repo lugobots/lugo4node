@@ -1,5 +1,5 @@
 import {RemoteControl} from "./remoteControl"
-import {TrainingController, BotTrainer, TrainingFunction} from './interfaces'
+import {BotTrainer, TrainingController, TrainingFunction} from './interfaces'
 import {GameSnapshot, OrderSet} from "../pb/server_pb"
 
 export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
@@ -47,21 +47,21 @@ export class TrainingCrl implements TrainingController {
     /**
      * Set the state of match randomly.
      */
-    async setRandomState(): Promise<void> {
+    async setEnvironment(data: any): Promise<void> {
         this._debug(`Reset state`)
         try {
-            this.lastSnapshot = await this.bot.createNewInitialState()
+            this.lastSnapshot = await this.bot.createNewInitialState(data)
         } catch (e) {
             console.error(`bot trainer failed to create initial state`, e)
             throw e;
         }
     }
 
-    getInputs(): any {
+    getState(): any {
         try {
             this.cycleSeq++
             this._debug(`get state`)
-            return this.bot.getInputs(this.lastSnapshot)
+            return this.bot.getState(this.lastSnapshot)
         } catch (e) {
             console.error(`bot trainer failed to return inputs from a particular state`, e)
             throw e
@@ -97,14 +97,6 @@ export class TrainingCrl implements TrainingController {
     _gotNextState = (newState: GameSnapshot) => {
         this._debug(`No one waiting for the next state`)
     };
-
-    // async onGettingReadyState(snapshot) {
-    //     if (!this.trainingHasStarted) {
-    //         // await this.remoteControl.nextTurn().catch(e => {
-    //         //     console.error(`could not request next turn`, e)
-    //         // })
-    //     }
-    // }
 
     async gameTurnHandler(orderSet, snapshot): Promise<OrderSet> {
         this._debug(`new turn`)

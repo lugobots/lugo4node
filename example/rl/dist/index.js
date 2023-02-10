@@ -106,14 +106,14 @@ function myTrainingFunction(trainingCtrl) {
                 case 2:
                     _b.trys.push([2, 9, , 10]);
                     scores[i] = 0;
-                    return [4 /*yield*/, trainingCtrl.setRandomState()];
+                    return [4 /*yield*/, trainingCtrl.setEnvironment({ iteration: i })];
                 case 3:
                     _b.sent();
                     j = 0;
                     _b.label = 4;
                 case 4:
                     if (!(j < stepsPerIteration)) return [3 /*break*/, 8];
-                    return [4 /*yield*/, trainingCtrl.getInputs()];
+                    return [4 /*yield*/, trainingCtrl.getState()];
                 case 5:
                     sensors = _b.sent();
                     action = possibleAction[Math.floor(Math.random() * possibleAction.length)];

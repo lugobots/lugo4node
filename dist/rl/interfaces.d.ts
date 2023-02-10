@@ -6,13 +6,15 @@ export type TrainingFunction = (trainingCtr: TrainingController) => Promise<void
 export interface TrainingController {
     /**
      * This method should be called whenever your need to reset the game to an initial state.
+     *
+     * @param {any} data - Pass any data you need to during the training session
      */
-    setRandomState: () => Promise<void>;
+    setEnvironment: (data: any) => Promise<void>;
     /**
      * Use this method to get the inputs that will be used by your model. E.g. if you are using tensor flow, you may
      * return the tensors used to feed your network.
      */
-    getInputs: () => any;
+    getState: () => any;
     /**
      * Use this method to pass that action picked by you model. It will return the reward and `done` values got from
      * your BotTrainer.
@@ -38,8 +40,10 @@ export interface BotTrainer {
      *
      * IMPORTANT!! Note that this method should define the new state directly on the game server. So you MUST
      * use the remote control client to change the game elements' position/state
+     *
+     * @param {any} data - Pass any data you need to during the training session
      */
-    createNewInitialState: () => Promise<GameSnapshot>;
+    createNewInitialState: (data: any) => Promise<GameSnapshot>;
     /**
      * getInputs is called in each training step.
      * The training function will call this method to receive whatever inputs you want to use in your neural network.
@@ -49,7 +53,7 @@ export interface BotTrainer {
      *
      * @param {GameSnapshot} snapshot - The current game state
      */
-    getInputs: (snapshot: GameSnapshot) => any;
+    getState: (snapshot: GameSnapshot) => any;
     /**
      * play define the orders that will be sent to the game server based on the `action` sent by your training function.
      *

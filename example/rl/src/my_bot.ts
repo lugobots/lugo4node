@@ -1,4 +1,4 @@
-import {GameSnapshotReader, Lugo, Mapper, SPECS, ORIENTATION, rl} from "@lugobots/lugo4node";
+import {GameSnapshotReader, Lugo, Mapper, ORIENTATION, rl} from "@lugobots/lugo4node";
 
 export const TRAINING_PLAYER_NUMBER = 5
 
@@ -12,7 +12,7 @@ export class MyBotTrainer implements rl.BotTrainer {
         this.remoteControl = remoteControl
     }
 
-    async createNewInitialState(): Promise<Lugo.GameSnapshot> {
+    async createNewInitialState(data: any): Promise<Lugo.GameSnapshot> {
         // Using the mapper is important for 2 reasons:
         // The mapper will help the bot to see the field in quadrants
         // and will translate the coordinates automatically regardless what side of the field the bot is playing
@@ -50,7 +50,7 @@ export class MyBotTrainer implements rl.BotTrainer {
         return await this.remoteControl.setBallProps(ballPos, newVelocity)
     }
 
-    getInputs(snapshot: Lugo.GameSnapshot): any {
+    getState(snapshot: Lugo.GameSnapshot): any {
         // here we should read the scenario and return the inputs that will be used by our neural network
         // the inputs, of course, are read from the game snapshot
 
