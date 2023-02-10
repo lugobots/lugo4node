@@ -1,7 +1,6 @@
-import {GameSnapshotReader, Lugo, Mapper, homeGoal, SPECS, ORIENTATION, rl} from "@lugobots/lugo4node";
-import * as tf from "@tensorflow/tfjs-node";
+import {GameSnapshotReader, Lugo, Mapper, SPECS, ORIENTATION, rl} from "@lugobots/lugo4node";
 
-export const PLAYER_NUM = 1;
+export const TRAINING_PLAYER_NUMBER = 5
 
 export class MyBotTrainer implements rl.BotTrainer {
 
@@ -9,144 +8,93 @@ export class MyBotTrainer implements rl.BotTrainer {
 
     private mapper: Mapper;
 
-    private target_point_y;
-
     constructor(remoteControl: rl.RemoteControl) {
         this.remoteControl = remoteControl
     }
 
     async createNewInitialState(): Promise<Lugo.GameSnapshot> {
-        this.mapper = new Mapper(20, 20, Lugo.Team.Side.HOME)
-        // for (let i = 1; i <= 11; i++) {
-        //     await this._randomPlayerPos(this.mapper, Lugo.Team.Side.HOME, i)
-        //     await this._randomPlayerPos(this.mapper, Lugo.Team.Side.AWAY, i)
-        // }
+        // Using the mapper is important for 2 reasons:
+        // The mapper will help the bot to see the field in quadrants
+        // and will translate the coordinates automatically regardless what side of the field the bot is playing
+        // see the documentation at https://github.com/lugobots/lugo4node#mapper-and-region-classes
+        this.mapper = new Mapper(20, 10, Lugo.Team.Side.HOME)
 
+        // here I am setting all players in some random position, but of course you can change how the initial state will be
+        for (let i = 1; i <= 11; i++) {
+            await this._randomPlayerPos(this.mapper, Lugo.Team.Side.HOME, i)
+            await this._randomPlayerPos(this.mapper, Lugo.Team.Side.AWAY, i)
+        }
+
+        // now I am changing the position of our training bot.
+        // the velocity is not important yet because the game has not started, but it is required
         const randomVelocity = new Lugo.Velocity()
         randomVelocity.setSpeed(0)
         randomVelocity.setDirection(ORIENTATION.NORTH)// irrelevant
         await this.remoteControl.setPlayerProps(
             Lugo.Team.Side.HOME,
-            PLAYER_NUM,
-            homeGoal.getCenter(),
+            TRAINING_PLAYER_NUMBER,
+            this.mapper.getRegion(10, randomInteger(2, 7)).getCenter(),
             randomVelocity)
 
+        // I am not using the ball in this training, so it does not really matter, I am just putting it away
         const ballPos = new Lugo.Point()
-        ballPos.setX(Math.round(randomInteger(SPECS.GOAL_ZONE_RANGE + SPECS.PLAYER_SIZE, SPECS.GOAL_ZONE_RANGE + (SPECS.PLAYER_SIZE * 4))))
-        ballPos.setY(randomInteger(homeGoal.getBottomPole().getY() - (SPECS.FIELD_HEIGHT/4), homeGoal.getTopPole().getY() + (SPECS.FIELD_HEIGHT/4)))
+        ballPos.setX(0)
+        ballPos.setY(0)
         const newVelocity = new Lugo.Velocity()
-        newVelocity.setSpeed(SPECS.BALL_MAX_SPEED)
+        newVelocity.setSpeed(0)
+        newVelocity.setDirection(ORIENTATION.NORTH)// irrelevant
 
-
-        const ballTarget = new Lugo.Point()
-        ballTarget.setX(0)
-        ballTarget.setY(randomInteger(homeGoal.getBottomPole().getY(), homeGoal.getTopPole().getY()))
-
-        this.target_point_y = ballTarget.getY()
-
-        let vect1 = new Lugo.Vector()
-        vect1.setX(ballTarget.getX() - ballPos.getX())
-        vect1.setY(ballTarget.getY() - ballPos.getY())
-
-        newVelocity.setDirection(vect1)
-
+        // it is important to set the game turn to 1 every time we start the game! Otherwise the game
+        // will end at some point during the training session
         await this.remoteControl.setTurn(1)
         return await this.remoteControl.setBallProps(ballPos, newVelocity)
     }
 
-    getInputs(snapshot: Lugo.GameSnapshot) {
-        const reader = new GameSnapshotReader(snapshot, Lugo.Team.Side.HOME)
-        const me = reader.getPlayer(Lugo.Team.Side.HOME, PLAYER_NUM)
-        if (!me) {
-            throw new Error("did not find myself in the game")
-        }
+    getInputs(snapshot: Lugo.GameSnapshot): any {
+        // here we should read the scenario and return the inputs that will be used by our neural network
+        // the inputs, of course, are read from the game snapshot
 
-        const ballPos = reader.getBall().getPosition();
-
-        // Distand to bottom pole
-        const x = me.getPosition().getY();// SPECS.FIELD_HEIGHT;
-        // ball distanc in X axis
-        const xDot = ballPos.getX();// SPECS.FIELD_WIDTH;
-        // ball distanc in Y axis
-        const theta = ballPos.getY();// SPECS.FIELD_HEIGHT;
-        // ball velocity in X aix
-        const thetaDot = reader.getBall().getVelocity().getDirection().getX();// SPECS.FIELD_WIDTH;
-
-        // console.log(`Inputs: `, [x, xDot, theta, thetaDot])
-        return tf.tensor2d([[x, xDot, theta, thetaDot]]);
+        // we can return whatever format we want
+        return [true, true, false];
     }
 
     async play(orderSet: Lugo.OrderSet, snapshot: Lugo.GameSnapshot, action: any): Promise<Lugo.OrderSet> {
+        // here we will receive the action that was defined during the training step.
 
-// action > 0: upper pole
-// action <= 0: lower pole
+        // we must translate the action to an order.
+        // Example:
+        // let's say my possible actions are "kick" or "do not kick", I would create a order to kick the ball
+        // let's say my possible actions are "go-forward", "go-right", etc... I would create an move order to that direction
+        //
+        // and so on.
+        // Our actions will be defined in our training function based on what we are training.
+        // The action can be anything, so we can have a json if several values.
+
         const reader = new GameSnapshotReader(snapshot, Lugo.Team.Side.HOME)
-        const me = reader.getPlayer(Lugo.Team.Side.HOME, PLAYER_NUM)
-        if (!me) {
-            throw new Error("did not find myself in the game")
-        }
-
-        let dir = new Lugo.Vector();
-        if (action === 0) {
-            dir.setX(1);
-        }else if (action > 0) {
-            dir.setY(-1);
-        }else if (action < 0) {
-            dir.setY(1);
-        }
-        // await delay(2000)
-        // console.log()
-        // console.log('========')
-        console.log(`dir: `, action, dir.getX(), dir.getY())
-        orderSet.setDebugMessage("update")
-        return orderSet.setOrdersList([reader.makeOrderMoveFromVector(dir, SPECS.PLAYER_MAX_SPEED)])
+        const dir = reader.makeOrderMoveByDirection(action)
+        return orderSet.setOrdersList([dir])
     }
 
-    /**
-     *
-     * @param {Lugo.GameSnapshot} previousSnapshot
-     * @param {Lugo.GameSnapshot} newSnapshot
-     * @returns {Promise<{reward: number, done: boolean}>}
-     */
     async evaluate(previousSnapshot: Lugo.GameSnapshot, newSnapshot: Lugo.GameSnapshot): Promise<{
         reward: number;
         done: boolean;
     }> {
+        // this method is called after each turn
+        // here we can evaluate how bad/good the action was.
+        // Example:
+        // if I am training my bot to move forward, I can check how closer to the goal he got,
+        // if I am training my bot to take the ball, I can check how closer to the bot he got.
+
         const readerPrevious = new GameSnapshotReader(previousSnapshot, Lugo.Team.Side.HOME)
         const reader = new GameSnapshotReader(newSnapshot, Lugo.Team.Side.HOME)
-        const me = reader.getPlayer(Lugo.Team.Side.HOME, PLAYER_NUM)
-        if (!me) {
-            throw new Error("did not find myself in the game")
-        }
-        const mePreviously = readerPrevious.getPlayer(Lugo.Team.Side.HOME, PLAYER_NUM)
-        if (!mePreviously) {
-            throw new Error("did not find myself in the game")
-        }
-
-        const previousYDist = Math.abs(mePreviously.getPosition().getY() - this.target_point_y)
-        const newYDist = Math.abs(me.getPosition().getY() - this.target_point_y)
-
-        let done = false
-        let reward = 1;
-        if (reader.getBall().getPosition().getX() <= SPECS.PLAYER_SIZE) {
-            done = true
-            // if (newYDist < SPECS.PLAYER_SIZE) {
-            //     reward += 3;
-            // }
-        }
-        if (previousYDist <= newYDist) {
-            reward = -1;
-
-        }
-        // console.log({done, reward});
-        return {done, reward}
+        return {done: newSnapshot.getTurn() >= 20, reward: Math.random()}
     }
 
     async _randomPlayerPos(mapper, side, number) {
         const minCol = 10
         const maxCol = 17
-        const minRow = 4
-        const maxRow = 16
+        const minRow = 1
+        const maxRow = 8
 
         const randomVelocity = new Lugo.Velocity()
         randomVelocity.setSpeed(0)
@@ -155,8 +103,7 @@ export class MyBotTrainer implements rl.BotTrainer {
         const randomCol = randomInteger(minCol, maxCol)
         const randomRow = randomInteger(minRow, maxRow)
         const randomPosition = mapper.getRegion(randomCol, randomRow).getCenter()
-        return await this.remoteControl.setPlayerProps(side, number, randomPosition, randomVelocity)
-        // return new Promise(resolve => {resolve(true)})
+        await this.remoteControl.setPlayerProps(side, number, randomPosition, randomVelocity)
     }
 
     /**
@@ -190,7 +137,7 @@ export class MyBotTrainer implements rl.BotTrainer {
 }
 
 function randomInteger(min, max) {
-    return Math.floor(Math.floor(Math.random() * (max - min + 1)) + min);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
