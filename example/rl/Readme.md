@@ -22,7 +22,7 @@ and set the timer mode to **remote**. Those options will allow your RL environme
     the compiled files.
 3. **Start the server using this command:** (use another terminal, keep `npm run watch` running )
     ```shell 
-    docker run -p 8080:8080 -p 5000:5000 lugobots/server:v1.0.0-beta.6-rc.2 play --dev-mode --timer-mode=remote
+    docker run -p 8080:8080 -p 5000:5000 lugobots/server:latest play --dev-mode --timer-mode=remote
     ```
    You may watch your bot training session at http://localhost:8080/
 4. **Run the training**
