@@ -35,6 +35,6 @@ and set the timer mode to **remote**. Those options will allow your RL environme
 You may start the server without the frontend part (headless), it will save some resources and speed up the training.
 
 ```bash 
-docker run -p 8080:8080 -p 5000:5000 lugobots/server:v1.0.0-beta.6-rc.2 play --dev-mode --timer-mode=remote --headless
+docker run -p 8080:8080 -p 5000:5000 lugobots/server:latest play --dev-mode --timer-mode=remote --headless
 ```
 
