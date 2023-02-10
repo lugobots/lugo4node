@@ -43,7 +43,7 @@ var MyBotTrainer = /** @class */ (function () {
     function MyBotTrainer(remoteControl) {
         this.remoteControl = remoteControl;
     }
-    MyBotTrainer.prototype.createNewInitialState = function () {
+    MyBotTrainer.prototype.createNewInitialState = function (data) {
         return __awaiter(this, void 0, void 0, function () {
             var i, randomVelocity, ballPos, newVelocity;
             return __generator(this, function (_a) {
@@ -96,7 +96,7 @@ var MyBotTrainer = /** @class */ (function () {
             });
         });
     };
-    MyBotTrainer.prototype.getInputs = function (snapshot) {
+    MyBotTrainer.prototype.getState = function (snapshot) {
         // here we should read the scenario and return the inputs that will be used by our neural network
         // the inputs, of course, are read from the game snapshot
         // we can return whatever format we want
