@@ -1,5 +1,5 @@
 import { RemoteControl } from "./remoteControl";
-import { TrainingController, BotTrainer, TrainingFunction } from './interfaces';
+import { BotTrainer, TrainingController, TrainingFunction } from './interfaces';
 import { GameSnapshot, OrderSet } from "../pb/server_pb";
 export declare const delay: (ms: any) => Promise<unknown>;
 export declare class TrainingCrl implements TrainingController {
@@ -28,8 +28,8 @@ export declare class TrainingCrl implements TrainingController {
     /**
      * Set the state of match randomly.
      */
-    setRandomState(): Promise<void>;
-    getInputs(): any;
+    setEnvironment(data: any): Promise<void>;
+    getState(): any;
     update(action: any): Promise<{
         reward: number;
         done: boolean;
