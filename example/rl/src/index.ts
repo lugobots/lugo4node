@@ -1,10 +1,10 @@
-import {Mapper, Client, rl, Lugo, DIRECTION, SPECS } from "@lugobots/lugo4node";
+import {Client, DIRECTION, Lugo, Mapper, rl} from "@lugobots/lugo4node";
 
 import {MyBotTrainer, TRAINING_PLAYER_NUMBER} from "./my_bot";
 
 // training settings
 const trainIterations = 50;
-const stepsPerIteration = 50;
+const stepsPerIteration = 240;
 
 const grpcAddress = "localhost:5000";
 const grpcInsecure = true;
@@ -39,13 +39,19 @@ const grpcInsecure = true;
     // now we can create the Gym, that will control all async work and allow us to focus on the learning part
     const gym = new rl.Gym(rc, bot, myTrainingFunction, {debugging_log: false})
 
-    // starting the game:
-    // If you want to train playing against another bot, you should start the other team first.
+    // First, starting the game server
+    // If you want to train playing against another bot, then you should start the other team first.
     // If you want to train using two teams, you should start the away team, then start the training bot, and finally start the home team
     // await gym.start(lugoClient)
 
     // if you want to train controlling all players, use the withZombiePlayers players to create zombie players.
     await gym.withZombiePlayers(grpcAddress).start(lugoClient)
+
+    // if you want to train against bots running randomly, you can use this helper
+    // await gym.withRandomMotionPlayers(grpcAddress, 10).start(lugoClient)
+
+    // if you want to train against bots chasing the ball, you can use this helper
+    // await gym.withChasersPlayers(grpcAddress).start(lugoClient)
 })();
 
 

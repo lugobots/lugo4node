@@ -36,39 +36,45 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-var tf = require("@tensorflow/tfjs-node");
 var lugo4node_1 = require("@lugobots/lugo4node");
 var my_bot_1 = require("./my_bot");
-var model_1 = require("./model");
 // training settings
-var trainIterations = 500;
-var gamesPerIteration = 10;
-var maxStepsPerGame = 60;
-var hiddenLayerSizes = [4, 4];
-var learningRate = 0.95;
-var discountRate = 0.05;
-var testingGames = 20;
+var trainIterations = 50;
+var stepsPerIteration = 240;
 var grpcAddress = "localhost:5000";
 var grpcInsecure = true;
-var model_path = "file://./model_output";
 (function () { return __awaiter(void 0, void 0, void 0, function () {
-    var teamSide, playerNumber, map, initialRegion, lugoClient, rc, bot, gym;
+    var teamSide, map, initialRegion, lugoClient, rc, bot, gym;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 teamSide = lugo4node_1.Lugo.Team.Side.HOME;
-                playerNumber = my_bot_1.PLAYER_NUM;
-                map = new lugo4node_1.Mapper(10, 6, lugo4node_1.Lugo.Team.Side.HOME);
-                initialRegion = map.getRegion(1, 1);
-                lugoClient = new lugo4node_1.Client(grpcAddress, grpcInsecure, "", teamSide, playerNumber, initialRegion.getCenter());
+                map = new lugo4node_1.Mapper(20, 10, lugo4node_1.Lugo.Team.Side.HOME);
+                initialRegion = map.getRegion(5, 4);
+                lugoClient = new lugo4node_1.Client(grpcAddress, grpcInsecure, "", teamSide, my_bot_1.TRAINING_PLAYER_NUMBER, initialRegion.getCenter());
                 rc = new lugo4node_1.rl.RemoteControl();
                 return [4 /*yield*/, rc.connect(grpcAddress)];
             case 1:
                 _a.sent();
                 bot = new my_bot_1.MyBotTrainer(rc);
                 gym = new lugo4node_1.rl.Gym(rc, bot, myTrainingFunction, { debugging_log: false });
-                return [4 /*yield*/, gym.withZombiePlayers(grpcAddress).start(lugoClient)];
+                // First, starting the game server
+                // If you want to train playing against another bot, then you should start the other team first.
+                // If you want to train using two teams, you should start the away team, then start the training bot, and finally start the home team
+                // await gym.start(lugoClient)
+                // if you want to train controlling all players, use the withZombiePlayers players to create zombie players.
+                return [4 /*yield*/, gym.withZombiePlayers(grpcAddress).start(lugoClient)
+                    // if you want to train against bots running randomly, you can use this helper
+                    // await gym.withRandomMotionPlayers(grpcAddress, 10).start(lugoClient)
+                    // if you want to train against bots chasing the ball, you can use this helper
+                    // await gym.withChasersPlayers(grpcAddress).start(lugoClient)
+                ];
             case 2:
+                // First, starting the game server
+                // If you want to train playing against another bot, then you should start the other team first.
+                // If you want to train using two teams, you should start the away team, then start the training bot, and finally start the home team
+                // await gym.start(lugoClient)
+                // if you want to train controlling all players, use the withZombiePlayers players to create zombie players.
                 _a.sent();
                 return [2 /*return*/];
         }
@@ -76,104 +82,67 @@ var model_path = "file://./model_output";
 }); })();
 function myTrainingFunction(trainingCtrl) {
     return __awaiter(this, void 0, void 0, function () {
-        var policyNet, optimizer, meanStepValues, t0, i, gameSteps, t1, stepsPerSecond;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var possibleAction, scores, i, j, sensors, action, _a, reward, done, e_1;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
                     console.log("Let's training");
-                    return [4 /*yield*/, model_1.SaveablePolicyNetwork.checkStoredModelStatus("".concat(model_path, "/model.json"))];
-                case 1:
-                    if (!((_a.sent()) != null)) return [3 /*break*/, 3];
-                    console.log('Reloading model');
-                    return [4 /*yield*/, model_1.SaveablePolicyNetwork.loadModel(model_path)];
-                case 2:
-                    policyNet = _a.sent();
-                    return [3 /*break*/, 4];
-                case 3:
-                    hiddenLayerSizes.unshift(4); // adds the first layer
-                    policyNet = new model_1.SaveablePolicyNetwork(hiddenLayerSizes);
-                    console.log('DONE constructing new instance of SaveablePolicyNetwork');
-                    _a.label = 4;
-                case 4:
-                    optimizer = tf.train.adam(learningRate);
-                    meanStepValues = [];
-                    t0 = new Date().getTime();
-                    i = 0;
-                    _a.label = 5;
-                case 5:
-                    if (!(i < trainIterations)) return [3 /*break*/, 10];
-                    console.log('train iteration ', i);
-                    return [4 /*yield*/, policyNet.train(trainingCtrl, optimizer, discountRate, gamesPerIteration, maxStepsPerGame)];
-                case 6:
-                    gameSteps = _a.sent();
-                    t1 = new Date().getTime();
-                    stepsPerSecond = (0, model_1.sum)(gameSteps) / ((t1 - t0) / 1e3);
-                    t0 = t1;
-                    // trainSpeed.textContent = `${stepsPerSecond.toFixed(1)} steps/s`
-                    meanStepValues.push({ x: i + 1, y: (0, model_1.mean)(gameSteps) });
-                    //   console.log(`# of tensors: ${tf.memory().numTensors}`);
-                    // plotSteps();
-                    // onIterationEnd(i + 1, trainIterations);
-                    return [4 /*yield*/, tf.nextFrame()];
-                case 7:
-                    //   console.log(`# of tensors: ${tf.memory().numTensors}`);
-                    // plotSteps();
-                    // onIterationEnd(i + 1, trainIterations);
-                    _a.sent(); // Unblock UI thread.
-                    return [4 /*yield*/, policyNet.saveModel(model_path)];
-                case 8:
-                    _a.sent();
-                    _a.label = 9;
-                case 9:
-                    ++i;
-                    return [3 /*break*/, 5];
-                case 10:
-                    console.log('Starting tests');
-                    // let isDone = false;
-                    // const cartPole = new CartPole(true);
-                    // cartPole.setRandomState();
-                    // let steps = 0;
-                    // stopRequested = false;
-                    // while (!isDone) {
-                    //     steps++;
-                    //     tf.tidy(() => {
-                    //         const action = policyNet.getActions(cartPole.getStateTensor())[0];
-                    //         logStatus(
-                    //             `Test in progress. ` +
-                    //             `Action: ${action === 1 ? '<--' : ' -->'} (Step ${steps})`);
-                    //         isDone = cartPole.update(action);
-                    //         renderCartPole(cartPole, cartPoleCanvas);
-                    //     });
-                    //     await tf.nextFrame();  // Unblock UI thread.
-                    //     if (stopRequested) {
-                    //         break;
-                    //     }
-                    // }
-                    return [4 /*yield*/, trainingCtrl.stop()
-                        // console.log(`Testing scores: `, testingScores)
+                    possibleAction = [
+                        lugo4node_1.DIRECTION.FORWARD,
+                        lugo4node_1.DIRECTION.BACKWARD,
+                        lugo4node_1.DIRECTION.LEFT,
+                        lugo4node_1.DIRECTION.RIGHT,
+                        lugo4node_1.DIRECTION.BACKWARD_LEFT,
+                        lugo4node_1.DIRECTION.BACKWARD_RIGHT,
+                        lugo4node_1.DIRECTION.FORWARD_RIGHT,
+                        lugo4node_1.DIRECTION.FORWARD_LEFT,
                     ];
-                case 11:
-                    // let isDone = false;
-                    // const cartPole = new CartPole(true);
-                    // cartPole.setRandomState();
-                    // let steps = 0;
-                    // stopRequested = false;
-                    // while (!isDone) {
-                    //     steps++;
-                    //     tf.tidy(() => {
-                    //         const action = policyNet.getActions(cartPole.getStateTensor())[0];
-                    //         logStatus(
-                    //             `Test in progress. ` +
-                    //             `Action: ${action === 1 ? '<--' : ' -->'} (Step ${steps})`);
-                    //         isDone = cartPole.update(action);
-                    //         renderCartPole(cartPole, cartPoleCanvas);
-                    //     });
-                    //     await tf.nextFrame();  // Unblock UI thread.
-                    //     if (stopRequested) {
-                    //         break;
-                    //     }
-                    // }
-                    _a.sent();
+                    scores = [];
+                    i = 0;
+                    _b.label = 1;
+                case 1:
+                    if (!(i < trainIterations)) return [3 /*break*/, 11];
+                    _b.label = 2;
+                case 2:
+                    _b.trys.push([2, 9, , 10]);
+                    scores[i] = 0;
+                    return [4 /*yield*/, trainingCtrl.setRandomState()];
+                case 3:
+                    _b.sent();
+                    j = 0;
+                    _b.label = 4;
+                case 4:
+                    if (!(j < stepsPerIteration)) return [3 /*break*/, 8];
+                    return [4 /*yield*/, trainingCtrl.getInputs()];
+                case 5:
+                    sensors = _b.sent();
+                    action = possibleAction[Math.floor(Math.random() * possibleAction.length)];
+                    return [4 /*yield*/, trainingCtrl.update(action)];
+                case 6:
+                    _a = _b.sent(), reward = _a.reward, done = _a.done;
+                    // now we should reward our model with the reward value
+                    scores[i] += reward;
+                    if (done) {
+                        // no more steps
+                        console.log("End of trainIteration ".concat(i, ", score: "), scores[i]);
+                        return [3 /*break*/, 8];
+                    }
+                    _b.label = 7;
+                case 7:
+                    ++j;
+                    return [3 /*break*/, 4];
+                case 8: return [3 /*break*/, 10];
+                case 9:
+                    e_1 = _b.sent();
+                    console.error(e_1);
+                    return [3 /*break*/, 10];
+                case 10:
+                    ++i;
+                    return [3 /*break*/, 1];
+                case 11: return [4 /*yield*/, trainingCtrl.stop()];
+                case 12:
+                    _b.sent();
+                    console.log("Training is over, scores: ", scores);
                     return [2 /*return*/];
             }
         });

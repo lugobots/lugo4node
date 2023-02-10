@@ -36,130 +36,89 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.delay = exports.MyBotTrainer = exports.PLAYER_NUM = void 0;
+exports.delay = exports.MyBotTrainer = exports.TRAINING_PLAYER_NUMBER = void 0;
 var lugo4node_1 = require("@lugobots/lugo4node");
-var tf = require("@tensorflow/tfjs-node");
-exports.PLAYER_NUM = 1;
+exports.TRAINING_PLAYER_NUMBER = 5;
 var MyBotTrainer = /** @class */ (function () {
     function MyBotTrainer(remoteControl) {
         this.remoteControl = remoteControl;
     }
     MyBotTrainer.prototype.createNewInitialState = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var randomVelocity, ballPos, newVelocity, ballTarget, vect1;
+            var i, randomVelocity, ballPos, newVelocity;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        this.mapper = new lugo4node_1.Mapper(20, 20, lugo4node_1.Lugo.Team.Side.HOME);
+                        // Using the mapper is important for 2 reasons:
+                        // The mapper will help the bot to see the field in quadrants
+                        // and will translate the coordinates automatically regardless what side of the field the bot is playing
+                        // see the documentation at https://github.com/lugobots/lugo4node#mapper-and-region-classes
+                        this.mapper = new lugo4node_1.Mapper(20, 10, lugo4node_1.Lugo.Team.Side.HOME);
+                        i = 1;
+                        _a.label = 1;
+                    case 1:
+                        if (!(i <= 11)) return [3 /*break*/, 5];
+                        return [4 /*yield*/, this._randomPlayerPos(this.mapper, lugo4node_1.Lugo.Team.Side.HOME, i)];
+                    case 2:
+                        _a.sent();
+                        return [4 /*yield*/, this._randomPlayerPos(this.mapper, lugo4node_1.Lugo.Team.Side.AWAY, i)];
+                    case 3:
+                        _a.sent();
+                        _a.label = 4;
+                    case 4:
+                        i++;
+                        return [3 /*break*/, 1];
+                    case 5:
                         randomVelocity = new lugo4node_1.Lugo.Velocity();
                         randomVelocity.setSpeed(0);
                         randomVelocity.setDirection(lugo4node_1.ORIENTATION.NORTH); // irrelevant
-                        return [4 /*yield*/, this.remoteControl.setPlayerProps(lugo4node_1.Lugo.Team.Side.HOME, exports.PLAYER_NUM, lugo4node_1.homeGoal.getCenter(), randomVelocity)];
-                    case 1:
+                        return [4 /*yield*/, this.remoteControl.setPlayerProps(lugo4node_1.Lugo.Team.Side.HOME, exports.TRAINING_PLAYER_NUMBER, this.mapper.getRegion(10, randomInteger(2, 7)).getCenter(), randomVelocity)
+                            // I am not using the ball in this training, so it does not really matter, I am just putting it away
+                        ];
+                    case 6:
                         _a.sent();
                         ballPos = new lugo4node_1.Lugo.Point();
-                        ballPos.setX(Math.round(randomInteger(lugo4node_1.SPECS.GOAL_ZONE_RANGE + lugo4node_1.SPECS.PLAYER_SIZE, lugo4node_1.SPECS.GOAL_ZONE_RANGE + (lugo4node_1.SPECS.PLAYER_SIZE * 4))));
-                        ballPos.setY(randomInteger(lugo4node_1.homeGoal.getBottomPole().getY() - (lugo4node_1.SPECS.FIELD_HEIGHT / 4), lugo4node_1.homeGoal.getTopPole().getY() + (lugo4node_1.SPECS.FIELD_HEIGHT / 4)));
+                        ballPos.setX(0);
+                        ballPos.setY(0);
                         newVelocity = new lugo4node_1.Lugo.Velocity();
-                        newVelocity.setSpeed(lugo4node_1.SPECS.BALL_MAX_SPEED);
-                        ballTarget = new lugo4node_1.Lugo.Point();
-                        ballTarget.setX(0);
-                        ballTarget.setY(randomInteger(lugo4node_1.homeGoal.getBottomPole().getY(), lugo4node_1.homeGoal.getTopPole().getY()));
-                        this.target_point_y = ballTarget.getY();
-                        vect1 = new lugo4node_1.Lugo.Vector();
-                        vect1.setX(ballTarget.getX() - ballPos.getX());
-                        vect1.setY(ballTarget.getY() - ballPos.getY());
-                        newVelocity.setDirection(vect1);
+                        newVelocity.setSpeed(0);
+                        newVelocity.setDirection(lugo4node_1.ORIENTATION.NORTH); // irrelevant
+                        // it is important to set the game turn to 1 every time we start the game! Otherwise the game
+                        // will end at some point during the training session
                         return [4 /*yield*/, this.remoteControl.setTurn(1)];
-                    case 2:
+                    case 7:
+                        // it is important to set the game turn to 1 every time we start the game! Otherwise the game
+                        // will end at some point during the training session
                         _a.sent();
                         return [4 /*yield*/, this.remoteControl.setBallProps(ballPos, newVelocity)];
-                    case 3: return [2 /*return*/, _a.sent()];
+                    case 8: return [2 /*return*/, _a.sent()];
                 }
             });
         });
     };
     MyBotTrainer.prototype.getInputs = function (snapshot) {
-        var reader = new lugo4node_1.GameSnapshotReader(snapshot, lugo4node_1.Lugo.Team.Side.HOME);
-        var me = reader.getPlayer(lugo4node_1.Lugo.Team.Side.HOME, exports.PLAYER_NUM);
-        if (!me) {
-            throw new Error("did not find myself in the game");
-        }
-        var ballPos = reader.getBall().getPosition();
-        // Distand to bottom pole
-        var x = me.getPosition().getY(); // SPECS.FIELD_HEIGHT;
-        // ball distanc in X axis
-        var xDot = ballPos.getX(); // SPECS.FIELD_WIDTH;
-        // ball distanc in Y axis
-        var theta = ballPos.getY(); // SPECS.FIELD_HEIGHT;
-        // ball velocity in X aix
-        var thetaDot = reader.getBall().getVelocity().getDirection().getX(); // SPECS.FIELD_WIDTH;
-        // console.log(`Inputs: `, [x, xDot, theta, thetaDot])
-        return tf.tensor2d([[x, xDot, theta, thetaDot]]);
+        // here we should read the scenario and return the inputs that will be used by our neural network
+        // the inputs, of course, are read from the game snapshot
+        // we can return whatever format we want
+        return [true, true, false];
     };
     MyBotTrainer.prototype.play = function (orderSet, snapshot, action) {
         return __awaiter(this, void 0, void 0, function () {
-            var reader, me, dir;
+            var reader, dir;
             return __generator(this, function (_a) {
                 reader = new lugo4node_1.GameSnapshotReader(snapshot, lugo4node_1.Lugo.Team.Side.HOME);
-                me = reader.getPlayer(lugo4node_1.Lugo.Team.Side.HOME, exports.PLAYER_NUM);
-                if (!me) {
-                    throw new Error("did not find myself in the game");
-                }
-                dir = new lugo4node_1.Lugo.Vector();
-                if (action === 0) {
-                    dir.setX(1);
-                }
-                else if (action > 0) {
-                    dir.setY(-1);
-                }
-                else if (action < 0) {
-                    dir.setY(1);
-                }
-                // await delay(2000)
-                // console.log()
-                // console.log('========')
-                console.log("dir: ", action, dir.getX(), dir.getY());
-                orderSet.setDebugMessage("update");
-                return [2 /*return*/, orderSet.setOrdersList([reader.makeOrderMoveFromVector(dir, lugo4node_1.SPECS.PLAYER_MAX_SPEED)])];
+                dir = reader.makeOrderMoveByDirection(action);
+                return [2 /*return*/, orderSet.setOrdersList([dir])];
             });
         });
     };
-    /**
-     *
-     * @param {Lugo.GameSnapshot} previousSnapshot
-     * @param {Lugo.GameSnapshot} newSnapshot
-     * @returns {Promise<{reward: number, done: boolean}>}
-     */
     MyBotTrainer.prototype.evaluate = function (previousSnapshot, newSnapshot) {
         return __awaiter(this, void 0, void 0, function () {
-            var readerPrevious, reader, me, mePreviously, previousYDist, newYDist, done, reward;
+            var readerPrevious, reader;
             return __generator(this, function (_a) {
                 readerPrevious = new lugo4node_1.GameSnapshotReader(previousSnapshot, lugo4node_1.Lugo.Team.Side.HOME);
                 reader = new lugo4node_1.GameSnapshotReader(newSnapshot, lugo4node_1.Lugo.Team.Side.HOME);
-                me = reader.getPlayer(lugo4node_1.Lugo.Team.Side.HOME, exports.PLAYER_NUM);
-                if (!me) {
-                    throw new Error("did not find myself in the game");
-                }
-                mePreviously = readerPrevious.getPlayer(lugo4node_1.Lugo.Team.Side.HOME, exports.PLAYER_NUM);
-                if (!mePreviously) {
-                    throw new Error("did not find myself in the game");
-                }
-                previousYDist = Math.abs(mePreviously.getPosition().getY() - this.target_point_y);
-                newYDist = Math.abs(me.getPosition().getY() - this.target_point_y);
-                done = false;
-                reward = 1;
-                if (reader.getBall().getPosition().getX() <= lugo4node_1.SPECS.PLAYER_SIZE) {
-                    done = true;
-                    // if (newYDist < SPECS.PLAYER_SIZE) {
-                    //     reward += 3;
-                    // }
-                }
-                if (previousYDist <= newYDist) {
-                    reward = -1;
-                }
-                // console.log({done, reward});
-                return [2 /*return*/, { done: done, reward: reward }];
+                return [2 /*return*/, { done: newSnapshot.getTurn() >= 20, reward: Math.random() }];
             });
         });
     };
@@ -171,20 +130,18 @@ var MyBotTrainer = /** @class */ (function () {
                     case 0:
                         minCol = 10;
                         maxCol = 17;
-                        minRow = 4;
-                        maxRow = 16;
+                        minRow = 1;
+                        maxRow = 8;
                         randomVelocity = new lugo4node_1.Lugo.Velocity();
                         randomVelocity.setSpeed(0);
                         randomVelocity.setDirection(lugo4node_1.ORIENTATION.NORTH); // irrelevant
                         randomCol = randomInteger(minCol, maxCol);
                         randomRow = randomInteger(minRow, maxRow);
                         randomPosition = mapper.getRegion(randomCol, randomRow).getCenter();
-                        return [4 /*yield*/, this.remoteControl.setPlayerProps(side, number, randomPosition, randomVelocity)
-                            // return new Promise(resolve => {resolve(true)})
-                        ];
-                    case 1: return [2 /*return*/, _a.sent()
-                        // return new Promise(resolve => {resolve(true)})
-                    ];
+                        return [4 /*yield*/, this.remoteControl.setPlayerProps(side, number, randomPosition, randomVelocity)];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
                 }
             });
         });
@@ -221,7 +178,7 @@ var MyBotTrainer = /** @class */ (function () {
 }());
 exports.MyBotTrainer = MyBotTrainer;
 function randomInteger(min, max) {
-    return Math.floor(Math.floor(Math.random() * (max - min + 1)) + min);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 var delay = function (ms) { return new Promise(function (resolve) { return setTimeout(resolve, ms); }); };
 exports.delay = delay;

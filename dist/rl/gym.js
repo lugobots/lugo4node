@@ -38,7 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 exports.Gym = void 0;
 var trainingCrl_1 = require("./trainingCrl");
-var zombie_1 = require("./zombie");
+var helper_bots_1 = require("./helper_bots");
 var server_pb_js_1 = require("../pb/server_pb.js");
 var Gym = /** @class */ (function () {
     function Gym(remoteControl, trainer, trainingFunction, options) {
@@ -64,7 +64,7 @@ var Gym = /** @class */ (function () {
                                     switch (_a.label) {
                                         case 0:
                                             if (!this.gameServerAddress) return [3 /*break*/, 2];
-                                            return [4 /*yield*/, completeWithZombies(this.gameServerAddress)];
+                                            return [4 /*yield*/, this.helperPlayers(this.gameServerAddress)];
                                         case 1:
                                             _a.sent();
                                             _a.label = 2;
@@ -86,40 +86,108 @@ var Gym = /** @class */ (function () {
         });
     };
     Gym.prototype.withZombiePlayers = function (gameServerAddress) {
+        var _this = this;
         this.gameServerAddress = gameServerAddress;
+        this.helperPlayers = function (gameServerAddress) { return __awaiter(_this, void 0, void 0, function () {
+            var i;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        i = 1;
+                        _a.label = 1;
+                    case 1:
+                        if (!(i <= 11)) return [3 /*break*/, 7];
+                        return [4 /*yield*/, (0, helper_bots_1.newZombieHelperPlayer)(server_pb_js_1.Team.Side.HOME, i, gameServerAddress)];
+                    case 2:
+                        _a.sent();
+                        return [4 /*yield*/, (0, trainingCrl_1.delay)(50)];
+                    case 3:
+                        _a.sent();
+                        return [4 /*yield*/, (0, helper_bots_1.newZombieHelperPlayer)(server_pb_js_1.Team.Side.AWAY, i, gameServerAddress)];
+                    case 4:
+                        _a.sent();
+                        return [4 /*yield*/, (0, trainingCrl_1.delay)(50)];
+                    case 5:
+                        _a.sent();
+                        _a.label = 6;
+                    case 6:
+                        i++;
+                        return [3 /*break*/, 1];
+                    case 7: return [2 /*return*/];
+                }
+            });
+        }); };
+        return this;
+    };
+    Gym.prototype.withChasersPlayers = function (gameServerAddress) {
+        var _this = this;
+        this.gameServerAddress = gameServerAddress;
+        this.helperPlayers = function (gameServerAddress) { return __awaiter(_this, void 0, void 0, function () {
+            var i;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        i = 1;
+                        _a.label = 1;
+                    case 1:
+                        if (!(i <= 11)) return [3 /*break*/, 7];
+                        return [4 /*yield*/, (0, helper_bots_1.newChaserHelperPlayer)(server_pb_js_1.Team.Side.HOME, i, gameServerAddress)];
+                    case 2:
+                        _a.sent();
+                        return [4 /*yield*/, (0, trainingCrl_1.delay)(50)];
+                    case 3:
+                        _a.sent();
+                        return [4 /*yield*/, (0, helper_bots_1.newChaserHelperPlayer)(server_pb_js_1.Team.Side.AWAY, i, gameServerAddress)];
+                    case 4:
+                        _a.sent();
+                        return [4 /*yield*/, (0, trainingCrl_1.delay)(50)];
+                    case 5:
+                        _a.sent();
+                        _a.label = 6;
+                    case 6:
+                        i++;
+                        return [3 /*break*/, 1];
+                    case 7: return [2 /*return*/];
+                }
+            });
+        }); };
+        return this;
+    };
+    Gym.prototype.withRandomMotionPlayers = function (gameServerAddress, turnsToChangeDirection) {
+        var _this = this;
+        if (turnsToChangeDirection === void 0) { turnsToChangeDirection = 60; }
+        this.gameServerAddress = gameServerAddress;
+        this.helperPlayers = function (gameServerAddress) { return __awaiter(_this, void 0, void 0, function () {
+            var i;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        i = 1;
+                        _a.label = 1;
+                    case 1:
+                        if (!(i <= 11)) return [3 /*break*/, 7];
+                        return [4 /*yield*/, (0, helper_bots_1.newRandomMotionHelperPlayer)(server_pb_js_1.Team.Side.HOME, i, gameServerAddress, turnsToChangeDirection)];
+                    case 2:
+                        _a.sent();
+                        return [4 /*yield*/, (0, trainingCrl_1.delay)(50)];
+                    case 3:
+                        _a.sent();
+                        return [4 /*yield*/, (0, helper_bots_1.newRandomMotionHelperPlayer)(server_pb_js_1.Team.Side.AWAY, i, gameServerAddress, turnsToChangeDirection)];
+                    case 4:
+                        _a.sent();
+                        return [4 /*yield*/, (0, trainingCrl_1.delay)(50)];
+                    case 5:
+                        _a.sent();
+                        _a.label = 6;
+                    case 6:
+                        i++;
+                        return [3 /*break*/, 1];
+                    case 7: return [2 /*return*/];
+                }
+            });
+        }); };
         return this;
     };
     return Gym;
 }());
 exports.Gym = Gym;
-function completeWithZombies(gameServerAddress) {
-    return __awaiter(this, void 0, void 0, function () {
-        var i;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    i = 1;
-                    _a.label = 1;
-                case 1:
-                    if (!(i <= 11)) return [3 /*break*/, 7];
-                    return [4 /*yield*/, (0, zombie_1.newZombiePlayer)(server_pb_js_1.Team.Side.HOME, i, gameServerAddress)];
-                case 2:
-                    _a.sent();
-                    return [4 /*yield*/, (0, trainingCrl_1.delay)(50)];
-                case 3:
-                    _a.sent();
-                    return [4 /*yield*/, (0, zombie_1.newZombiePlayer)(server_pb_js_1.Team.Side.AWAY, i, gameServerAddress)];
-                case 4:
-                    _a.sent();
-                    return [4 /*yield*/, (0, trainingCrl_1.delay)(50)];
-                case 5:
-                    _a.sent();
-                    _a.label = 6;
-                case 6:
-                    i++;
-                    return [3 /*break*/, 1];
-                case 7: return [2 /*return*/];
-            }
-        });
-    });
-}

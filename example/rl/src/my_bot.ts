@@ -33,7 +33,7 @@ export class MyBotTrainer implements rl.BotTrainer {
         await this.remoteControl.setPlayerProps(
             Lugo.Team.Side.HOME,
             TRAINING_PLAYER_NUMBER,
-            this.mapper.getRegion(10, randomInteger(7, 13)).getCenter(),
+            this.mapper.getRegion(10, randomInteger(2, 7)).getCenter(),
             randomVelocity)
 
         // I am not using the ball in this training, so it does not really matter, I am just putting it away
@@ -93,8 +93,8 @@ export class MyBotTrainer implements rl.BotTrainer {
     async _randomPlayerPos(mapper, side, number) {
         const minCol = 10
         const maxCol = 17
-        const minRow = 4
-        const maxRow = 16
+        const minRow = 1
+        const maxRow = 8
 
         const randomVelocity = new Lugo.Velocity()
         randomVelocity.setSpeed(0)
