@@ -79,9 +79,6 @@ export class TrainingCrl implements TrainingController {
         this.OrderSet.setTurn(this.lastSnapshot.getTurn());
         const updatedOrderSet = await this.bot.play(this.OrderSet, this.lastSnapshot, action)
 
-
-
-        console.log(`updatedOrderSet ++++++++>>>>>> ${action}`, updatedOrderSet.getOrdersList()[0].getMove().getVelocity().getDirection())
         this._debug(`got order set, passing down`)
         this.resumeListeningPhase(updatedOrderSet)
         await delay(20)// before calling next turn, let's wait just a bit to ensure the server got our order

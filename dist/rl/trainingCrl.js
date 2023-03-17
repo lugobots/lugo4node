@@ -115,7 +115,6 @@ var TrainingCrl = /** @class */ (function () {
                         return [4 /*yield*/, this.bot.play(this.OrderSet, this.lastSnapshot, action)];
                     case 1:
                         updatedOrderSet = _c.sent();
-                        console.log("updatedOrderSet ++++++++>>>>>> ".concat(action), updatedOrderSet.getOrdersList()[0].getMove().getVelocity().getDirection());
                         this._debug("got order set, passing down");
                         this.resumeListeningPhase(updatedOrderSet);
                         return [4 /*yield*/, (0, exports.delay)(20)]; // before calling next turn, let's wait just a bit to ensure the server got our order
