@@ -19,7 +19,7 @@ export declare class TrainingCrl implements TrainingController {
     private bot;
     debugging_log: boolean;
     private stopRequested;
-    private onGetNewAction;
+    private resumeListeningPhase;
     /**
      * @param {RemoteControl} remoteControl
      * @param {BotTrainer} bot

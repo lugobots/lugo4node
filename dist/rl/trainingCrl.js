@@ -52,8 +52,8 @@ var TrainingCrl = /** @class */ (function () {
         this.cycleSeq = 0;
         this.debugging_log = true;
         this.stopRequested = false;
-        this.onGetNewAction = function (action) {
-            console.error('onGetNewAction not defined yet - should wait the initialise it on the first "update" call');
+        this.resumeListeningPhase = function () {
+            console.error('resumeListeningPhase not defined yet - should wait the initialise it on the first "update" call');
         };
         this._gotNextState = function (newGameSnapshot) {
             _this._debug("No one waiting for the next state");
@@ -112,34 +112,37 @@ var TrainingCrl = /** @class */ (function () {
                         }
                         previousState = this.lastSnapshot;
                         this.OrderSet.setTurn(this.lastSnapshot.getTurn());
-                        updatedOrderSet = this.bot.play(this.OrderSet, this.lastSnapshot, action);
+                        return [4 /*yield*/, this.bot.play(this.OrderSet, this.lastSnapshot, action)];
+                    case 1:
+                        updatedOrderSet = _c.sent();
+                        console.log("updatedOrderSet ++++++++>>>>>> ".concat(action), updatedOrderSet.getOrdersList()[0].getMove().getVelocity().getDirection());
                         this._debug("got order set, passing down");
-                        this.onGetNewAction(updatedOrderSet);
+                        this.resumeListeningPhase(updatedOrderSet);
+                        return [4 /*yield*/, (0, exports.delay)(20)]; // before calling next turn, let's wait just a bit to ensure the server got our order
+                    case 2:
+                        _c.sent(); // before calling next turn, let's wait just a bit to ensure the server got our order
                         _a = this;
                         return [4 /*yield*/, this.waitUntilNextListeningState()];
-                    case 1:
+                    case 3:
                         _a.lastSnapshot = _c.sent();
-                        return [4 /*yield*/, (0, exports.delay)(80)]; // why? ensure the server got the order?
-                    case 2:
-                        _c.sent(); // why? ensure the server got the order?
                         this._debug("got new snapshot after order has been sent");
                         if (this.stopRequested) {
                             return [2 /*return*/, { done: true, reward: 0 }];
                         }
                         // TODO: if I want to skip the net N turns? I should be able too
                         this._debug("update finished (turn ".concat(this.lastSnapshot.getTurn(), " waiting for next action}"));
-                        _c.label = 3;
-                    case 3:
-                        _c.trys.push([3, 5, , 6]);
-                        return [4 /*yield*/, this.bot.evaluate(previousState, this.lastSnapshot)];
+                        _c.label = 4;
                     case 4:
+                        _c.trys.push([4, 6, , 7]);
+                        return [4 /*yield*/, this.bot.evaluate(previousState, this.lastSnapshot)];
+                    case 5:
                         _b = _c.sent(), done = _b.done, reward = _b.reward;
                         return [2 /*return*/, { done: done, reward: reward }];
-                    case 5:
+                    case 6:
                         e_2 = _c.sent();
                         console.error("bot trainer failed to evaluate game state", e_2);
                         throw e_2;
-                    case 6: return [2 /*return*/];
+                    case 7: return [2 /*return*/];
                 }
             });
         });
@@ -154,9 +157,9 @@ var TrainingCrl = /** @class */ (function () {
                          * This method is called when the game is on the `LISTENING` state.
                          * When the game starts it takes a while to enter this state.
                          *
-                         * When the status enter, we want to hold the game in the LISTENING state until the learning bot submit the action
+                         * When the game enters in LISTENING state, we want to hold the game until the learning bot submit the action.
                          *
-                         * Then we create the promise below that will only be resolved when the `onGetNewAction` is resolved.
+                         * Then we create the promise below that will only be resolved when the `resumeListeningPhase` is called.
                          *
                          * Read the following comments to understand the flow.
                          */
@@ -176,6 +179,7 @@ var TrainingCrl = /** @class */ (function () {
                                         console.error("max wait for a new action");
                                         reject();
                                     }, 30000);
+                                    // [explaining flow] here we check if the bot asked to stop
                                     if (this.stopRequested) {
                                         this._debug("stop requested - will not defined call back for new actions");
                                         resolve(orderSet);
@@ -183,16 +187,14 @@ var TrainingCrl = /** @class */ (function () {
                                         return [2 /*return*/, null];
                                     }
                                     this.OrderSet = orderSet;
-                                    // [explaining flow] here we will define the callback called when the bot returns the action.
-                                    // note that the `onGetNewAction` is executed within `update` method.
-                                    // this method also must be async because it calls async methods
-                                    this.onGetNewAction = function (updatedOrderSet) {
+                                    // [explaining flow] here we will define the callback called when the bot returns the orders.
+                                    this.resumeListeningPhase = function (updatedOrderSet) {
                                         _this._debug("sending new action");
                                         clearTimeout(maxWait);
                                         resolve(updatedOrderSet);
                                     };
                                     this.onListeningMode = true;
-                                    this._debug("onGetNewAction defined, waiting for action (has started: ".concat(this.trainingHasStarted, ")"));
+                                    this._debug("resumeListeningPhase defined, waiting for action (has started: ".concat(this.trainingHasStarted, ")"));
                                     if (!this.trainingHasStarted) {
                                         this.onReady(this);
                                         this.trainingHasStarted = true;
@@ -202,7 +204,7 @@ var TrainingCrl = /** @class */ (function () {
                                 });
                             }); })];
                     case 1: 
-                    // [explaining flow] this promise will ensure that we will only return the bot order after onGetNewAction has been called.
+                    // [explaining flow] this promise will ensure that we will only return the bot order after resumeListeningPhase has been called.
                     return [2 /*return*/, _a.sent()];
                 }
             });

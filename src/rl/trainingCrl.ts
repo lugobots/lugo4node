@@ -30,8 +30,8 @@ export class TrainingCrl implements TrainingController {
     debugging_log = true
     private stopRequested = false
 
-    private onGetNewAction: (action) => void = (action: any) => {
-        console.error('onGetNewAction not defined yet - should wait the initialise it on the first "update" call')
+    private resumeListeningPhase: (action) => void = () => {
+        console.error('resumeListeningPhase not defined yet - should wait the initialise it on the first "update" call')
     }
 
     /**
@@ -77,14 +77,17 @@ export class TrainingCrl implements TrainingController {
 
         const previousState = this.lastSnapshot;
         this.OrderSet.setTurn(this.lastSnapshot.getTurn());
-        const updatedOrderSet = this.bot.play(this.OrderSet, this.lastSnapshot, action)
+        const updatedOrderSet = await this.bot.play(this.OrderSet, this.lastSnapshot, action)
 
+
+
+        console.log(`updatedOrderSet ++++++++>>>>>> ${action}`, updatedOrderSet.getOrdersList()[0].getMove().getVelocity().getDirection())
         this._debug(`got order set, passing down`)
-        this.onGetNewAction(updatedOrderSet)
-
+        this.resumeListeningPhase(updatedOrderSet)
+        await delay(20)// before calling next turn, let's wait just a bit to ensure the server got our order
         this.lastSnapshot = await this.waitUntilNextListeningState()
 
-        await delay(80)// why? ensure the server got the order?
+
         this._debug(`got new snapshot after order has been sent`)
 
         if (this.stopRequested) {
@@ -111,9 +114,9 @@ export class TrainingCrl implements TrainingController {
          * This method is called when the game is on the `LISTENING` state.
          * When the game starts it takes a while to enter this state.
          *
-         * When the status enter, we want to hold the game in the LISTENING state until the learning bot submit the action
+         * When the game enters in LISTENING state, we want to hold the game until the learning bot submit the action.
          *
-         * Then we create the promise below that will only be resolved when the `onGetNewAction` is resolved.
+         * Then we create the promise below that will only be resolved when the `resumeListeningPhase` is called.
          *
          * Read the following comments to understand the flow.
          */
@@ -125,8 +128,9 @@ export class TrainingCrl implements TrainingController {
         }
         this._gotNextState(snapshot)
 
-        // [explaining flow] this promise will ensure that we will only return the bot order after onGetNewAction has been called.
+        // [explaining flow] this promise will ensure that we will only return the bot order after resumeListeningPhase has been called.
         return await new Promise(async (resolve, reject) => {
+            // [explaining flow] this setTimeout ensures that we will not wait forever for the bot to return
             const maxWait = setTimeout(() => {
                 if (this.stopRequested) {
                     return resolve(orderSet)
@@ -134,6 +138,7 @@ export class TrainingCrl implements TrainingController {
                 console.error(`max wait for a new action`)
                 reject()
             }, 30000)
+            // [explaining flow] here we check if the bot asked to stop
             if (this.stopRequested) {
                 this._debug(`stop requested - will not defined call back for new actions`)
 
@@ -146,17 +151,15 @@ export class TrainingCrl implements TrainingController {
             this.OrderSet = orderSet
 
 
-            // [explaining flow] here we will define the callback called when the bot returns the action.
-            // note that the `onGetNewAction` is executed within `update` method.
-            // this method also must be async because it calls async methods
-            this.onGetNewAction = (updatedOrderSet) => {
+            // [explaining flow] here we will define the callback called when the bot returns the orders.
+            this.resumeListeningPhase = (updatedOrderSet) => {
                 this._debug(`sending new action`)
                 clearTimeout(maxWait)
 
                 resolve(updatedOrderSet)
             }
             this.onListeningMode = true
-            this._debug(`onGetNewAction defined, waiting for action (has started: ${this.trainingHasStarted})`)
+            this._debug(`resumeListeningPhase defined, waiting for action (has started: ${this.trainingHasStarted})`)
             if (!this.trainingHasStarted) {
                 this.onReady(this)
                 this.trainingHasStarted = true
