@@ -16,7 +16,9 @@ export class TrainingCrl implements TrainingController {
 
     private lastSnapshot: GameSnapshot;
 
-    private waitingForAction: boolean = false
+    private onListeningMode: boolean = false
+
+    private OrderSet: OrderSet
 
     private cycleSeq: number = 0
 
@@ -28,9 +30,8 @@ export class TrainingCrl implements TrainingController {
     debugging_log = true
     private stopRequested = false
 
-    private gotNewAction: (action) => Promise<GameSnapshot> = (action: any) => {
-        console.error('gotNewAction not defined yet - should wait the initialise it on the first "update" call')
-        return Promise.reject()
+    private onGetNewAction: (action) => void = (action: any) => {
+        console.error('onGetNewAction not defined yet - should wait the initialise it on the first "update" call')
     }
 
     /**
@@ -60,7 +61,7 @@ export class TrainingCrl implements TrainingController {
     getState(): any {
         try {
             this.cycleSeq++
-            this._debug(`get state`)
+            this._debug(`got state`)
             return this.bot.getState(this.lastSnapshot)
         } catch (e) {
             console.error(`bot trainer failed to return inputs from a particular state`, e)
@@ -70,13 +71,20 @@ export class TrainingCrl implements TrainingController {
 
     async update(action: any): Promise<{ reward: number; done: boolean }> {
         this._debug(`UPDATE`)
-        if (!this.waitingForAction) {
+        if (!this.onListeningMode) {
             throw new Error("faulty synchrony - got a new action when was still processing the last one")
         }
 
-        const previousState = this.lastSnapshot
-        this._debug(`got action for turn ${this.lastSnapshot.getTurn()}`)
-        this.lastSnapshot = await this.gotNewAction(action)
+        const previousState = this.lastSnapshot;
+        this.OrderSet.setTurn(this.lastSnapshot.getTurn());
+        const updatedOrderSet = this.bot.play(this.OrderSet, this.lastSnapshot, action)
+
+        this._debug(`got order set, passing down`)
+        this.onGetNewAction(updatedOrderSet)
+
+        this.lastSnapshot = await this.waitUntilNextListeningState()
+
+        await delay(80)// why? ensure the server got the order?
         this._debug(`got new snapshot after order has been sent`)
 
         if (this.stopRequested) {
@@ -94,17 +102,30 @@ export class TrainingCrl implements TrainingController {
         }
     }
 
-    _gotNextState = (newState: GameSnapshot) => {
+    _gotNextState = (newGameSnapshot: GameSnapshot) => {
         this._debug(`No one waiting for the next state`)
     };
 
     async gameTurnHandler(orderSet, snapshot): Promise<OrderSet> {
+        /**
+         * This method is called when the game is on the `LISTENING` state.
+         * When the game starts it takes a while to enter this state.
+         *
+         * When the status enter, we want to hold the game in the LISTENING state until the learning bot submit the action
+         *
+         * Then we create the promise below that will only be resolved when the `onGetNewAction` is resolved.
+         *
+         * Read the following comments to understand the flow.
+         */
+
+
         this._debug(`new turn`)
-        if (this.waitingForAction) {
-            throw new Error("faulty synchrony - got new turn while waiting for order (check the lugo 'timer-mode')")
+        if (this.onListeningMode) {
+            throw new Error("faulty synchrony - got new turn while the trainer already was in listening mode  (check the lugo 'timer-mode')")
         }
         this._gotNextState(snapshot)
 
+        // [explaining flow] this promise will ensure that we will only return the bot order after onGetNewAction has been called.
         return await new Promise(async (resolve, reject) => {
             const maxWait = setTimeout(() => {
                 if (this.stopRequested) {
@@ -112,45 +133,30 @@ export class TrainingCrl implements TrainingController {
                 }
                 console.error(`max wait for a new action`)
                 reject()
-            }, 5000)
+            }, 30000)
             if (this.stopRequested) {
                 this._debug(`stop requested - will not defined call back for new actions`)
+
                 resolve(orderSet)
+
                 clearTimeout(maxWait)
                 return null
             }
 
-            this.gotNewAction = async (newAction) => {
+            this.OrderSet = orderSet
+
+
+            // [explaining flow] here we will define the callback called when the bot returns the action.
+            // note that the `onGetNewAction` is executed within `update` method.
+            // this method also must be async because it calls async methods
+            this.onGetNewAction = (updatedOrderSet) => {
                 this._debug(`sending new action`)
                 clearTimeout(maxWait)
-                return new Promise<GameSnapshot>((resolveTurn, rejectTurn) => {
-                    try {
-                        this.waitingForAction = false
-                        this._gotNextState = (newState) => {
-                            this._debug(`Returning result for new action (snapshot of turn ${newState.getTurn()})`)
-                            resolveTurn(newState)
-                        }
-                        this._debug(`sending order for turn ${snapshot.getTurn()} based on action`)
-                        orderSet.setTurn(this.lastSnapshot.getTurn());
-                        this.bot.play(orderSet, snapshot, newAction).then((orderSet) => {
-                            resolve(orderSet)// sending the orders wh
-                            this._debug(`order sent, calling next turn`)
-                            return delay(80)// why? ensure the server got the order?
-                        }).then(() => {
-                            this._debug(`RESUME NOW!`)
-                            return this.remoteControl.resumeListening();
-                        }).then(() => {
-                            this._debug(`listening resumed`)
-                        })
-                    } catch (e) {
-                        reject()
-                        rejectTurn()
-                        console.error(`failed to send the orders to the server`, e)
-                    }
-                })
+
+                resolve(updatedOrderSet)
             }
-            this.waitingForAction = true
-            this._debug(`gotNewAction defined, waiting for action (has started: ${this.trainingHasStarted})`)
+            this.onListeningMode = true
+            this._debug(`onGetNewAction defined, waiting for action (has started: ${this.trainingHasStarted})`)
             if (!this.trainingHasStarted) {
                 this.onReady(this)
                 this.trainingHasStarted = true
@@ -159,6 +165,24 @@ export class TrainingCrl implements TrainingController {
 
         })
     }
+
+    async waitUntilNextListeningState() {
+        return new Promise<GameSnapshot>((resolveTurn, rejectTurn) => {
+            try {
+                this.onListeningMode = false
+                this._gotNextState = (newGameSnapshot) => {
+                    resolveTurn(newGameSnapshot)
+                }
+
+                this._debug(`resumeListening: ${this.lastSnapshot.getTurn()}`)
+                this.remoteControl.resumeListening()
+            } catch (e) {
+                rejectTurn()
+                console.error(`failed to send the orders to the server`, e)
+            }
+        })
+    }
+
 
     async stop() {
         this.stopRequested = true

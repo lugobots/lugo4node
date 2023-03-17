@@ -10,7 +10,8 @@ export declare class TrainingCrl implements TrainingController {
     private readonly onReady;
     protected trainingHasStarted: boolean;
     private lastSnapshot;
-    private waitingForAction;
+    private onListeningMode;
+    private OrderSet;
     private cycleSeq;
     /**
      * @type {BotTrainer}
@@ -18,7 +19,7 @@ export declare class TrainingCrl implements TrainingController {
     private bot;
     debugging_log: boolean;
     private stopRequested;
-    private gotNewAction;
+    private onGetNewAction;
     /**
      * @param {RemoteControl} remoteControl
      * @param {BotTrainer} bot
@@ -34,8 +35,9 @@ export declare class TrainingCrl implements TrainingController {
         reward: number;
         done: boolean;
     }>;
-    _gotNextState: (newState: GameSnapshot) => void;
+    _gotNextState: (newGameSnapshot: GameSnapshot) => void;
     gameTurnHandler(orderSet: any, snapshot: any): Promise<OrderSet>;
+    waitUntilNextListeningState(): Promise<GameSnapshot>;
     stop(): Promise<void>;
     _debug(msg: any): void;
 }

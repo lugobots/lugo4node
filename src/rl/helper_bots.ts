@@ -62,6 +62,8 @@ export function newChaserHelperPlayer(teamSide, playerNumber, gameServerAddress)
 
 export function newZombieHelperPlayer(teamSide, playerNumber, gameServerAddress): Promise<void> {
     return newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress, async (orderSet: OrderSet, snapshot: GameSnapshot): Promise<OrderSet> => {
+        console.log(`LET ZOOMIE`)
+
         orderSet.setDebugMessage(`${teamSide === 0 ? 'HOME' : 'AWAY'}-${playerNumber} #${snapshot.getTurn()}`)
         return orderSet;
     })
@@ -79,6 +81,7 @@ export function newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress,
             playerNumber
             , initialRegion.getCenter())
         lugoClient.play(turnHandler, resolve).catch(e => {
+            console.log(`failed zombie`)
             reject();
         })
     })

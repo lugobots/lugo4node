@@ -37,7 +37,7 @@ const grpcInsecure = true;
     const bot = new MyBotTrainer(rc)
 
     // now we can create the Gym, that will control all async work and allow us to focus on the learning part
-    const gym = new rl.Gym(rc, bot, myTrainingFunction, {debugging_log: false})
+    const gym = new rl.Gym(rc, bot, myTrainingFunction, {debugging_log: true})
 
     // First, starting the game server
     // If you want to train playing against another bot, then you should start the other team first.

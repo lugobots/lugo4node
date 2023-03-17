@@ -118,7 +118,7 @@ var MyBotTrainer = /** @class */ (function () {
             return __generator(this, function (_a) {
                 readerPrevious = new lugo4node_1.GameSnapshotReader(previousSnapshot, lugo4node_1.Lugo.Team.Side.HOME);
                 reader = new lugo4node_1.GameSnapshotReader(newSnapshot, lugo4node_1.Lugo.Team.Side.HOME);
-                return [2 /*return*/, { done: newSnapshot.getTurn() >= 20, reward: Math.random() }];
+                return [2 /*return*/, { done: newSnapshot.getTurn() >= 50, reward: Math.random() }];
             });
         });
     };

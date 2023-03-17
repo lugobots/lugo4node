@@ -163,7 +163,7 @@ export class Client {
                                 try {
                                     orderSet = await processor(orderSet, snapshot)
                                 } catch (e) {
-                                    console.error(`bot error`, e)
+                                    console.error(`bot error`, e.message)
                                 }
                                 if (orderSet) {
                                     await this.orderSetSender(orderSet)
