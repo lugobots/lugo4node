@@ -87,7 +87,7 @@ export class MyBotTrainer implements rl.BotTrainer {
 
         const readerPrevious = new GameSnapshotReader(previousSnapshot, Lugo.Team.Side.HOME)
         const reader = new GameSnapshotReader(newSnapshot, Lugo.Team.Side.HOME)
-        return {done: newSnapshot.getTurn() >= 50, reward: Math.random()}
+        return {done: newSnapshot.getTurn() >= 20, reward: Math.random()}
     }
 
     async _randomPlayerPos(mapper, side, number) {

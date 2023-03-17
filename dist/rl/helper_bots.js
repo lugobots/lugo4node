@@ -107,7 +107,6 @@ function newZombieHelperPlayer(teamSide, playerNumber, gameServerAddress) {
     var _this = this;
     return newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress, function (orderSet, snapshot) { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            console.log("LET ZOOMIE");
             orderSet.setDebugMessage("".concat(teamSide === 0 ? 'HOME' : 'AWAY', "-").concat(playerNumber, " #").concat(snapshot.getTurn()));
             return [2 /*return*/, orderSet];
         });
@@ -120,7 +119,6 @@ function newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress, turnHa
         var initialRegion = map.getRegion(PLAYER_POSITIONS[playerNumber].Col, PLAYER_POSITIONS[playerNumber].Row);
         var lugoClient = new client_1.Client(gameServerAddress, true, "", teamSide, playerNumber, initialRegion.getCenter());
         lugoClient.play(turnHandler, resolve)["catch"](function (e) {
-            console.log("failed zombie");
             reject();
         });
     });

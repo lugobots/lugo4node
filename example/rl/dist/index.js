@@ -57,7 +57,7 @@ var grpcInsecure = true;
             case 1:
                 _a.sent();
                 bot = new my_bot_1.MyBotTrainer(rc);
-                gym = new lugo4node_1.rl.Gym(rc, bot, myTrainingFunction, { debugging_log: true });
+                gym = new lugo4node_1.rl.Gym(rc, bot, myTrainingFunction, { debugging_log: false });
                 // First, starting the game server
                 // If you want to train playing against another bot, then you should start the other team first.
                 // If you want to train using two teams, you should start the away team, then start the training bot, and finally start the home team

@@ -24,7 +24,7 @@
     "mocha": "^10.0.0"
   },
   "files": [
-    "/distsss"
+    "/dist"
   ],
   "repository": {
     "type": "git",

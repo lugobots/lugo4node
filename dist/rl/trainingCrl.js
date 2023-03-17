@@ -161,13 +161,9 @@ var TrainingCrl = /** @class */ (function () {
                          * Read the following comments to understand the flow.
                          */
                         this._debug("new turn");
-                        // [explaining flow] when it enters in the LISTENING state, we are not waiting for an action yet. Only after
-                        // creating the promise we will be waiting for the action.
                         if (this.onListeningMode) {
                             throw new Error("faulty synchrony - got new turn while the trainer already was in listening mode  (check the lugo 'timer-mode')");
                         }
-                        // [explaining flow] this call back is a way to tell to our last execution that the order sent in the last execution
-                        // was processed by the server. So, the first time we ran, this call is useless.
                         this._gotNextState(snapshot);
                         return [4 /*yield*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
                                 var maxWait;
@@ -180,8 +176,6 @@ var TrainingCrl = /** @class */ (function () {
                                         console.error("max wait for a new action");
                                         reject();
                                     }, 30000);
-                                    // [explaining flow] same here. If something hasked to stop, the bot will not return an action, so do not
-                                    // need to wait the timeout, we just stop it immediately
                                     if (this.stopRequested) {
                                         this._debug("stop requested - will not defined call back for new actions");
                                         resolve(orderSet);
