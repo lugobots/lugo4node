@@ -196,7 +196,7 @@ var Client = /** @class */ (function () {
                                                 return [3 /*break*/, 5];
                                             case 4:
                                                 e_1 = _b.sent();
-                                                console.error("bot error", e_1);
+                                                console.error("bot error", e_1.message);
                                                 return [3 /*break*/, 5];
                                             case 5:
                                                 if (!orderSet) return [3 /*break*/, 7];
