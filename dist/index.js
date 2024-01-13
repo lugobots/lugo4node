@@ -311,8 +311,7 @@ function defineState(snapshot, playerNumber, side) {
     if (!snapshot || !snapshot.getBall()) {
         throw new Error('invalid snapshot state - cannot define player state');
     }
-    var reader = new GameSnapshotReader(snapshot, side);
-    var me = reader.getPlayer(side, playerNumber);
+    var me = snapshot.getPlayer(side, playerNumber);
     if (!me) {
         throw new Error('could not find the bot in the snapshot - cannot define player state');
     }

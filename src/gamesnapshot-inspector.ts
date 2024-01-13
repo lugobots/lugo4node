@@ -26,6 +26,10 @@ export default class GameSnapshotInspector {
         return this.snapshot;
     }
 
+    getTurn() : number {
+        return this.snapshot.getTurn();
+    }
+
     getMe(): Lugo.Player | null {
         return this.me;
     }
@@ -106,9 +110,9 @@ export default class GameSnapshotInspector {
         return this.makeOrderMoveFromPoint(this.me?.getPosition() ?? Geo.newZeroedPoint(), targetPoint, speed);
     }
 
-    makeOrderMoveByDirection(direction: DIRECTION, speed: number): Lugo.Order {
+    makeOrderMoveByDirection(direction: DIRECTION, speed?: number): Lugo.Order {
         const directionTarget = this.getOrientationByDirection(direction);
-        return this.makeOrderMoveFromVector(directionTarget, speed);
+        return this.makeOrderMoveFromVector(directionTarget, speed ?? SPECS.PLAYER_MAX_SPEED);
     }
 
     makeOrderMoveToStop(): Lugo.Order {

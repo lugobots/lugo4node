@@ -9,6 +9,7 @@ import { Bot, PLAYER_STATE } from './stub';
 import * as geo from "./geo";
 import { normalize, distanceBetweenPoints, getLength, subVector, getScaledVector, NewVector } from "./geo";
 import * as rl from "./rl/index";
+import GameSnapshotInspector from './game-snapshot-inspector';
 export { rl, Client, NewClientFromConfig, EnvVarLoader, Goal, Mapper, Region, ORIENTATION, SPECS, Bot, PLAYER_STATE, Lugo, geo, // keeping backward compatibility
 normalize, distanceBetweenPoints, getLength, subVector, getScaledVector, NewVector, };
 export declare class GameSnapshotReader {
@@ -131,4 +132,4 @@ export declare enum DIRECTION {
  * @param side
  * @returns {PLAYER_STATE}
  */
-export declare function defineState(snapshot: Lugo.GameSnapshot, playerNumber: number, side: Lugo.Team.Side): PLAYER_STATE;
+export declare function defineState(snapshot: GameSnapshotInspector, playerNumber: number, side: Lugo.Team.Side): PLAYER_STATE;

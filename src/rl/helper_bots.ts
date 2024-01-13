@@ -1,7 +1,8 @@
-import {Mapper} from '../mapper';
-import {Client, RawTurnProcessor} from '../client'
-import {GameSnapshot, OrderSet} from "../pb/server_pb";
-import {DIRECTION, GameSnapshotReader} from "../index";
+import { Client, RawTurnProcessor } from '../client';
+import GameSnapshotInspector from '../gamesnapshot-inspector';
+import { DIRECTION } from "../index";
+import { Mapper } from '../mapper';
+import { Order } from "../pb/server_pb";
 
 const PLAYER_POSITIONS = {
     1: {Col: 0, Row: 1},
@@ -22,7 +23,7 @@ const PLAYER_POSITIONS = {
 export function newRandomMotionHelperPlayer(teamSide, playerNumber, gameServerAddress, turnsToChangeDirection = 60) {
     let changeCounter = 0
     let currentDir;
-    return newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress, async (orderSet: OrderSet, snapshot: GameSnapshot): Promise<OrderSet> => {
+    return newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress, async (snapshot: GameSnapshotInspector): Promise<Order[] | { orders: Order[], debug_message: string } | null> => {
         changeCounter--;
         if (changeCounter <= 0) {
             console.log("change dir!", teamSide, playerNumber, snapshot.getTurn())
@@ -38,32 +39,36 @@ export function newRandomMotionHelperPlayer(teamSide, playerNumber, gameServerAd
                 DIRECTION.FORWARD_LEFT,
             ][Math.floor(Math.random() * 8)]
         }
-        const reader = new GameSnapshotReader(snapshot, teamSide)
-        orderSet.addOrders(reader.makeOrderMoveByDirection(currentDir))
-        orderSet.setDebugMessage(`${teamSide === 0 ? 'HOME' : 'AWAY'}-${playerNumber} #${snapshot.getTurn()} - chasing ball`)
-        return orderSet;
+     
+        const orders =  [snapshot.makeOrderMoveByDirection(currentDir)];
+        const debug_message = `${teamSide === 0 ? 'HOME' : 'AWAY'}-${playerNumber} #${snapshot.getTurn()} - chasing ball`;
+        return { orders, debug_message  };
     })
 }
 
 export function newChaserHelperPlayer(teamSide, playerNumber, gameServerAddress) {
-    return newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress, async (orderSet: OrderSet, snapshot: GameSnapshot): Promise<OrderSet> => {
-        const reader = new GameSnapshotReader(snapshot, teamSide)
-        orderSet.addOrders(reader.makeOrderCatch())
-        const me = reader.getPlayer(teamSide, playerNumber)
+    return newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress, async (snapshot: GameSnapshotInspector): Promise<Order[] | { orders: Order[], debug_message: string } | null> => { 
+        const orders =  [];
+        
+        orders.push(snapshot.makeOrderCatch())
+        const me = snapshot.getPlayer(teamSide, playerNumber);
         if (!me) {
             throw new Error("did not find myself in the game")
         }
 
-        orderSet.addOrders(reader.makeOrderMoveMaxSpeed(me.getPosition(), snapshot.getBall().getPosition()))
-        orderSet.setDebugMessage(`${teamSide === 0 ? 'HOME' : 'AWAY'}-${playerNumber} #${snapshot.getTurn()} - chasing ball`)
-        return orderSet;
+
+
+        orders.push(snapshot.makeOrderMoveMaxSpeed(snapshot.getBall().getPosition()));      
+        const debug_message = `${teamSide === 0 ? 'HOME' : 'AWAY'}-${playerNumber} #${snapshot.getTurn()} - chasing ball`;
+        return { orders, debug_message  };
     })
 }
 
 export function newZombieHelperPlayer(teamSide, playerNumber, gameServerAddress): Promise<void> {
-    return newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress, async (orderSet: OrderSet, snapshot: GameSnapshot): Promise<OrderSet> => {
-        orderSet.setDebugMessage(`${teamSide === 0 ? 'HOME' : 'AWAY'}-${playerNumber} #${snapshot.getTurn()}`)
-        return orderSet;
+    return newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress, async (snapshot: GameSnapshotInspector): Promise<Order[] | { orders: Order[], debug_message: string } | null> => {
+        const orders =  [];
+        const debug_message = `${teamSide === 0 ? 'HOME' : 'AWAY'}-${playerNumber} #${snapshot.getTurn()}`;
+        return { orders, debug_message  };
     })
 }
 
