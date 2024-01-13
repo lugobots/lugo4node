@@ -1,5 +1,5 @@
-import {EnvVarLoader, NewClientFromConfig, Mapper} from '@lugobots/lugo4node'
-import {MyBot, PLAYER_POSITIONS} from './myBot.js'
+import { EnvVarLoader, Mapper, NewClientFromConfig } from '@lugobots/lugo4node'
+import { MyBot, PLAYER_POSITIONS } from './myBot.js'
 
 // we must load the env vars following the standard defined by the game specs because all bots will receive the
 // arguments in the same format (env vars)
