@@ -1,5 +1,36 @@
-import {Point} from "./pb/physics_pb";
-import {Team} from "./pb/server_pb";
+import { Point } from "./pb/physics_pb";
+import { Team } from "./pb/server_pb";
+import { SPECS } from "./specs";
+
+
+const homeGoalCenter = new Point()
+homeGoalCenter.setX(0)
+homeGoalCenter.setY(SPECS.MAX_Y_COORDINATE / 2)
+
+const homeGoalTopPole = new Point()
+homeGoalTopPole.setX(0)
+homeGoalTopPole.setY(SPECS.GOAL_MAX_Y)
+
+const homeGoalBottomPole = new Point()
+homeGoalBottomPole.setX(0)
+homeGoalBottomPole.setY(SPECS.GOAL_MIN_Y)
+
+
+const awayGoalCenter = new Point()
+awayGoalCenter.setX(SPECS.MAX_X_COORDINATE)
+awayGoalCenter.setY(SPECS.MAX_Y_COORDINATE / 2)
+
+
+const awayGoalTopPole = new Point()
+awayGoalTopPole.setX(SPECS.MAX_X_COORDINATE)
+awayGoalTopPole.setY(SPECS.GOAL_MAX_Y)
+
+const awayGoalBottomPole = new Point()
+awayGoalBottomPole.setX(SPECS.MAX_X_COORDINATE)
+awayGoalBottomPole.setY(SPECS.GOAL_MIN_Y)
+
+
+
 
 export class Goal {
     private readonly _center: Point;
@@ -38,3 +69,16 @@ export class Goal {
     }
 
 }
+
+export const AWAY_GOAL = new Goal(
+    Team.Side.AWAY,
+    awayGoalCenter,
+    awayGoalTopPole,
+    awayGoalBottomPole
+)
+export const HOME_GOAL = new Goal(
+    Team.Side.HOME,
+    homeGoalCenter,
+    homeGoalTopPole,
+    homeGoalBottomPole
+)
