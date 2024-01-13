@@ -81,6 +81,9 @@ export class Client {
         return this.setGettingReadyHandler(s => {
             bot.gettingReady(s)
         })._start((snapshot: GameSnapshotInspector): Promise<RawTurnProcessorReturn> => {
+
+
+
             return new Promise((resolve, reject) => {
                 const playerState = defineState(snapshot, this.number, this.teamSide)
                 if (this.number === 1) {
@@ -156,14 +159,15 @@ export class Client {
                 const running = this.client.joinATeam(req)
                 onJoin()
 
-                running.on('data', async (snapshot) => {
+                running.on('data', async (snapshot: GameSnapshot) => {
                     try {
+                        const inspector = new GameSnapshotInspector(this.teamSide, this.number, snapshot);
                         switch (snapshot.getState()) {
                             case GameSnapshot.State.LISTENING:
                                 let orderSet = new OrderSet()
                                 orderSet.setTurn(snapshot.getTurn())
                                 try {
-                                     const botReturn = await processor(snapshot);
+                                     const botReturn = await processor(inspector);
 
                                     if(!botReturn) {
                                         orderSet.setOrdersList([]);
@@ -185,7 +189,7 @@ export class Client {
                                 }
                                 break;
                             case GameSnapshot.State.GET_READY:
-                                this.gettingReadyHandler(snapshot)
+                                this.gettingReadyHandler(inspector)
                                 break;
 
                         }

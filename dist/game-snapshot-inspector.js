@@ -2,6 +2,7 @@
 exports.__esModule = true;
 var _1 = require(".");
 var Geo = require("./geo");
+var goal_1 = require("./goal");
 var Helpers = require("./helpers");
 var ORIENTATION = require("./orentation");
 var Lugo = require("./proto_exported");
@@ -178,6 +179,18 @@ var GameSnapshotInspector = /** @class */ (function () {
                 throw new Error("unknown direction ".concat(direction));
         }
         return directionTarget;
+    };
+    GameSnapshotInspector.prototype.getOpponentGoal = function () {
+        if (this.mySide === Lugo.Team.Side.HOME) {
+            return goal_1.AWAY_GOAL;
+        }
+        return goal_1.HOME_GOAL;
+    };
+    GameSnapshotInspector.prototype.getMyGoal = function () {
+        if (this.mySide === Lugo.Team.Side.HOME) {
+            return goal_1.HOME_GOAL;
+        }
+        return goal_1.AWAY_GOAL;
     };
     return GameSnapshotInspector;
 }());

@@ -1,4 +1,4 @@
-import { DIRECTION } from '.';
+import { DIRECTION, Goal } from '.';
 import * as Lugo from './proto_exported';
 export default class GameSnapshotInspector {
     mySide: Lugo.Team.Side;
@@ -33,4 +33,6 @@ export default class GameSnapshotInspector {
     makeOrderKickMaxSpeed(target: Lugo.Point): Lugo.Order;
     makeOrderCatch(): Lugo.Order;
     private getOrientationByDirection;
+    getOpponentGoal(): Goal;
+    getMyGoal(): Goal;
 }

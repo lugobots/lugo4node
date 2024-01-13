@@ -12,6 +12,7 @@ function NewVector(from, to) {
     var v = new physics_pb_js_1.Vector();
     v.setX(to.getX() - from.getX());
     v.setY(to.getY() - from.getY());
+    console.log("");
     if (isInValidateVector(v)) {
         throw new Error("an vector cannot have zero length");
     }

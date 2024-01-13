@@ -1,5 +1,6 @@
-import { DIRECTION } from '.';
+import { DIRECTION, Goal } from '.';
 import * as Geo from './geo';
+import { AWAY_GOAL, HOME_GOAL } from './goal';
 import * as Helpers from "./helpers";
 import * as ORIENTATION from './orentation';
 import * as Lugo from './proto_exported';
@@ -208,6 +209,20 @@ export default class GameSnapshotInspector {
                 throw new Error(`unknown direction ${direction}`)
         }
         return directionTarget;
+    }
+
+    getOpponentGoal(): Goal {
+        if (this.mySide === Lugo.Team.Side.HOME) {
+            return AWAY_GOAL
+        }
+        return HOME_GOAL
+    }
+
+    getMyGoal(): Goal {
+        if (this.mySide === Lugo.Team.Side.HOME) {
+            return HOME_GOAL
+        }
+        return AWAY_GOAL
     }
 }
 

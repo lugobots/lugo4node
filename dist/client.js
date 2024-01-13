@@ -40,6 +40,7 @@ exports.Client = exports.NewClientFromConfig = exports.PROTOCOL_VERSION = void 0
 var grpc_js_1 = require("@grpc/grpc-js");
 var server_grpc_pb_1 = require("./pb/server_grpc_pb");
 var server_pb_js_1 = require("./pb/server_pb.js");
+var game_snapshot_inspector_js_1 = require("./game-snapshot-inspector.js");
 var index_js_1 = require("./index.js");
 var stub_js_1 = require("./stub.js");
 exports.PROTOCOL_VERSION = "1.0.0";
@@ -173,11 +174,12 @@ var Client = /** @class */ (function () {
                                 var running = _this.client.joinATeam(req);
                                 onJoin();
                                 running.on('data', function (snapshot) { return __awaiter(_this, void 0, void 0, function () {
-                                    var _a, orderSet, botReturn, e_1, e_2;
+                                    var inspector, _a, orderSet, botReturn, e_1, e_2;
                                     return __generator(this, function (_b) {
                                         switch (_b.label) {
                                             case 0:
                                                 _b.trys.push([0, 11, , 12]);
+                                                inspector = new game_snapshot_inspector_js_1["default"](this.teamSide, this.number, snapshot);
                                                 _a = snapshot.getState();
                                                 switch (_a) {
                                                     case server_pb_js_1.GameSnapshot.State.LISTENING: return [3 /*break*/, 1];
@@ -190,7 +192,7 @@ var Client = /** @class */ (function () {
                                                 _b.label = 2;
                                             case 2:
                                                 _b.trys.push([2, 4, , 5]);
-                                                return [4 /*yield*/, processor(snapshot)];
+                                                return [4 /*yield*/, processor(inspector)];
                                             case 3:
                                                 botReturn = _b.sent();
                                                 if (!botReturn) {
@@ -219,7 +221,7 @@ var Client = /** @class */ (function () {
                                                 _b.label = 8;
                                             case 8: return [3 /*break*/, 10];
                                             case 9:
-                                                this.gettingReadyHandler(snapshot);
+                                                this.gettingReadyHandler(inspector);
                                                 return [3 /*break*/, 10];
                                             case 10: return [3 /*break*/, 12];
                                             case 11:

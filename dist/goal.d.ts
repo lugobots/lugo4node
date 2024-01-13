@@ -18,3 +18,5 @@ export declare class Goal {
     getTopPole(): Point;
     getBottomPole(): Point;
 }
+export declare const AWAY_GOAL: Goal;
+export declare const HOME_GOAL: Goal;
