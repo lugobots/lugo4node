@@ -37,11 +37,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.Client = exports.NewClientFromConfig = exports.PROTOCOL_VERSION = void 0;
-var server_pb_js_1 = require("./pb/server_pb.js");
-var server_grpc_pb_1 = require("./pb/server_grpc_pb");
 var grpc_js_1 = require("@grpc/grpc-js");
+var server_grpc_pb_1 = require("./pb/server_grpc_pb");
+var server_pb_js_1 = require("./pb/server_pb.js");
+var game_snapshot_inspector_js_1 = require("./game-snapshot-inspector.js");
+var index_1 = require("./index");
 var stub_js_1 = require("./stub.js");
-var index_js_1 = require("./index.js");
 exports.PROTOCOL_VERSION = "1.0.0";
 /**
  *
@@ -66,7 +67,7 @@ var Client = /** @class */ (function () {
      */
     function Client(server_add, grpc_insecure, token, teamSide, number, init_position) {
         /**
-         * @type {function(GameSnapshot)}
+         * @type {function(GameSnapshotInspector)}
          */
         this.gettingReadyHandler = function (gs) {
         };
@@ -91,25 +92,25 @@ var Client = /** @class */ (function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.setGettingReadyHandler(function (s) {
                         bot.gettingReady(s);
-                    })._start(function (ordersSet, snapshot) {
+                    })._start(function (snapshot) {
                         return new Promise(function (resolve, reject) {
-                            var playerState = (0, index_js_1.defineState)(snapshot, _this.number, _this.teamSide);
+                            var playerState = (0, index_1.defineState)(snapshot, _this.number, _this.teamSide);
                             if (_this.number === 1) {
-                                resolve(bot.asGoalkeeper(ordersSet, snapshot, playerState));
+                                resolve(bot.asGoalkeeper(snapshot, playerState));
                                 return;
                             }
                             switch (playerState) {
                                 case stub_js_1.PLAYER_STATE.DISPUTING_THE_BALL:
-                                    resolve(bot.onDisputing(ordersSet, snapshot));
+                                    resolve(bot.onDisputing(snapshot));
                                     break;
                                 case stub_js_1.PLAYER_STATE.DEFENDING:
-                                    resolve(bot.onDefending(ordersSet, snapshot));
+                                    resolve(bot.onDefending(snapshot));
                                     break;
                                 case stub_js_1.PLAYER_STATE.SUPPORTING:
-                                    resolve(bot.onSupporting(ordersSet, snapshot));
+                                    resolve(bot.onSupporting(snapshot));
                                     break;
                                 case stub_js_1.PLAYER_STATE.HOLDING_THE_BALL:
-                                    resolve(bot.onHolding(ordersSet, snapshot));
+                                    resolve(bot.onHolding(snapshot));
                                     break;
                             }
                         });
@@ -133,7 +134,7 @@ var Client = /** @class */ (function () {
     };
     /**
      *
-     * @param {function(GameSnapshot)} handler
+     * @param {function(GameSnapshotInspector)} handler
      *
      * @returns {Client}
      */
@@ -173,11 +174,12 @@ var Client = /** @class */ (function () {
                                 var running = _this.client.joinATeam(req);
                                 onJoin();
                                 running.on('data', function (snapshot) { return __awaiter(_this, void 0, void 0, function () {
-                                    var _a, orderSet, e_1, e_2;
+                                    var inspector, _a, orderSet, botReturn, e_1, e_2;
                                     return __generator(this, function (_b) {
                                         switch (_b.label) {
                                             case 0:
                                                 _b.trys.push([0, 11, , 12]);
+                                                inspector = new game_snapshot_inspector_js_1["default"](this.teamSide, this.number, snapshot);
                                                 _a = snapshot.getState();
                                                 switch (_a) {
                                                     case server_pb_js_1.GameSnapshot.State.LISTENING: return [3 /*break*/, 1];
@@ -190,9 +192,19 @@ var Client = /** @class */ (function () {
                                                 _b.label = 2;
                                             case 2:
                                                 _b.trys.push([2, 4, , 5]);
-                                                return [4 /*yield*/, processor(orderSet, snapshot)];
+                                                return [4 /*yield*/, processor(inspector)];
                                             case 3:
-                                                orderSet = _b.sent();
+                                                botReturn = _b.sent();
+                                                if (!botReturn) {
+                                                    orderSet.setOrdersList([]);
+                                                }
+                                                if (Array.isArray(botReturn)) {
+                                                    orderSet.setOrdersList(botReturn);
+                                                }
+                                                else {
+                                                    orderSet.setOrdersList(botReturn.orders);
+                                                    orderSet.setDebugMessage(botReturn.debug_message);
+                                                }
                                                 return [3 /*break*/, 5];
                                             case 4:
                                                 e_1 = _b.sent();
@@ -209,7 +221,7 @@ var Client = /** @class */ (function () {
                                                 _b.label = 8;
                                             case 8: return [3 /*break*/, 10];
                                             case 9:
-                                                this.gettingReadyHandler(snapshot);
+                                                this.gettingReadyHandler(inspector);
                                                 return [3 /*break*/, 10];
                                             case 10: return [3 /*break*/, 12];
                                             case 11:

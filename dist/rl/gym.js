@@ -37,9 +37,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.Gym = void 0;
-var trainingCrl_1 = require("./trainingCrl");
-var helper_bots_1 = require("./helper_bots");
 var server_pb_js_1 = require("../pb/server_pb.js");
+var helper_bots_1 = require("./helper_bots");
+var trainingCrl_1 = require("./trainingCrl");
 var Gym = /** @class */ (function () {
     function Gym(remoteControl, trainer, trainingFunction, options) {
         if (options === void 0) { options = { debugging_log: false }; }
@@ -55,9 +55,9 @@ var Gym = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         hasStarted = false;
-                        return [4 /*yield*/, lugoClient.play(function (orderSet, snapshot) {
+                        return [4 /*yield*/, lugoClient.play(function (snapshot) {
                                 hasStarted = true;
-                                return _this.trainingCrl.gameTurnHandler(orderSet, snapshot);
+                                return _this.trainingCrl.gameTurnHandler(snapshot);
                             }, function () { return __awaiter(_this, void 0, void 0, function () {
                                 var _this = this;
                                 return __generator(this, function (_a) {

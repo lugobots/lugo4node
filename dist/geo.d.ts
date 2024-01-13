@@ -1,4 +1,4 @@
-import { Point, Vector } from './pb/physics_pb.js';
+import { Point, Vector, Velocity } from './pb/physics_pb.js';
 /**
  *
  * @param {Point} from
@@ -33,3 +33,6 @@ export declare function getScaledVector(v: Vector, scale: number): Vector;
  */
 export declare function subVector(originalV: Vector, subV: Vector): Vector;
 export declare function distanceBetweenPoints(a: Point, b: Point): number;
+export declare function NewZeroedVelocity(direction: Vector): Velocity;
+export declare function TargetFrom(v: Vector, point: Point): Point;
+export declare function newZeroedPoint(): Point;

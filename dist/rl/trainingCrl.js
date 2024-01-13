@@ -37,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.TrainingCrl = exports.delay = void 0;
+var server_pb_1 = require("../pb/server_pb");
 var delay = function (ms) { return new Promise(function (resolve) { return setTimeout(resolve, ms); }); };
 exports.delay = delay;
 var TrainingCrl = /** @class */ (function () {
@@ -146,7 +147,7 @@ var TrainingCrl = /** @class */ (function () {
             });
         });
     };
-    TrainingCrl.prototype.gameTurnHandler = function (orderSet, snapshot) {
+    TrainingCrl.prototype.gameTurnHandler = function (snapshot) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
@@ -166,14 +167,14 @@ var TrainingCrl = /** @class */ (function () {
                         if (this.onListeningMode) {
                             throw new Error("faulty synchrony - got new turn while the trainer already was in listening mode  (check the lugo 'timer-mode')");
                         }
-                        this._gotNextState(snapshot);
+                        this._gotNextState(snapshot.getSnapshot());
                         return [4 /*yield*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
                                 var maxWait;
                                 var _this = this;
                                 return __generator(this, function (_a) {
                                     maxWait = setTimeout(function () {
                                         if (_this.stopRequested) {
-                                            return resolve(orderSet);
+                                            return resolve([]);
                                         }
                                         console.error("max wait for a new action");
                                         reject();
@@ -181,11 +182,11 @@ var TrainingCrl = /** @class */ (function () {
                                     // [explaining flow] here we check if the bot asked to stop
                                     if (this.stopRequested) {
                                         this._debug("stop requested - will not defined call back for new actions");
-                                        resolve(orderSet);
+                                        resolve([]);
                                         clearTimeout(maxWait);
                                         return [2 /*return*/, null];
                                     }
-                                    this.OrderSet = orderSet;
+                                    this.OrderSet = new server_pb_1.OrderSet();
                                     // [explaining flow] here we will define the callback called when the bot returns the orders.
                                     this.resumeListeningPhase = function (updatedOrderSet) {
                                         _this._debug("sending new action");
