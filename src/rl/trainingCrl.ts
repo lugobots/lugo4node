@@ -1,6 +1,7 @@
-import {RemoteControl} from "./remoteControl"
-import {BotTrainer, TrainingController, TrainingFunction} from './interfaces'
-import {GameSnapshot, OrderSet} from "../pb/server_pb"
+import GameSnapshotInspector from "../game-snapshot-inspector";
+import { GameSnapshot, Order, OrderSet } from "../pb/server_pb";
+import { BotTrainer, TrainingController, TrainingFunction } from './interfaces';
+import { RemoteControl } from "./remoteControl";
 
 export const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -106,7 +107,7 @@ export class TrainingCrl implements TrainingController {
         this._debug(`No one waiting for the next state`)
     };
 
-    async gameTurnHandler(orderSet, snapshot): Promise<OrderSet> {
+    async gameTurnHandler(snapshot: GameSnapshotInspector): Promise<Order[] | { orders: Order[], debug_message: string }> {
         /**
          * This method is called when the game is on the `LISTENING` state.
          * When the game starts it takes a while to enter this state.
@@ -123,14 +124,14 @@ export class TrainingCrl implements TrainingController {
         if (this.onListeningMode) {
             throw new Error("faulty synchrony - got new turn while the trainer already was in listening mode  (check the lugo 'timer-mode')")
         }
-        this._gotNextState(snapshot)
+        this._gotNextState(snapshot.getSnapshot())
 
         // [explaining flow] this promise will ensure that we will only return the bot order after resumeListeningPhase has been called.
         return await new Promise(async (resolve, reject) => {
             // [explaining flow] this setTimeout ensures that we will not wait forever for the bot to return
             const maxWait = setTimeout(() => {
                 if (this.stopRequested) {
-                    return resolve(orderSet)
+                    return resolve([])
                 }
                 console.error(`max wait for a new action`)
                 reject()
@@ -139,13 +140,13 @@ export class TrainingCrl implements TrainingController {
             if (this.stopRequested) {
                 this._debug(`stop requested - will not defined call back for new actions`)
 
-                resolve(orderSet)
+                resolve([])
 
                 clearTimeout(maxWait)
                 return null
             }
 
-            this.OrderSet = orderSet
+            this.OrderSet = new OrderSet();
 
 
             // [explaining flow] here we will define the callback called when the bot returns the orders.

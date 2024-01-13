@@ -7,6 +7,7 @@ export default class GameSnapshotInspector {
     snapshot: Lugo.GameSnapshot;
     constructor(botSide: Lugo.Team.Side, playerNumber: number, gameSnapshot: Lugo.GameSnapshot);
     getSnapshot(): Lugo.GameSnapshot | null;
+    getTurn(): number;
     getMe(): Lugo.Player | null;
     getBall(): Lugo.Ball | null;
     getPlayer(side: Lugo.Team.Side, number: number): Lugo.Player | null;
@@ -25,7 +26,7 @@ export default class GameSnapshotInspector {
     makeOrderMoveMaxSpeed(target: Lugo.Point): Lugo.Order;
     makeOrderMoveFromPoint(origin: Lugo.Point, target: Lugo.Point, speed: number): Lugo.Order;
     makeOrderMoveFromVector(direction: Lugo.Vector, speed: number): Lugo.Order;
-    makeOrderMoveByDirection(direction: DIRECTION, speed: number): Lugo.Order;
+    makeOrderMoveByDirection(direction: DIRECTION, speed?: number): Lugo.Order;
     makeOrderMoveToStop(): Lugo.Order;
     makeOrderJump(target: Lugo.Point, speed: number): Lugo.Order;
     makeOrderKick(target: Lugo.Point, speed: number): Lugo.Order;

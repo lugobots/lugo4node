@@ -1,8 +1,7 @@
-import { Client, RawTurnProcessor } from '../client';
-import GameSnapshotInspector from '../gamesnapshot-inspector';
+import { Client, RawTurnProcessor, type RawTurnProcessorReturn } from '../client';
+import GameSnapshotInspector from '../game-snapshot-inspector';
 import { DIRECTION } from "../index";
 import { Mapper } from '../mapper';
-import { Order } from "../pb/server_pb";
 
 const PLAYER_POSITIONS = {
     1: {Col: 0, Row: 1},
@@ -23,7 +22,7 @@ const PLAYER_POSITIONS = {
 export function newRandomMotionHelperPlayer(teamSide, playerNumber, gameServerAddress, turnsToChangeDirection = 60) {
     let changeCounter = 0
     let currentDir;
-    return newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress, async (snapshot: GameSnapshotInspector): Promise<Order[] | { orders: Order[], debug_message: string } | null> => {
+    return newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress, async (snapshot: GameSnapshotInspector): Promise<RawTurnProcessorReturn> => {
         changeCounter--;
         if (changeCounter <= 0) {
             console.log("change dir!", teamSide, playerNumber, snapshot.getTurn())
@@ -47,7 +46,7 @@ export function newRandomMotionHelperPlayer(teamSide, playerNumber, gameServerAd
 }
 
 export function newChaserHelperPlayer(teamSide, playerNumber, gameServerAddress) {
-    return newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress, async (snapshot: GameSnapshotInspector): Promise<Order[] | { orders: Order[], debug_message: string } | null> => { 
+    return newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress, async (snapshot: GameSnapshotInspector): Promise<RawTurnProcessorReturn> => { 
         const orders =  [];
         
         orders.push(snapshot.makeOrderCatch())
@@ -65,7 +64,7 @@ export function newChaserHelperPlayer(teamSide, playerNumber, gameServerAddress)
 }
 
 export function newZombieHelperPlayer(teamSide, playerNumber, gameServerAddress): Promise<void> {
-    return newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress, async (snapshot: GameSnapshotInspector): Promise<Order[] | { orders: Order[], debug_message: string } | null> => {
+    return newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress, async (snapshot: GameSnapshotInspector): Promise<RawTurnProcessorReturn> => {
         const orders =  [];
         const debug_message = `${teamSide === 0 ? 'HOME' : 'AWAY'}-${playerNumber} #${snapshot.getTurn()}`;
         return { orders, debug_message  };

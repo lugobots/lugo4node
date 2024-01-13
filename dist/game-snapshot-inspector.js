@@ -19,6 +19,9 @@ var GameSnapshotInspector = /** @class */ (function () {
     GameSnapshotInspector.prototype.getSnapshot = function () {
         return this.snapshot;
     };
+    GameSnapshotInspector.prototype.getTurn = function () {
+        return this.snapshot.getTurn();
+    };
     GameSnapshotInspector.prototype.getMe = function () {
         return this.me;
     };
@@ -87,7 +90,7 @@ var GameSnapshotInspector = /** @class */ (function () {
     };
     GameSnapshotInspector.prototype.makeOrderMoveByDirection = function (direction, speed) {
         var directionTarget = this.getOrientationByDirection(direction);
-        return this.makeOrderMoveFromVector(directionTarget, speed);
+        return this.makeOrderMoveFromVector(directionTarget, speed !== null && speed !== void 0 ? speed : specs_1.SPECS.PLAYER_MAX_SPEED);
     };
     GameSnapshotInspector.prototype.makeOrderMoveToStop = function () {
         var _a, _b, _c;
