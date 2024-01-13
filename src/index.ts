@@ -9,6 +9,7 @@ import {Bot, PLAYER_STATE} from './stub'
 import * as geo from "./geo"
 import {normalize, distanceBetweenPoints, getLength, subVector, getScaledVector, NewVector} from "./geo"
 import * as rl from "./rl/index"
+import GameSnapshotInspector from './game-snapshot-inspector'
 // imports actually used in this file
 
 export {
@@ -357,13 +358,12 @@ export enum DIRECTION {
  * @param side
  * @returns {PLAYER_STATE}
  */
-export function defineState(snapshot: Lugo.GameSnapshot, playerNumber: number, side: Lugo.Team.Side): PLAYER_STATE {
+export function defineState(snapshot: GameSnapshotInspector, playerNumber: number, side: Lugo.Team.Side): PLAYER_STATE {
     if (!snapshot || !snapshot.getBall()) {
         throw new Error('invalid snapshot state - cannot define player state')
     }
 
-    const reader = new GameSnapshotReader(snapshot, side)
-    const me = reader.getPlayer(side, playerNumber)
+    const me = snapshot.getPlayer(side, playerNumber)
     if (!me) {
         throw new Error('could not find the bot in the snapshot - cannot define player state')
     }
