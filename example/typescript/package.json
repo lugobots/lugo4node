@@ -8,7 +8,6 @@
     "play": "cd ../../ && docker build -t example-bot-typescript -f example/typescript/Dockerfile . && cd - && docker-compose up",
     "tsc": "tsc"
   },
-  "type": "module",
   "author": "Rubens Silva",
   "license": "ISC",
   "dependencies": {
