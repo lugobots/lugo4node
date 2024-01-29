@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.defineState = exports.DIRECTION = exports.NewDefaultStarter = exports.subVector = exports.rl = exports.normalize = exports.getScaledVector = exports.getLength = exports.geo = exports.distanceBetweenPoints = exports.SPECS = exports.Region = exports.PLAYER_STATE = exports.ORIENTATION = exports.NewVector = exports.NewClientFromConfig = exports.Mapper = exports.Lugo = exports.Goal = exports.GameSnapshotInspector = exports.EnvVarLoader = exports.Client = void 0;
+exports.defineState = exports.DIRECTION = exports.DefaultInitBundle = exports.NewDefaultStarter = exports.subVector = exports.rl = exports.normalize = exports.getScaledVector = exports.getLength = exports.geo = exports.distanceBetweenPoints = exports.SPECS = exports.Region = exports.PLAYER_STATE = exports.ORIENTATION = exports.NewVector = exports.NewClientFromConfig = exports.Mapper = exports.Lugo = exports.Goal = exports.GameSnapshotInspector = exports.EnvVarLoader = exports.Client = void 0;
 var client_1 = require("./client");
 exports.Client = client_1.Client;
 exports.NewClientFromConfig = client_1.NewClientFromConfig;
@@ -34,6 +34,8 @@ var stub_1 = require("./stub");
 exports.PLAYER_STATE = stub_1.PLAYER_STATE;
 var starter_1 = require("./starter");
 exports.NewDefaultStarter = starter_1.NewDefaultStarter;
+var defaults_1 = require("./util/defaults");
+exports.DefaultInitBundle = defaults_1.DefaultInitBundle;
 var DIRECTION;
 (function (DIRECTION) {
     DIRECTION[DIRECTION["FORWARD"] = 0] = "FORWARD";

@@ -2,7 +2,6 @@
 exports.__esModule = true;
 var _1 = require(".");
 var Geo = require("./geo");
-var goal_1 = require("./goal");
 var Helpers = require("./helpers");
 var ORIENTATION = require("./orentation");
 var Lugo = require("./proto_exported");
@@ -28,7 +27,7 @@ var GameSnapshotInspector = /** @class */ (function () {
     };
     GameSnapshotInspector.prototype.getBall = function () {
         var _a, _b;
-        return (_b = (_a = this.snapshot) === null || _a === void 0 ? void 0 : _a.getBall()) !== null && _b !== void 0 ? _b : null; // Adjust the method name based on your actual implementation
+        return (_b = (_a = this.snapshot) === null || _a === void 0 ? void 0 : _a.getBall()) !== null && _b !== void 0 ? _b : null;
     };
     GameSnapshotInspector.prototype.getPlayer = function (side, number) {
         return Helpers.getPlayer(this.snapshot, side, number);
@@ -179,18 +178,6 @@ var GameSnapshotInspector = /** @class */ (function () {
                 throw new Error("unknown direction ".concat(direction));
         }
         return directionTarget;
-    };
-    GameSnapshotInspector.prototype.getOpponentGoal = function () {
-        if (this.mySide === Lugo.Team.Side.HOME) {
-            return goal_1.AWAY_GOAL;
-        }
-        return goal_1.HOME_GOAL;
-    };
-    GameSnapshotInspector.prototype.getMyGoal = function () {
-        if (this.mySide === Lugo.Team.Side.HOME) {
-            return goal_1.HOME_GOAL;
-        }
-        return goal_1.AWAY_GOAL;
     };
     return GameSnapshotInspector;
 }());

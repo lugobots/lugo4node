@@ -1,14 +1,14 @@
-import { DIRECTION, Goal } from '.';
+import { DIRECTION } from '.';
 import * as Lugo from './proto_exported';
 export default class GameSnapshotInspector {
     mySide: Lugo.Team.Side;
     myNumber: number;
-    me: Lugo.Player | null;
+    me: Lugo.Player;
     snapshot: Lugo.GameSnapshot;
     constructor(botSide: Lugo.Team.Side, playerNumber: number, gameSnapshot: Lugo.GameSnapshot);
     getSnapshot(): Lugo.GameSnapshot | null;
     getTurn(): number;
-    getMe(): Lugo.Player | null;
+    getMe(): Lugo.Player;
     getBall(): Lugo.Ball | null;
     getPlayer(side: Lugo.Team.Side, number: number): Lugo.Player | null;
     getBallHolder(): Lugo.Player | null;
@@ -33,6 +33,4 @@ export default class GameSnapshotInspector {
     makeOrderKickMaxSpeed(target: Lugo.Point): Lugo.Order;
     makeOrderCatch(): Lugo.Order;
     private getOrientationByDirection;
-    getOpponentGoal(): Goal;
-    getMyGoal(): Goal;
 }
