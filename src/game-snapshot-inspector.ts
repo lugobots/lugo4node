@@ -9,7 +9,7 @@ import { SPECS } from "./specs";
 export default class GameSnapshotInspector {
     mySide: Lugo.Team.Side;
     myNumber: number;
-    me: Lugo.Player | null;
+    me: Lugo.Player;
     snapshot: Lugo.GameSnapshot;
 
     constructor(botSide: Lugo.Team.Side, playerNumber: number, gameSnapshot: Lugo.GameSnapshot) {
@@ -31,7 +31,7 @@ export default class GameSnapshotInspector {
         return this.snapshot.getTurn();
     }
 
-    getMe(): Lugo.Player | null {
+    getMe(): Lugo.Player {
         return this.me;
     }
 
