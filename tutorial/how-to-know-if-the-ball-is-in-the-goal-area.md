@@ -1,0 +1,1 @@
+const inGoalArea: boolean = inspector.getSnapshot().getTurnsBallInGoalZone() > 0 

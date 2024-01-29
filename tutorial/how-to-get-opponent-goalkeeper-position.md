@@ -1,0 +1,1 @@
+const opponentGoalkeeperPosition = inspector.getOpponentGoalkeeper().getPosition();
