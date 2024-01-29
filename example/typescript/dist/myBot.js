@@ -21,29 +21,29 @@ var MyBot = /** @class */ (function () {
         return Math.abs(regionOrigin.getRow() - destOrigin.getRow()) <= maxDistance &&
             Math.abs(regionOrigin.getCol() - destOrigin.getCol()) <= maxDistance;
     };
-    MyBot.prototype.onDisputing = function (snapshot) {
+    MyBot.prototype.onDisputing = function (inspector) {
         try {
             // the Lugo.GameSnapshot helps us to read the game state
             var orders = [];
-            var me = snapshot.getMe();
-            var ballPosition = snapshot.getBall().getPosition();
+            var me = inspector.getMe();
+            var ballPosition = inspector.getBall().getPosition();
             var ballRegion = this.mapper.getRegionFromPoint(ballPosition);
             var myRegion = this.mapper.getRegionFromPoint(me.getPosition());
             // but if the ball is near to me, I will try to catch it
             if (this.isNear(ballRegion, myRegion)) {
-                orders.push(snapshot.makeOrderMoveMaxSpeed(ballPosition));
+                orders.push(inspector.makeOrderMoveMaxSpeed(ballPosition));
             }
-            orders.push(snapshot.makeOrderCatch());
+            orders.push(inspector.makeOrderCatch());
             return orders;
         }
         catch (e) {
             console.log("did not play this turn", e);
         }
     };
-    MyBot.prototype.onDefending = function (snapshot) {
+    MyBot.prototype.onDefending = function (inspector) {
         try {
-            var me = snapshot.getMe();
-            var ballPosition = snapshot.getBall().getPosition();
+            var me = inspector.getMe();
+            var ballPosition = inspector.getBall().getPosition();
             var ballRegion = this.mapper.getRegionFromPoint(ballPosition);
             var myRegion = this.mapper.getRegionFromPoint(this.initPosition);
             var moveDest = this.initPosition;
@@ -51,26 +51,26 @@ var MyBot = /** @class */ (function () {
                 Math.abs(myRegion.getCol() - ballRegion.getCol()) <= 2) {
                 moveDest = ballPosition;
             }
-            var moveOrder = snapshot.makeOrderMoveMaxSpeed(moveDest);
-            var catchOrder = snapshot.makeOrderCatch();
+            var moveOrder = inspector.makeOrderMoveMaxSpeed(moveDest);
+            var catchOrder = inspector.makeOrderCatch();
             return { orders: [moveOrder, catchOrder], debug_message: "trying to catch the ball" };
         }
         catch (e) {
             console.log("did not play this turn", e);
         }
     };
-    MyBot.prototype.onHolding = function (snapshot) {
+    MyBot.prototype.onHolding = function (inspector) {
         try {
-            var me = snapshot.getMe();
+            var me = inspector.getMe();
             var myGoalCenter = this.mapper.getRegionFromPoint(this.mapper.getAttackGoal().getCenter());
             var currentRegion = this.mapper.getRegionFromPoint(me.getPosition());
             var myOrder = void 0;
             if (Math.abs(currentRegion.getRow() - myGoalCenter.getRow()) <= 1 &&
                 Math.abs(currentRegion.getCol() - myGoalCenter.getCol()) <= 1) {
-                myOrder = snapshot.makeOrderKickMaxSpeed(this.mapper.getAttackGoal().getCenter());
+                myOrder = inspector.makeOrderKickMaxSpeed(this.mapper.getAttackGoal().getCenter());
             }
             else {
-                myOrder = snapshot.makeOrderMoveMaxSpeed(this.mapper.getAttackGoal().getCenter());
+                myOrder = inspector.makeOrderMoveMaxSpeed(this.mapper.getAttackGoal().getCenter());
             }
             return { orders: [myOrder], debug_message: "attack!" };
         }
@@ -78,32 +78,32 @@ var MyBot = /** @class */ (function () {
             console.log("did not play this turn", e);
         }
     };
-    MyBot.prototype.onSupporting = function (snapshot) {
+    MyBot.prototype.onSupporting = function (inspector) {
         try {
-            var me = snapshot.getMe();
-            var ballHolderPosition = snapshot.getBall().getPosition();
-            var myOrder = snapshot.makeOrderMoveMaxSpeed(ballHolderPosition);
+            var me = inspector.getMe();
+            var ballHolderPosition = inspector.getBall().getPosition();
+            var myOrder = inspector.makeOrderMoveMaxSpeed(ballHolderPosition);
             return { orders: [myOrder], debug_message: "supporting" };
         }
         catch (e) {
             console.log("did not play this turn", e);
         }
     };
-    MyBot.prototype.asGoalkeeper = function (snapshot, state) {
+    MyBot.prototype.asGoalkeeper = function (inspector, state) {
         try {
-            var me = snapshot.getMe();
-            var position = snapshot.getBall().getPosition();
+            var me = inspector.getMe();
+            var position = inspector.getBall().getPosition();
             if (state !== lugo4node_1.PLAYER_STATE.DISPUTING_THE_BALL) {
                 position = this.mapper.getDefenseGoal().getCenter();
             }
-            var myOrder = snapshot.makeOrderMoveMaxSpeed(position);
-            return { orders: [myOrder, snapshot.makeOrderCatch()], debug_message: "supporting" };
+            var myOrder = inspector.makeOrderMoveMaxSpeed(position);
+            return { orders: [myOrder, inspector.makeOrderCatch()], debug_message: "supporting" };
         }
         catch (e) {
             console.log("did not play this turn", e);
         }
     };
-    MyBot.prototype.gettingReady = function (snapshot) {
+    MyBot.prototype.gettingReady = function (inspector) {
     };
     ;
     return MyBot;
