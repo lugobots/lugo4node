@@ -36,7 +36,7 @@ export default class GameSnapshotInspector {
     }
 
     getBall(): Lugo.Ball | null {
-        return this.snapshot?.getBall() ?? null; // Adjust the method name based on your actual implementation
+        return this.snapshot?.getBall() ?? null;
     }
 
 	getPlayer(side: Lugo.Team.Side, number: number): Lugo.Player | null {
@@ -209,20 +209,6 @@ export default class GameSnapshotInspector {
                 throw new Error(`unknown direction ${direction}`)
         }
         return directionTarget;
-    }
-
-    getOpponentGoal(): Goal {
-        if (this.mySide === Lugo.Team.Side.HOME) {
-            return AWAY_GOAL
-        }
-        return HOME_GOAL
-    }
-
-    getMyGoal(): Goal {
-        if (this.mySide === Lugo.Team.Side.HOME) {
-            return HOME_GOAL
-        }
-        return AWAY_GOAL
     }
 }
 

@@ -1,3 +1,4 @@
+import { AWAY_GOAL, Goal, HOME_GOAL } from './goal.js'
 import * as physics from './pb/physics_pb.js'
 import * as lugo from './pb/server_pb.js'
 
@@ -180,6 +181,21 @@ export class Mapper {
         this.side = side
         this.regionWidth = SPECS.MAX_X_COORDINATE / cols
         this.regionHeight = SPECS.MAX_Y_COORDINATE / rows
+    }
+
+
+    getDefenseGoal(): Goal {
+        if (this.side === lugo.Team.Side.HOME) {
+            return HOME_GOAL
+        }
+        return AWAY_GOAL
+    }
+
+   getAttackGoal(): Goal {
+        if (this.side === lugo.Team.Side.AWAY) {
+            return AWAY_GOAL
+        }
+        return HOME_GOAL
     }
 
     /**
