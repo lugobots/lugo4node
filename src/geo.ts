@@ -10,7 +10,6 @@ export function NewVector(from: Point, to: Point): Vector {
     const v = new Vector()
     v.setX(to.getX() - from.getX())
     v.setY(to.getY() - from.getY())
-    console.log("");
     if (isInValidateVector(v)) {
         throw new Error("an vector cannot have zero length")
     }

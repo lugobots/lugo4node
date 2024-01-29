@@ -29,12 +29,12 @@ export class MyBot implements Bot {
                 Math.abs(regionOrigin.getCol() - destOrigin.getCol()) <= maxDistance
     }
 
-    onDisputing(snapshot: GameSnapshotInspector): Lugo.Order[] | { orders: Lugo.Order[], debug_message: string } | null {
+    onDisputing(inspector: GameSnapshotInspector): Lugo.Order[] | { orders: Lugo.Order[], debug_message: string } | null {
         try {
             // the Lugo.GameSnapshot helps us to read the game state
             const orders = [];
-            const me = snapshot.getMe();
-            const ballPosition = snapshot.getBall().getPosition()
+            const me = inspector.getMe();
+            const ballPosition = inspector.getBall().getPosition()
 
             const ballRegion = this.mapper.getRegionFromPoint(ballPosition)
             const myRegion = this.mapper.getRegionFromPoint(me.getPosition())
@@ -42,10 +42,10 @@ export class MyBot implements Bot {
 
             // but if the ball is near to me, I will try to catch it
             if (this.isNear(ballRegion, myRegion)) {
-                orders.push(snapshot.makeOrderMoveMaxSpeed( ballPosition));
+                orders.push(inspector.makeOrderMoveMaxSpeed( ballPosition));
             }
 
-            orders.push(snapshot.makeOrderCatch());
+            orders.push(inspector.makeOrderCatch());
 
             return orders;
         } catch (e) {
@@ -53,10 +53,10 @@ export class MyBot implements Bot {
         }
     }
 
-    onDefending(snapshot: GameSnapshotInspector): Lugo.Order[] | { orders: Lugo.Order[], debug_message: string } | null {
+    onDefending(inspector: GameSnapshotInspector): Lugo.Order[] | { orders: Lugo.Order[], debug_message: string } | null {
         try {
-            const me = snapshot.getMe();
-            const ballPosition = snapshot.getBall().getPosition()
+            const me = inspector.getMe();
+            const ballPosition = inspector.getBall().getPosition()
             const ballRegion = this.mapper.getRegionFromPoint(ballPosition)
             const myRegion = this.mapper.getRegionFromPoint(this.initPosition)
 
@@ -65,8 +65,8 @@ export class MyBot implements Bot {
                 Math.abs(myRegion.getCol() - ballRegion.getCol()) <= 2) {
                 moveDest = ballPosition
             }
-            const moveOrder = snapshot.makeOrderMoveMaxSpeed( moveDest)
-            const catchOrder = snapshot.makeOrderCatch()
+            const moveOrder = inspector.makeOrderMoveMaxSpeed( moveDest)
+            const catchOrder = inspector.makeOrderCatch()
 
             return { orders: [moveOrder, catchOrder], debug_message: "trying to catch the ball" }
         } catch (e) {
@@ -74,9 +74,9 @@ export class MyBot implements Bot {
         }
     }
 
-    onHolding(snapshot: GameSnapshotInspector): Lugo.Order[] | { orders: Lugo.Order[], debug_message: string } | null {
+    onHolding(inspector: GameSnapshotInspector): Lugo.Order[] | { orders: Lugo.Order[], debug_message: string } | null {
         try {
-            const me = snapshot.getMe();
+            const me = inspector.getMe();
 
             const myGoalCenter = this.mapper.getRegionFromPoint(this.mapper.getAttackGoal().getCenter())
             const currentRegion = this.mapper.getRegionFromPoint(me.getPosition())
@@ -84,9 +84,9 @@ export class MyBot implements Bot {
             let myOrder;
             if (Math.abs(currentRegion.getRow() - myGoalCenter.getRow()) <= 1 &&
                 Math.abs(currentRegion.getCol() - myGoalCenter.getCol()) <= 1) {
-                myOrder = snapshot.makeOrderKickMaxSpeed(this.mapper.getAttackGoal().getCenter())
+                myOrder = inspector.makeOrderKickMaxSpeed(this.mapper.getAttackGoal().getCenter())
             } else {
-                myOrder = snapshot.makeOrderMoveMaxSpeed(this.mapper.getAttackGoal().getCenter())
+                myOrder = inspector.makeOrderMoveMaxSpeed(this.mapper.getAttackGoal().getCenter())
             }
 
 
@@ -96,11 +96,11 @@ export class MyBot implements Bot {
         }
     }
 
-    onSupporting(snapshot: GameSnapshotInspector): Lugo.Order[] | { orders: Lugo.Order[], debug_message: string } | null {
+    onSupporting(inspector: GameSnapshotInspector): Lugo.Order[] | { orders: Lugo.Order[], debug_message: string } | null {
         try {
-            const me = snapshot.getMe();
-            const ballHolderPosition = snapshot.getBall().getPosition()
-            const myOrder = snapshot.makeOrderMoveMaxSpeed( ballHolderPosition)
+            const me = inspector.getMe();
+            const ballHolderPosition = inspector.getBall().getPosition()
+            const myOrder = inspector.makeOrderMoveMaxSpeed( ballHolderPosition)
 
             return { orders: [myOrder], debug_message: "supporting" }
         } catch (e) {
@@ -108,24 +108,24 @@ export class MyBot implements Bot {
         }
     }
 
-    asGoalkeeper(snapshot: GameSnapshotInspector, state: PLAYER_STATE): Lugo.Order[] | { orders: Lugo.Order[], debug_message: string } | null {
+    asGoalkeeper(inspector: GameSnapshotInspector, state: PLAYER_STATE): Lugo.Order[] | { orders: Lugo.Order[], debug_message: string } | null {
         try {
-            const me = snapshot.getMe();
-            let position = snapshot.getBall().getPosition()
+            const me = inspector.getMe();
+            let position = inspector.getBall().getPosition()
             if (state !== PLAYER_STATE.DISPUTING_THE_BALL) {
                 position = this.mapper.getDefenseGoal().getCenter()
             }
 
-            const myOrder = snapshot.makeOrderMoveMaxSpeed( position)
+            const myOrder = inspector.makeOrderMoveMaxSpeed( position)
 
 
-            return { orders: [myOrder, snapshot.makeOrderCatch()], debug_message:  "supporting"}
+            return { orders: [myOrder, inspector.makeOrderCatch()], debug_message:  "supporting"}
         } catch (e) {
             console.log(`did not play this turn`, e)
         }
     }
 
-    gettingReady(snapshot: GameSnapshotInspector): void {
+    gettingReady(inspector: GameSnapshotInspector): void {
 
     };
 }
