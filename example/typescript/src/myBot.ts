@@ -23,14 +23,6 @@ export class MyBot implements Bot {
         mapper.getRegionFromPoint(initPosition)
     }
 
-    private makeReader(snapshot: GameSnapshotInspector): {  me: Lugo.Player } {
-        const me = snapshot.getPlayer(this.side, this.number)
-        if (!me) {
-            throw new Error("did not find myself in the game")
-        }
-        return { me}
-    }
-
     private isNear(regionOrigin : Region, destOrigin: Region) : boolean {
         const maxDistance = 2
         return Math.abs(regionOrigin.getRow() - destOrigin.getRow()) <= maxDistance &&
@@ -41,7 +33,7 @@ export class MyBot implements Bot {
         try {
             // the Lugo.GameSnapshot helps us to read the game state
             const orders = [];
-            const {me} = this.makeReader(snapshot)
+            const me = snapshot.getMe();
             const ballPosition = snapshot.getBall().getPosition()
 
             const ballRegion = this.mapper.getRegionFromPoint(ballPosition)
@@ -63,7 +55,7 @@ export class MyBot implements Bot {
 
     onDefending(snapshot: GameSnapshotInspector): Lugo.Order[] | { orders: Lugo.Order[], debug_message: string } | null {
         try {
-            const { me} = this.makeReader(snapshot)
+            const me = snapshot.getMe();
             const ballPosition = snapshot.getBall().getPosition()
             const ballRegion = this.mapper.getRegionFromPoint(ballPosition)
             const myRegion = this.mapper.getRegionFromPoint(this.initPosition)
@@ -84,7 +76,7 @@ export class MyBot implements Bot {
 
     onHolding(snapshot: GameSnapshotInspector): Lugo.Order[] | { orders: Lugo.Order[], debug_message: string } | null {
         try {
-            const { me} = this.makeReader(snapshot)
+            const me = snapshot.getMe();
 
             const myGoalCenter = this.mapper.getRegionFromPoint(snapshot.getOpponentGoal().getCenter())
             const currentRegion = this.mapper.getRegionFromPoint(me.getPosition())
@@ -106,7 +98,7 @@ export class MyBot implements Bot {
 
     onSupporting(snapshot: GameSnapshotInspector): Lugo.Order[] | { orders: Lugo.Order[], debug_message: string } | null {
         try {
-            const { me} = this.makeReader(snapshot)
+            const me = snapshot.getMe();
             const ballHolderPosition = snapshot.getBall().getPosition()
             const myOrder = snapshot.makeOrderMoveMaxSpeed( ballHolderPosition)
 
@@ -118,7 +110,7 @@ export class MyBot implements Bot {
 
     asGoalkeeper(snapshot: GameSnapshotInspector, state: PLAYER_STATE): Lugo.Order[] | { orders: Lugo.Order[], debug_message: string } | null {
         try {
-            const {me} = this.makeReader(snapshot)
+            const me = snapshot.getMe();
             let position = snapshot.getBall().getPosition()
             if (state !== PLAYER_STATE.DISPUTING_THE_BALL) {
                 position = snapshot.getMyGoal().getCenter()
