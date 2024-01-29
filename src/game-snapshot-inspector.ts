@@ -9,7 +9,7 @@ import { SPECS } from "./specs";
 export default class GameSnapshotInspector {
     mySide: Lugo.Team.Side;
     myNumber: number;
-    me: Lugo.Player | null;
+    me: Lugo.Player;
     snapshot: Lugo.GameSnapshot;
 
     constructor(botSide: Lugo.Team.Side, playerNumber: number, gameSnapshot: Lugo.GameSnapshot) {
@@ -31,12 +31,12 @@ export default class GameSnapshotInspector {
         return this.snapshot.getTurn();
     }
 
-    getMe(): Lugo.Player | null {
+    getMe(): Lugo.Player {
         return this.me;
     }
 
     getBall(): Lugo.Ball | null {
-        return this.snapshot?.getBall() ?? null; // Adjust the method name based on your actual implementation
+        return this.snapshot?.getBall() ?? null;
     }
 
 	getPlayer(side: Lugo.Team.Side, number: number): Lugo.Player | null {
@@ -209,20 +209,6 @@ export default class GameSnapshotInspector {
                 throw new Error(`unknown direction ${direction}`)
         }
         return directionTarget;
-    }
-
-    getOpponentGoal(): Goal {
-        if (this.mySide === Lugo.Team.Side.HOME) {
-            return AWAY_GOAL
-        }
-        return HOME_GOAL
-    }
-
-    getMyGoal(): Goal {
-        if (this.mySide === Lugo.Team.Side.HOME) {
-            return HOME_GOAL
-        }
-        return AWAY_GOAL
     }
 }
 
