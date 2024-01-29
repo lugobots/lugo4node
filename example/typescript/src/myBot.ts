@@ -78,15 +78,15 @@ export class MyBot implements Bot {
         try {
             const me = snapshot.getMe();
 
-            const myGoalCenter = this.mapper.getRegionFromPoint(snapshot.getOpponentGoal().getCenter())
+            const myGoalCenter = this.mapper.getRegionFromPoint(this.mapper.getAttackGoal().getCenter())
             const currentRegion = this.mapper.getRegionFromPoint(me.getPosition())
 
             let myOrder;
             if (Math.abs(currentRegion.getRow() - myGoalCenter.getRow()) <= 1 &&
                 Math.abs(currentRegion.getCol() - myGoalCenter.getCol()) <= 1) {
-                myOrder = snapshot.makeOrderKickMaxSpeed(snapshot.getOpponentGoal().getCenter())
+                myOrder = snapshot.makeOrderKickMaxSpeed(this.mapper.getAttackGoal().getCenter())
             } else {
-                myOrder = snapshot.makeOrderMoveMaxSpeed(snapshot.getOpponentGoal().getCenter())
+                myOrder = snapshot.makeOrderMoveMaxSpeed(this.mapper.getAttackGoal().getCenter())
             }
 
 
@@ -113,7 +113,7 @@ export class MyBot implements Bot {
             const me = snapshot.getMe();
             let position = snapshot.getBall().getPosition()
             if (state !== PLAYER_STATE.DISPUTING_THE_BALL) {
-                position = snapshot.getMyGoal().getCenter()
+                position = this.mapper.getDefenseGoal().getCenter()
             }
 
             const myOrder = snapshot.makeOrderMoveMaxSpeed( position)
