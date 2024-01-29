@@ -1,3 +1,4 @@
+import { Goal } from './goal.js';
 import * as physics from './pb/physics_pb.js';
 import * as lugo from './pb/server_pb.js';
 export declare class Region {
@@ -99,6 +100,8 @@ export declare class Mapper {
      * @param side {lugo.Team.Side}
      */
     constructor(cols: number, rows: number, side: lugo.Team.Side);
+    getDefenseGoal(): Goal;
+    getAttackGoal(): Goal;
     /**
      * @param col {number}
      * @param row {number}

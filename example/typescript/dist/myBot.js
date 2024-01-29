@@ -16,13 +16,6 @@ var MyBot = /** @class */ (function () {
         this.initPosition = initPosition;
         mapper.getRegionFromPoint(initPosition);
     }
-    MyBot.prototype.makeReader = function (snapshot) {
-        var me = snapshot.getPlayer(this.side, this.number);
-        if (!me) {
-            throw new Error("did not find myself in the game");
-        }
-        return { me: me };
-    };
     MyBot.prototype.isNear = function (regionOrigin, destOrigin) {
         var maxDistance = 2;
         return Math.abs(regionOrigin.getRow() - destOrigin.getRow()) <= maxDistance &&
@@ -32,7 +25,7 @@ var MyBot = /** @class */ (function () {
         try {
             // the Lugo.GameSnapshot helps us to read the game state
             var orders = [];
-            var me = this.makeReader(snapshot).me;
+            var me = snapshot.getMe();
             var ballPosition = snapshot.getBall().getPosition();
             var ballRegion = this.mapper.getRegionFromPoint(ballPosition);
             var myRegion = this.mapper.getRegionFromPoint(me.getPosition());
@@ -49,7 +42,7 @@ var MyBot = /** @class */ (function () {
     };
     MyBot.prototype.onDefending = function (snapshot) {
         try {
-            var me = this.makeReader(snapshot).me;
+            var me = snapshot.getMe();
             var ballPosition = snapshot.getBall().getPosition();
             var ballRegion = this.mapper.getRegionFromPoint(ballPosition);
             var myRegion = this.mapper.getRegionFromPoint(this.initPosition);
@@ -68,16 +61,16 @@ var MyBot = /** @class */ (function () {
     };
     MyBot.prototype.onHolding = function (snapshot) {
         try {
-            var me = this.makeReader(snapshot).me;
-            var myGoalCenter = this.mapper.getRegionFromPoint(snapshot.getOpponentGoal().getCenter());
+            var me = snapshot.getMe();
+            var myGoalCenter = this.mapper.getRegionFromPoint(this.mapper.getAttackGoal().getCenter());
             var currentRegion = this.mapper.getRegionFromPoint(me.getPosition());
             var myOrder = void 0;
             if (Math.abs(currentRegion.getRow() - myGoalCenter.getRow()) <= 1 &&
                 Math.abs(currentRegion.getCol() - myGoalCenter.getCol()) <= 1) {
-                myOrder = snapshot.makeOrderKickMaxSpeed(snapshot.getOpponentGoal().getCenter());
+                myOrder = snapshot.makeOrderKickMaxSpeed(this.mapper.getAttackGoal().getCenter());
             }
             else {
-                myOrder = snapshot.makeOrderMoveMaxSpeed(snapshot.getOpponentGoal().getCenter());
+                myOrder = snapshot.makeOrderMoveMaxSpeed(this.mapper.getAttackGoal().getCenter());
             }
             return { orders: [myOrder], debug_message: "attack!" };
         }
@@ -87,7 +80,7 @@ var MyBot = /** @class */ (function () {
     };
     MyBot.prototype.onSupporting = function (snapshot) {
         try {
-            var me = this.makeReader(snapshot).me;
+            var me = snapshot.getMe();
             var ballHolderPosition = snapshot.getBall().getPosition();
             var myOrder = snapshot.makeOrderMoveMaxSpeed(ballHolderPosition);
             return { orders: [myOrder], debug_message: "supporting" };
@@ -98,10 +91,10 @@ var MyBot = /** @class */ (function () {
     };
     MyBot.prototype.asGoalkeeper = function (snapshot, state) {
         try {
-            var me = this.makeReader(snapshot).me;
+            var me = snapshot.getMe();
             var position = snapshot.getBall().getPosition();
             if (state !== lugo4node_1.PLAYER_STATE.DISPUTING_THE_BALL) {
-                position = snapshot.getMyGoal().getCenter();
+                position = this.mapper.getDefenseGoal().getCenter();
             }
             var myOrder = snapshot.makeOrderMoveMaxSpeed(position);
             return { orders: [myOrder, snapshot.makeOrderCatch()], debug_message: "supporting" };
