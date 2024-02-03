@@ -10,11 +10,13 @@ import * as Lugo from './proto_exported'
 import * as rl from "./rl/index"
 import { SPECS } from "./specs.js"
 import { Bot, PLAYER_STATE } from './stub'
+import { NewDefaultStarter } from './starter'
+import { DefaultInitBundle } from './util/defaults'
 // imports actually used in this file
 
 export {
     Bot, Client, EnvVarLoader, GameSnapshotInspector, Goal, Lugo, Mapper, NewClientFromConfig, NewVector, ORIENTATION, PLAYER_STATE, Region, SPECS, distanceBetweenPoints, geo, getLength, getScaledVector, // keeping backward compatibility
-    normalize, rl, subVector
+    normalize, rl, subVector, NewDefaultStarter, DefaultInitBundle
 }
 
 export enum DIRECTION {
