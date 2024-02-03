@@ -12,7 +12,7 @@ import { Bot, PLAYER_STATE } from './stub.js'
 export const PROTOCOL_VERSION = "1.0.0"
 
 export type RawTurnProcessorReturn = Order[] | { orders: Order[], debug_message: string } | null;
-export type RawTurnProcessor = (snapshot: GameSnapshotInspector) => Promise<RawTurnProcessorReturn>
+export type RawTurnProcessor = (inspector: GameSnapshotInspector) => Promise<RawTurnProcessorReturn>
 
 /**
  *
@@ -80,28 +80,25 @@ export class Client {
     }) {
         return this.setGettingReadyHandler(s => {
             bot.gettingReady(s)
-        })._start((snapshot: GameSnapshotInspector): Promise<RawTurnProcessorReturn> => {
-
-
-
+        })._start((inspector: GameSnapshotInspector): Promise<RawTurnProcessorReturn> => {
             return new Promise((resolve, reject) => {
-                const playerState = defineState(snapshot, this.number, this.teamSide)
+                const playerState = defineState(inspector, this.number, this.teamSide)
                 if (this.number === 1) {
-                    resolve(bot.asGoalkeeper(snapshot, playerState));
+                    resolve(bot.asGoalkeeper(inspector, playerState));
                     return
                 }
                 switch (playerState) {
                     case PLAYER_STATE.DISPUTING_THE_BALL:
-                        resolve(bot.onDisputing(snapshot));
+                        resolve(bot.onDisputing(inspector));
                         break;
                     case PLAYER_STATE.DEFENDING:
-                        resolve(bot.onDefending(snapshot));
+                        resolve(bot.onDefending(inspector));
                         break;
                     case PLAYER_STATE.SUPPORTING:
-                        resolve(bot.onSupporting(snapshot));
+                        resolve(bot.onSupporting(inspector));
                         break;
                     case PLAYER_STATE.HOLDING_THE_BALL:
-                        resolve(bot.onHolding(snapshot));
+                        resolve(bot.onHolding(inspector));
                         break;
                 }
             });

@@ -8,7 +8,7 @@ export type RawTurnProcessorReturn = Order[] | {
     orders: Order[];
     debug_message: string;
 } | null;
-export type RawTurnProcessor = (snapshot: GameSnapshotInspector) => Promise<RawTurnProcessorReturn>;
+export type RawTurnProcessor = (inspector: GameSnapshotInspector) => Promise<RawTurnProcessorReturn>;
 /**
  *
  * @param {EnvVarLoader} config

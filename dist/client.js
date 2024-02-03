@@ -92,25 +92,25 @@ var Client = /** @class */ (function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.setGettingReadyHandler(function (s) {
                         bot.gettingReady(s);
-                    })._start(function (snapshot) {
+                    })._start(function (inspector) {
                         return new Promise(function (resolve, reject) {
-                            var playerState = (0, index_1.defineState)(snapshot, _this.number, _this.teamSide);
+                            var playerState = (0, index_1.defineState)(inspector, _this.number, _this.teamSide);
                             if (_this.number === 1) {
-                                resolve(bot.asGoalkeeper(snapshot, playerState));
+                                resolve(bot.asGoalkeeper(inspector, playerState));
                                 return;
                             }
                             switch (playerState) {
                                 case stub_js_1.PLAYER_STATE.DISPUTING_THE_BALL:
-                                    resolve(bot.onDisputing(snapshot));
+                                    resolve(bot.onDisputing(inspector));
                                     break;
                                 case stub_js_1.PLAYER_STATE.DEFENDING:
-                                    resolve(bot.onDefending(snapshot));
+                                    resolve(bot.onDefending(inspector));
                                     break;
                                 case stub_js_1.PLAYER_STATE.SUPPORTING:
-                                    resolve(bot.onSupporting(snapshot));
+                                    resolve(bot.onSupporting(inspector));
                                     break;
                                 case stub_js_1.PLAYER_STATE.HOLDING_THE_BALL:
-                                    resolve(bot.onHolding(snapshot));
+                                    resolve(bot.onHolding(inspector));
                                     break;
                             }
                         });
