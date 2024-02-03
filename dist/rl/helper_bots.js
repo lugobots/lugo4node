@@ -37,9 +37,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.newCustomHelperPlayer = exports.newZombieHelperPlayer = exports.newChaserHelperPlayer = exports.newRandomMotionHelperPlayer = void 0;
-var mapper_1 = require("../mapper");
 var client_1 = require("../client");
 var index_1 = require("../index");
+var mapper_1 = require("../mapper");
 var PLAYER_POSITIONS = {
     1: { Col: 0, Row: 1 },
     2: { Col: 1, Row: 1 },
@@ -59,8 +59,8 @@ function newRandomMotionHelperPlayer(teamSide, playerNumber, gameServerAddress, 
     if (turnsToChangeDirection === void 0) { turnsToChangeDirection = 60; }
     var changeCounter = 0;
     var currentDir;
-    return newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress, function (orderSet, snapshot) { return __awaiter(_this, void 0, void 0, function () {
-        var reader;
+    return newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress, function (snapshot) { return __awaiter(_this, void 0, void 0, function () {
+        var orders, debug_message;
         return __generator(this, function (_a) {
             changeCounter--;
             if (changeCounter <= 0) {
@@ -77,38 +77,39 @@ function newRandomMotionHelperPlayer(teamSide, playerNumber, gameServerAddress, 
                     index_1.DIRECTION.FORWARD_LEFT,
                 ][Math.floor(Math.random() * 8)];
             }
-            reader = new index_1.GameSnapshotReader(snapshot, teamSide);
-            orderSet.addOrders(reader.makeOrderMoveByDirection(currentDir));
-            orderSet.setDebugMessage("".concat(teamSide === 0 ? 'HOME' : 'AWAY', "-").concat(playerNumber, " #").concat(snapshot.getTurn(), " - chasing ball"));
-            return [2 /*return*/, orderSet];
+            orders = [snapshot.makeOrderMoveByDirection(currentDir)];
+            debug_message = "".concat(teamSide === 0 ? 'HOME' : 'AWAY', "-").concat(playerNumber, " #").concat(snapshot.getTurn(), " - chasing ball");
+            return [2 /*return*/, { orders: orders, debug_message: debug_message }];
         });
     }); });
 }
 exports.newRandomMotionHelperPlayer = newRandomMotionHelperPlayer;
 function newChaserHelperPlayer(teamSide, playerNumber, gameServerAddress) {
     var _this = this;
-    return newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress, function (orderSet, snapshot) { return __awaiter(_this, void 0, void 0, function () {
-        var reader, me;
+    return newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress, function (snapshot) { return __awaiter(_this, void 0, void 0, function () {
+        var orders, me, debug_message;
         return __generator(this, function (_a) {
-            reader = new index_1.GameSnapshotReader(snapshot, teamSide);
-            orderSet.addOrders(reader.makeOrderCatch());
-            me = reader.getPlayer(teamSide, playerNumber);
+            orders = [];
+            orders.push(snapshot.makeOrderCatch());
+            me = snapshot.getPlayer(teamSide, playerNumber);
             if (!me) {
                 throw new Error("did not find myself in the game");
             }
-            orderSet.addOrders(reader.makeOrderMoveMaxSpeed(me.getPosition(), snapshot.getBall().getPosition()));
-            orderSet.setDebugMessage("".concat(teamSide === 0 ? 'HOME' : 'AWAY', "-").concat(playerNumber, " #").concat(snapshot.getTurn(), " - chasing ball"));
-            return [2 /*return*/, orderSet];
+            orders.push(snapshot.makeOrderMoveMaxSpeed(snapshot.getBall().getPosition()));
+            debug_message = "".concat(teamSide === 0 ? 'HOME' : 'AWAY', "-").concat(playerNumber, " #").concat(snapshot.getTurn(), " - chasing ball");
+            return [2 /*return*/, { orders: orders, debug_message: debug_message }];
         });
     }); });
 }
 exports.newChaserHelperPlayer = newChaserHelperPlayer;
 function newZombieHelperPlayer(teamSide, playerNumber, gameServerAddress) {
     var _this = this;
-    return newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress, function (orderSet, snapshot) { return __awaiter(_this, void 0, void 0, function () {
+    return newCustomHelperPlayer(teamSide, playerNumber, gameServerAddress, function (snapshot) { return __awaiter(_this, void 0, void 0, function () {
+        var orders, debug_message;
         return __generator(this, function (_a) {
-            orderSet.setDebugMessage("".concat(teamSide === 0 ? 'HOME' : 'AWAY', "-").concat(playerNumber, " #").concat(snapshot.getTurn()));
-            return [2 /*return*/, orderSet];
+            orders = [];
+            debug_message = "".concat(teamSide === 0 ? 'HOME' : 'AWAY', "-").concat(playerNumber, " #").concat(snapshot.getTurn());
+            return [2 /*return*/, { orders: orders, debug_message: debug_message }];
         });
     }); });
 }

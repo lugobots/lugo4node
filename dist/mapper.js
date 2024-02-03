@@ -1,6 +1,7 @@
 "use strict";
 exports.__esModule = true;
 exports.Mapper = exports.Region = void 0;
+var goal_js_1 = require("./goal.js");
 var physics = require("./pb/physics_pb.js");
 var lugo = require("./pb/server_pb.js");
 var Point = physics.Point;
@@ -129,6 +130,18 @@ var Mapper = /** @class */ (function () {
         this.regionWidth = specs_js_1.SPECS.MAX_X_COORDINATE / cols;
         this.regionHeight = specs_js_1.SPECS.MAX_Y_COORDINATE / rows;
     }
+    Mapper.prototype.getDefenseGoal = function () {
+        if (this.side === lugo.Team.Side.HOME) {
+            return goal_js_1.HOME_GOAL;
+        }
+        return goal_js_1.AWAY_GOAL;
+    };
+    Mapper.prototype.getAttackGoal = function () {
+        if (this.side === lugo.Team.Side.AWAY) {
+            return goal_js_1.AWAY_GOAL;
+        }
+        return goal_js_1.HOME_GOAL;
+    };
     /**
      * @param col {number}
      * @param row {number}

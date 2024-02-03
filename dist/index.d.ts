@@ -1,119 +1,17 @@
 import { Client, NewClientFromConfig } from './client';
 import { EnvVarLoader } from './configurator';
+import GameSnapshotInspector from './game-snapshot-inspector';
+import * as geo from "./geo";
+import { NewVector, distanceBetweenPoints, getLength, getScaledVector, normalize, subVector } from "./geo";
 import { Goal } from './goal';
 import { Mapper, Region } from './mapper';
 import * as ORIENTATION from './orentation';
 import * as Lugo from './proto_exported';
+import * as rl from "./rl/index";
 import { SPECS } from "./specs.js";
 import { Bot, PLAYER_STATE } from './stub';
-import * as geo from "./geo";
-import { normalize, distanceBetweenPoints, getLength, subVector, getScaledVector, NewVector } from "./geo";
-import * as rl from "./rl/index";
-export { rl, Client, NewClientFromConfig, EnvVarLoader, Goal, Mapper, Region, ORIENTATION, SPECS, Bot, PLAYER_STATE, Lugo, geo, // keeping backward compatibility
-normalize, distanceBetweenPoints, getLength, subVector, getScaledVector, NewVector, };
-export declare class GameSnapshotReader {
-    readonly mySide: any;
-    /**
-     * @type {Lugo.GameSnapshot}
-     */
-    readonly snapshot: any;
-    constructor(snapshot: Lugo.GameSnapshot, mySide: Lugo.Team.Side);
-    /**
-     * Returns the bot team
-     * @returns {Lugo.Team}
-     */
-    getMyTeam(): Lugo.Team;
-    /**
-     * Returns the opponent team
-     * @returns {Lugo.Team}
-     */
-    getOpponentTeam(): Lugo.Team;
-    /**
-     * @param { Lugo.Team.Side} side
-     * @returns {Lugo.Team}
-     */
-    getTeam(side: any): Lugo.Team;
-    /**
-     *
-     * @param { Player} player
-     * @returns {boolean}
-     */
-    isBallHolder(player: Lugo.Player): boolean;
-    /**
-     *
-     * @returns {Lugo.Team.Side}
-     */
-    getOpponentSide(): Lugo.Team.Side;
-    /**
-     *
-     * @returns {Goal}
-     */
-    getMyGoal(): Goal;
-    /**
-     *
-     * @returns {Lugo.Ball}
-     */
-    getBall(): Lugo.Ball;
-    /**
-     *
-     * @returns {Goal}
-     */
-    getOpponentGoal(): Goal;
-    /**
-     *
-     * @param {.Lugo.Team.Side} side
-     * @param {number} number
-     * @returns {.Player}
-     */
-    getPlayer(side: Lugo.Team.Side, number: number): Lugo.Player | null;
-    /**
-     *
-     * @param {Point} origin
-     * @param {Point} target
-     * @return {Order}
-     */
-    makeOrderMoveMaxSpeed(origin: Lugo.Point, target: Lugo.Point): Lugo.Order;
-    /**
-     *
-     * @param {Point} origin
-     * @param {Point} target
-     * @param speed
-     * @returns {Order}
-     */
-    makeOrderMove(origin: Lugo.Point, target: Lugo.Point, speed: number): Lugo.Order;
-    /**
-     *
-     * @param {Vector} direction
-     * @param {number} speed
-     * @returns {Order}
-     * @private
-     */
-    makeOrderMoveFromVector(direction: Lugo.Vector, speed: number): Lugo.Order;
-    makeOrderMoveByDirection(direction: DIRECTION): Lugo.Order;
-    makeOrderJump(origin: Lugo.Point, target: Lugo.Point, speed: number): Lugo.Order;
-    /**
-     *
-     * @param {Ball} ball
-     * @param {Point} target
-     * @param {number} speed
-     * @returns {Order}
-     */
-    makeOrderKick(ball: Lugo.Ball, target: Lugo.Point, speed: number): Lugo.Order;
-    /**
-     *
-     * @param {Ball} ball
-     * @param {Point} target
-     * @returns {Order}
-     */
-    makeOrderKickMaxSpeed(ball: Lugo.Ball, target: Lugo.Point): Lugo.Order;
-    /**
-     *
-     * @returns {!Order}
-     */
-    makeOrderCatch(): Lugo.Order;
-}
-export declare const awayGoal: Goal;
-export declare const homeGoal: Goal;
+export { Bot, Client, EnvVarLoader, GameSnapshotInspector, Goal, Lugo, Mapper, NewClientFromConfig, NewVector, ORIENTATION, PLAYER_STATE, Region, SPECS, distanceBetweenPoints, geo, getLength, getScaledVector, // keeping backward compatibility
+normalize, rl, subVector };
 export declare enum DIRECTION {
     FORWARD = 0,
     BACKWARD = 1,
@@ -126,9 +24,9 @@ export declare enum DIRECTION {
 }
 /**
  *
- * @param {GameSnapshot}  snapshot
+ * @param {GameSnapshotInspector}  snapshot
  * @param playerNumber
  * @param side
  * @returns {PLAYER_STATE}
  */
-export declare function defineState(snapshot: Lugo.GameSnapshot, playerNumber: number, side: Lugo.Team.Side): PLAYER_STATE;
+export declare function defineState(snapshot: GameSnapshotInspector, playerNumber: number, side: Lugo.Team.Side): PLAYER_STATE;

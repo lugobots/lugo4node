@@ -1,14 +1,14 @@
-import {delay, TrainingCrl} from "./trainingCrl";
+import { Client } from '../client';
+import GameSnapshotInspector from "../game-snapshot-inspector";
+import { Order, Team } from "../pb/server_pb.js";
 import {
     newChaserHelperPlayer,
-    newCustomHelperPlayer,
     newRandomMotionHelperPlayer,
     newZombieHelperPlayer
 } from "./helper_bots";
-import {RemoteControl} from "./remoteControl"
-import {BotTrainer, TrainingFunction} from "./interfaces";
-import {Client, RawTurnProcessor} from '../client'
-import {OrderSet, Team} from "../pb/server_pb.js"
+import { BotTrainer, TrainingFunction } from "./interfaces";
+import { RemoteControl } from "./remoteControl";
+import { delay, TrainingCrl } from "./trainingCrl";
 
 export class Gym {
 
@@ -30,9 +30,9 @@ export class Gym {
         // If the game was started in a previous training session, the game server will be stuck on the listening phase.
         // so we check if the game has started, if now, we try to resume the server
         let hasStarted = false;
-        await lugoClient.play((orderSet, snapshot): Promise<OrderSet> => {
+        await lugoClient.play((snapshot: GameSnapshotInspector): Promise<Order[] | {orders: Order[], debug_message: string} | null> => {
             hasStarted = true;
-            return this.trainingCrl.gameTurnHandler(orderSet, snapshot)
+            return this.trainingCrl.gameTurnHandler(snapshot)
         }, async () => {
             if (this.gameServerAddress) {
                 await this.helperPlayers(this.gameServerAddress)

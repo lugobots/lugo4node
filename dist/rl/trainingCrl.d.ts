@@ -1,6 +1,7 @@
-import { RemoteControl } from "./remoteControl";
+import GameSnapshotInspector from "../game-snapshot-inspector";
+import { GameSnapshot, Order } from "../pb/server_pb";
 import { BotTrainer, TrainingController, TrainingFunction } from './interfaces';
-import { GameSnapshot, OrderSet } from "../pb/server_pb";
+import { RemoteControl } from "./remoteControl";
 export declare const delay: (ms: any) => Promise<unknown>;
 export declare class TrainingCrl implements TrainingController {
     /**
@@ -36,7 +37,10 @@ export declare class TrainingCrl implements TrainingController {
         done: boolean;
     }>;
     _gotNextState: (newGameSnapshot: GameSnapshot) => void;
-    gameTurnHandler(orderSet: any, snapshot: any): Promise<OrderSet>;
+    gameTurnHandler(snapshot: GameSnapshotInspector): Promise<Order[] | {
+        orders: Order[];
+        debug_message: string;
+    }>;
     waitUntilNextListeningState(): Promise<GameSnapshot>;
     stop(): Promise<void>;
     _debug(msg: any): void;

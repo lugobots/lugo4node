@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.distanceBetweenPoints = exports.subVector = exports.getScaledVector = exports.getLength = exports.normalize = exports.NewVector = void 0;
+exports.newZeroedPoint = exports.TargetFrom = exports.NewZeroedVelocity = exports.distanceBetweenPoints = exports.subVector = exports.getScaledVector = exports.getLength = exports.normalize = exports.NewVector = void 0;
 var physics_pb_js_1 = require("./pb/physics_pb.js");
 /**
  *
@@ -12,6 +12,7 @@ function NewVector(from, to) {
     var v = new physics_pb_js_1.Vector();
     v.setX(to.getX() - from.getX());
     v.setY(to.getY() - from.getY());
+    console.log("");
     if (isInValidateVector(v)) {
         throw new Error("an vector cannot have zero length");
     }
@@ -82,3 +83,21 @@ function distanceBetweenPoints(a, b) {
     return Math.hypot(a.getX() - b.getX(), a.getY() - b.getY());
 }
 exports.distanceBetweenPoints = distanceBetweenPoints;
+function NewZeroedVelocity(direction) {
+    var velocity = new physics_pb_js_1.Velocity();
+    velocity.setDirection(direction);
+    velocity.setSpeed(0);
+    return velocity;
+}
+exports.NewZeroedVelocity = NewZeroedVelocity;
+function TargetFrom(v, point) {
+    var target = new physics_pb_js_1.Point();
+    target.setX(point.getX() + Math.round(v.getX()));
+    target.setX(point.getY() + Math.round(v.getY()));
+    return target;
+}
+exports.TargetFrom = TargetFrom;
+function newZeroedPoint() {
+    return new physics_pb_js_1.Point().setX(0).setY(0);
+}
+exports.newZeroedPoint = newZeroedPoint;

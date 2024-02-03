@@ -1,4 +1,4 @@
-import {Point, Vector} from './pb/physics_pb.js'
+import { Point, Vector, Velocity } from './pb/physics_pb.js';
 
 /**
  *
@@ -10,6 +10,7 @@ export function NewVector(from: Point, to: Point): Vector {
     const v = new Vector()
     v.setX(to.getX() - from.getX())
     v.setY(to.getY() - from.getY())
+    console.log("");
     if (isInValidateVector(v)) {
         throw new Error("an vector cannot have zero length")
     }
@@ -81,4 +82,23 @@ function isInValidateVector(v: Vector): boolean {
 
 export function distanceBetweenPoints(a: Point, b: Point) : number {
     return Math.hypot(a.getX() - b.getX(), a.getY() - b.getY())
+}
+
+export function NewZeroedVelocity(direction: Vector): Velocity {
+    const velocity = new Velocity();
+    velocity.setDirection(direction);
+    velocity.setSpeed(0);
+	return velocity
+}
+
+export function TargetFrom(v: Vector, point: Point): Point {
+    const target = new Point();
+    target.setX(point.getX() + Math.round(v.getX()));
+    target.setX(point.getY() + Math.round(v.getY()));
+
+    return target;
+}
+
+export function newZeroedPoint() : Point {
+    return new Point().setX(0).setY(0);
 }

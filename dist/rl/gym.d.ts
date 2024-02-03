@@ -1,6 +1,6 @@
-import { RemoteControl } from "./remoteControl";
-import { BotTrainer, TrainingFunction } from "./interfaces";
 import { Client } from '../client';
+import { BotTrainer, TrainingFunction } from "./interfaces";
+import { RemoteControl } from "./remoteControl";
 export declare class Gym {
     private trainingCrl;
     private gameServerAddress;
