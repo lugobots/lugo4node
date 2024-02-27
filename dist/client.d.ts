@@ -1,9 +1,14 @@
 import { Point } from "./pb/physics_pb.js";
-import { OrderSet } from "./pb/server_pb.js";
-import { Bot } from './stub.js';
+import { Order, OrderSet } from "./pb/server_pb.js";
 import { EnvVarLoader } from './configurator.js';
+import GameSnapshotInspector from "./game-snapshot-inspector.js";
+import { Bot } from './stub.js';
 export declare const PROTOCOL_VERSION = "1.0.0";
-export type RawTurnProcessor = (OrderSet: any, GameSnapshot: any) => Promise<OrderSet>;
+export type RawTurnProcessorReturn = Order[] | {
+    orders: Order[];
+    debug_message: string;
+} | null;
+export type RawTurnProcessor = (inspector: GameSnapshotInspector) => Promise<RawTurnProcessorReturn>;
 /**
  *
  * @param {EnvVarLoader} config
@@ -23,7 +28,7 @@ export declare class Client {
     private readonly init_position;
     private client;
     /**
-     * @type {function(GameSnapshot)}
+     * @type {function(GameSnapshotInspector)}
      */
     private gettingReadyHandler;
     /**
@@ -52,11 +57,11 @@ export declare class Client {
     play(raw_processor: RawTurnProcessor, onJoin?: () => void): Promise<void>;
     /**
      *
-     * @param {function(GameSnapshot)} handler
+     * @param {function(GameSnapshotInspector)} handler
      *
      * @returns {Client}
      */
-    setGettingReadyHandler(handler: any): this;
+    setGettingReadyHandler(handler: (s: GameSnapshotInspector) => void): this;
     /**
      *
      * @param {function(OrderSet, GameSnapshot):OrderSet} processor

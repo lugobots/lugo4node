@@ -1,16 +1,18 @@
-import {Point} from "./pb/physics_pb.js"
-import {GameSnapshot, JoinRequest, OrderSet, Team} from "./pb/server_pb.js"
-import {GameClient} from './pb/server_grpc_pb'
-import {credentials} from '@grpc/grpc-js'
+import { credentials } from '@grpc/grpc-js'
+import { Point } from "./pb/physics_pb.js"
+import { GameClient } from './pb/server_grpc_pb'
+import { GameSnapshot, JoinRequest, Order, OrderSet, Team } from "./pb/server_pb.js"
 
-import {Bot, PLAYER_STATE} from './stub.js'
-import {EnvVarLoader} from './configurator.js'
-import {defineState} from './index.js'
+import { EnvVarLoader } from './configurator.js'
+import GameSnapshotInspector from "./game-snapshot-inspector.js"
+import { defineState } from './index'
+import { Bot, PLAYER_STATE } from './stub.js'
 
 
 export const PROTOCOL_VERSION = "1.0.0"
 
-export type RawTurnProcessor = (OrderSet, GameSnapshot) => Promise<OrderSet>
+export type RawTurnProcessorReturn = Order[] | { orders: Order[], debug_message: string } | null;
+export type RawTurnProcessor = (inspector: GameSnapshotInspector) => Promise<RawTurnProcessorReturn>
 
 /**
  *
@@ -43,9 +45,9 @@ export class Client {
     private client: GameClient;
 
     /**
-     * @type {function(GameSnapshot)}
+     * @type {function(GameSnapshotInspector)}
      */
-    private gettingReadyHandler = function (gs: GameSnapshot) {
+    private gettingReadyHandler = function (gs: GameSnapshotInspector) {
     }
 
     /**
@@ -78,25 +80,25 @@ export class Client {
     }) {
         return this.setGettingReadyHandler(s => {
             bot.gettingReady(s)
-        })._start((ordersSet, snapshot): Promise<OrderSet> => {
+        })._start((inspector: GameSnapshotInspector): Promise<RawTurnProcessorReturn> => {
             return new Promise((resolve, reject) => {
-                const playerState = defineState(snapshot, this.number, this.teamSide)
+                const playerState = defineState(inspector, this.number, this.teamSide)
                 if (this.number === 1) {
-                    resolve(bot.asGoalkeeper(ordersSet, snapshot, playerState));
+                    resolve(bot.asGoalkeeper(inspector, playerState));
                     return
                 }
                 switch (playerState) {
                     case PLAYER_STATE.DISPUTING_THE_BALL:
-                        resolve(bot.onDisputing(ordersSet, snapshot));
+                        resolve(bot.onDisputing(inspector));
                         break;
                     case PLAYER_STATE.DEFENDING:
-                        resolve(bot.onDefending(ordersSet, snapshot));
+                        resolve(bot.onDefending(inspector));
                         break;
                     case PLAYER_STATE.SUPPORTING:
-                        resolve(bot.onSupporting(ordersSet, snapshot));
+                        resolve(bot.onSupporting(inspector));
                         break;
                     case PLAYER_STATE.HOLDING_THE_BALL:
-                        resolve(bot.onHolding(ordersSet, snapshot));
+                        resolve(bot.onHolding(inspector));
                         break;
                 }
             });
@@ -115,11 +117,11 @@ export class Client {
 
     /**
      *
-     * @param {function(GameSnapshot)} handler
+     * @param {function(GameSnapshotInspector)} handler
      *
      * @returns {Client}
      */
-    setGettingReadyHandler(handler) {
+    setGettingReadyHandler(handler: (s: GameSnapshotInspector) => void) {
         this.gettingReadyHandler = handler
         return this
     }
@@ -154,14 +156,26 @@ export class Client {
                 const running = this.client.joinATeam(req)
                 onJoin()
 
-                running.on('data', async (snapshot) => {
+                running.on('data', async (snapshot: GameSnapshot) => {
                     try {
+                        const inspector = new GameSnapshotInspector(this.teamSide, this.number, snapshot);
                         switch (snapshot.getState()) {
                             case GameSnapshot.State.LISTENING:
                                 let orderSet = new OrderSet()
                                 orderSet.setTurn(snapshot.getTurn())
                                 try {
-                                    orderSet = await processor(orderSet, snapshot)
+                                     const botReturn = await processor(inspector);
+
+                                    if(!botReturn) {
+                                        orderSet.setOrdersList([]);
+                                    }
+
+                                    if(Array.isArray(botReturn)) {
+                                        orderSet.setOrdersList(botReturn);
+                                    } else {
+                                        orderSet.setOrdersList(botReturn.orders);
+                                        orderSet.setDebugMessage(botReturn.debug_message);
+                                    }
                                 } catch (e) {
                                     console.error(`bot error`, e.message)
                                 }
@@ -172,7 +186,7 @@ export class Client {
                                 }
                                 break;
                             case GameSnapshot.State.GET_READY:
-                                this.gettingReadyHandler(snapshot)
+                                this.gettingReadyHandler(inspector)
                                 break;
 
                         }
