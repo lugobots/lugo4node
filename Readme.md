@@ -19,7 +19,7 @@ support your strategy (see the project [exampe](./example/simple) folder).
 * [Second option: Implementing the turn handler (a little more work)](#second-option-implementing-the-turn-handler-a-little-more-work)
 * [Third option: Using reinforcement learning :brain:](#third-option-using-reinforcement-learning-brain)
 - [Helpers](#helpers)
-  * [Snapshot reader](#snapshot-reader)
+  * [Snapshot inspector](#snapshot-inspector)
   * [Mapper and Region classes](#mapper-and-region-classes)
     + [The Mapper](#the-mapper)
     + [The Region](#the-region)
@@ -75,11 +75,11 @@ move/kick/catch order, finding your teammates positions, etc.
 
 **Lugo4Node** brings some libraries to help you with that:
 
-### Snapshot reader
+### Snapshot inspector
 
 _Auto generated doc coming soon_
 
-The Snapshot reader is quite useful. Firs to it helps you to extract data from
+The Snapshot inspector is quite useful. Firs to it helps you to extract data from
 the [Game Snapshot](https://github.com/lugobots/protos/blob/master/doc/docs.md#lugo.GameSnapshot) each game turn.
 
 ```javascript
@@ -121,17 +121,17 @@ inspector.makeOrderKickMaxSpeed(target: Lugo.Point): Lugo.Order
 inspector.makeOrderCatch(): Lugo.Order
 ```
 
-<!-- And, last but not least, the Reader also helps our bot to see the game map based on directions instead of coordinates:
+<!-- And, last but not least, the inspector also helps our bot to see the game map based on directions instead of coordinates:
 
 ```javascript
-reader.goForward()
-reader.goForwardLeft()
-reader.goForwardRight()
-reader.goBackward()
-reader.goBackwardLeft()
-reader.goBackwardRight()
-reader.goLeft()
-reader.goRight()
+inspector.goForward()
+inspector.goForwardLeft()
+inspector.goForwardRight()
+inspector.goBackward()
+inspector.goBackwardLeft()
+inspector.goBackwardRight()
+inspector.goLeft()
+inspector.goRight()
 ``` -->
 
 ### Mapper and Region classes
