@@ -83,14 +83,24 @@ The Snapshot reader is quite useful. Firs to it helps you to extract data from
 the [Game Snapshot](https://github.com/lugobots/protos/blob/master/doc/docs.md#lugo.GameSnapshot) each game turn.
 
 ```javascript
-const reader = new GameSnapshotReader(snapshot, proto.lugo.Team.Side.HOME)
-reader.getMyTeam()
-reader.getTeam(side)
-reader.isBallHolder(player)
-reader.getOpponentSide()
-reader.getMyGoal()
-reader.getOpponentGoal()
-reader.getPlayer(side, number)
+const inspector = new GameSnapshotInspector(proto.lugo.Team.Side.HOME, 8, snapshot);
+
+inspector.getSnapshot(): Lugo.GameSnapshot | null
+inspector.getTurn(): number
+inspector.getMe(): Lugo.Player
+inspector.getBall(): Lugo.Ball | null
+inspector.getPlayer(side: Lugo.Team.Side, number: number): Lugo.Player | null
+inspector.getBallHolder(): Lugo.Player | null
+inspector.isBallHolder(player: Lugo.Player): boolean
+inspector.getTeam(side: Lugo.Team.Side): Lugo.Team | null
+inspector.getMyTeam(): Lugo.Team | null
+inspector.getOpponentTeam(): Lugo.Team | null
+inspector.getMyTeamSide(): Lugo.Team.Side
+inspector.getOpponentSide(): Lugo.Team.Side
+inspector.getMyTeamPlayers(): Lugo.Player[] 
+inspector.getOpponentPlayers(): Lugo.Player[]
+inspector.getMyTeamGoalkeeper(): Lugo.Player | null
+inspector.getOpponentGoalkeeper(): Lugo.Player | null
 
 ```
 
@@ -99,14 +109,19 @@ the [Turn Orders Set](https://github.com/lugobots/protos/blob/master/doc/docs.md
 and our bot team side:
 
 ```javascript
-reader.makeOrderMoveMaxSpeed(origin, target)
-reader.makeOrderMove(origin, target, speed)
-reader.makeOrderKick(ball, target, speed)
-reader.makeOrderKickMaxSpeed(ball, target)
-reader.makeOrderCatch()
+inspector.makeOrderMove(target: Lugo.Point, speed: number): Lugo.Order
+inspector.makeOrderMoveMaxSpeed(target: Lugo.Point): Lugo.Order
+inspector.makeOrderMoveFromPoint(origin: Lugo.Point, target: Lugo.Point, speed: number): Lugo.Order
+inspector.makeOrderMoveFromVector(direction: Lugo.Vector, speed: number): Lugo.Order
+inspector.makeOrderMoveByDirection(direction: DIRECTION, speed?: number): Lugo.Order
+inspector.makeOrderMoveToStop(): Lugo.Order
+inspector.makeOrderJump(target: Lugo.Point, speed: number): Lugo.Order
+inspector.makeOrderKick(target: Lugo.Point, speed: number): Lugo.Order
+inspector.makeOrderKickMaxSpeed(target: Lugo.Point): Lugo.Order
+inspector.makeOrderCatch(): Lugo.Order
 ```
 
-And, last but not least, the Reader also helps our bot to see the game map based on directions instead of coordinates:
+<!-- And, last but not least, the Reader also helps our bot to see the game map based on directions instead of coordinates:
 
 ```javascript
 reader.goForward()
@@ -117,7 +132,7 @@ reader.goBackwardLeft()
 reader.goBackwardRight()
 reader.goLeft()
 reader.goRight()
-```
+``` -->
 
 ### Mapper and Region classes
 
@@ -141,7 +156,11 @@ const map = new Mapper(10, 10, teamSide)
 const region = map.getRegion(2, 3)
 
 // and you may find a Map Region based in a map point
-const region = map.getRegionFromPoint(reader.getPlayer(proto.lugo.Team.Side.AWAY, 5))
+const region = map.getRegionFromPoint(inspector.getPlayer(proto.lugo.Team.Side.AWAY, 5))
+
+// and you can also know the position of the goals
+map.getAttackGoal(): Goal
+map.getDefenseGoal(): Goal
 ```
 
 #### The Region
