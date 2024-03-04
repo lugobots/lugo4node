@@ -1,19 +1,17 @@
 # Lugo4Node - A Lugo Bots Client
 
-Lugo4Node is a NodeJS implementation of a client player for [Lugo](https://lugobots.dev/) game.
+Lugo4Node is a NodeJS implementation of a client player for [Lugo](https://lugobots.dev/) game. 
 
-It **is not a bot** that plays the game, it is only the client for the game lugo.
+It **is not a bot** that plays the game, it is only the client to connect to the game server. 
 
-This client implements a brainless player in the game. So, this library implements many methods that does not affect the
-player intelligence/behaviour/decisions. It is meant to reduce the developer concerns on communication, protocols,
-attributes, etc.
+This package implements many methods that does not affect the player intelligence/behaviour/decisions. It is meant to reduce the developer concerns on communication, protocols, attributes, etc.
 
-Using this client, you just need to implement the Artificial Intelligence of your player and some other few methods to
-support your strategy (see the project [exampe](./example/simple) folder).
+Using this client, you just need to implement the Artificial Intelligence of your player and some other few methods to support your strategy (see the [example](./example/simple) folder and [The Dummies JS](https://github.com/lugobots/the-dummies-js)).
 
 
 # Table of Contents
 * [Requirements](#requirements)
+* [Installation](#installation)
 * [Usage](#usage)
 * [First option: Implementing a Bot class (simpler and recommended)](#first-option-implementing-a-bot-class-simpler-and-recommended)
 * [Second option: Implementing the turn handler (a little more work)](#second-option-implementing-the-turn-handler-a-little-more-work)
@@ -29,21 +27,59 @@ support your strategy (see the project [exampe](./example/simple) folder).
 
 * NPM >= 16
 
+### Installation
+
+npm install @lugobots/lugo4node
 
 ### Usage
 
 There are three ways to use **Lugo4Node** client:
 
-
 ### First option: Implementing a Bot class (simpler and recommended)
 
 See [example](./example/simple/index-bot-handler.js)
 
-**Lugo4Node** client implements the method `playAsBot(bot)` that expects an instance [bot](stub.js#L11) implementation.
+**Lugo4Node** *PlayAsBot* implements a very basic logic to reduce the code boilerplate. This client will wrap most repetitive
+code that handles the raw data got by the bot and will identify the player state.
 
-All you need to do is creating your bot by extending that class and implementing your bot behaviour. See an example
-at [example/simple/my_bot.ts](example/simple/my_bot.js)
+The `Bot` interface requires the methods to handle each player state based on the ball possession.
 
+
+```javascript
+class Bot  {
+    // OnDisputing is called when no one has the ball possession
+    onDisputing(inspector: GameSnapshotInspector): Order[] | { orders: Order[], debug_message: string } | null {
+      // the magic code comes here
+      return ...
+    }
+    
+    // OnDefending is called when an opponent player has the ball possession
+    onDefending(inspector: GameSnapshotInspector): Order[] | { orders: Order[], debug_message: string } | null {
+      // the magic code comes here
+      return ...
+    }
+    
+    // OnHolding is called when this bot has the ball possession
+    onHolding(inspector: GameSnapshotInspector): Order[] | { orders: Order[], debug_message: string } | null {
+      // the magic code comes here
+      return ...
+    }
+    
+    // OnSupporting is called when a teammate player has the ball possession
+    onSupporting(inspector: GameSnapshotInspector): Order[] | { orders: Order[], debug_message: string } | null {
+      // the magic code comes here
+      return ...
+    }
+    
+    // AsGoalkeeper is only called when this bot is the goalkeeper (number 1). This method is called on every turn,
+    // and the player state is passed at the last parameter.
+    asGoalkeeper(inspector: GameSnapshotInspector, state: PLAYER_STATE): Order[] | { orders: Order[], debug_message: string } | null {
+      // the magic code comes here
+      return ...
+    }
+}
+
+```
 
 ### Second option: Implementing the turn handler (a little more work)
 
