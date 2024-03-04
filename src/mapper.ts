@@ -193,9 +193,9 @@ export class Mapper {
 
    getAttackGoal(): Goal {
         if (this.side === lugo.Team.Side.AWAY) {
-            return AWAY_GOAL
+            return HOME_GOAL
         }
-        return HOME_GOAL
+        return AWAY_GOAL
     }
 
     /**
