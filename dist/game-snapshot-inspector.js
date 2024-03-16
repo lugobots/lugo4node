@@ -84,9 +84,13 @@ var GameSnapshotInspector = /** @class */ (function () {
         return new Lugo.Order().setMove(moveOrder);
     };
     GameSnapshotInspector.prototype.makeOrderMoveFromVector = function (direction, speed) {
-        var _a, _b, _c, _d;
-        var targetPoint = Geo.TargetFrom(direction, (_b = (_a = this.me) === null || _a === void 0 ? void 0 : _a.getPosition()) !== null && _b !== void 0 ? _b : Geo.newZeroedPoint());
-        return this.makeOrderMoveFromPoint((_d = (_c = this.me) === null || _c === void 0 ? void 0 : _c.getPosition()) !== null && _d !== void 0 ? _d : Geo.newZeroedPoint(), targetPoint, speed);
+        var _a, _b;
+        var origin = (_b = (_a = this.me) === null || _a === void 0 ? void 0 : _a.getPosition()) !== null && _b !== void 0 ? _b : Geo.newZeroedPoint();
+        var targetPoint = Geo.TargetFrom(direction, origin);
+        if (Math.abs((0, _1.distanceBetweenPoints)(targetPoint, direction)) == 0) {
+            return this.makeOrderMoveFromPoint(direction, new Lugo.Point(), 0);
+        }
+        return this.makeOrderMoveFromPoint(origin, targetPoint, speed);
     };
     GameSnapshotInspector.prototype.makeOrderMoveByDirection = function (direction, speed) {
         var directionTarget = this.getOrientationByDirection(direction);
