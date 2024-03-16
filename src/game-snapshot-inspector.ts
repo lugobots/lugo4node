@@ -1,10 +1,9 @@
-import { DIRECTION, Goal } from '.';
+import {DIRECTION, distanceBetweenPoints} from '.';
 import * as Geo from './geo';
-import { AWAY_GOAL, HOME_GOAL } from './goal';
 import * as Helpers from "./helpers";
 import * as ORIENTATION from './orentation';
 import * as Lugo from './proto_exported';
-import { SPECS } from "./specs";
+import {SPECS} from "./specs";
 
 export default class GameSnapshotInspector {
     mySide: Lugo.Team.Side;
@@ -27,7 +26,7 @@ export default class GameSnapshotInspector {
         return this.snapshot;
     }
 
-    getTurn() : number {
+    getTurn(): number {
         return this.snapshot.getTurn();
     }
 
@@ -39,11 +38,11 @@ export default class GameSnapshotInspector {
         return this.snapshot?.getBall() ?? null;
     }
 
-	getPlayer(side: Lugo.Team.Side, number: number): Lugo.Player | null {
+    getPlayer(side: Lugo.Team.Side, number: number): Lugo.Player | null {
         return Helpers.getPlayer(this.snapshot, side, number);
     }
 
-	getBallHolder(): Lugo.Player | null {
+    getBallHolder(): Lugo.Player | null {
         return Helpers.getBallHolder(this.snapshot);
     }
 
@@ -97,7 +96,7 @@ export default class GameSnapshotInspector {
         return this.makeOrderMoveFromPoint(this.me?.getPosition() ?? Geo.newZeroedPoint(), target, SPECS.PLAYER_MAX_SPEED);
     }
 
-	makeOrderMoveFromPoint(origin: Lugo.Point, target: Lugo.Point, speed: number): Lugo.Order {
+    makeOrderMoveFromPoint(origin: Lugo.Point, target: Lugo.Point, speed: number): Lugo.Order {
         const vec: Lugo.Vector = Geo.NewVector(origin, target);
         const vel: Lugo.Velocity = Geo.NewZeroedVelocity(Geo.normalize(vec));
         vel.setSpeed(speed);
@@ -107,8 +106,12 @@ export default class GameSnapshotInspector {
     }
 
     makeOrderMoveFromVector(direction: Lugo.Vector, speed: number): Lugo.Order {
-        const targetPoint: Lugo.Point = Geo.TargetFrom(direction, this.me?.getPosition() ?? Geo.newZeroedPoint());
-        return this.makeOrderMoveFromPoint(this.me?.getPosition() ?? Geo.newZeroedPoint(), targetPoint, speed);
+        const origin = this.me?.getPosition() ?? Geo.newZeroedPoint();
+        const targetPoint: Lugo.Point = Geo.TargetFrom(direction, origin);
+        if (Math.abs(distanceBetweenPoints(targetPoint, direction)) == 0) {
+            return this.makeOrderMoveFromPoint(direction, new Lugo.Point(), 0);
+        }
+        return this.makeOrderMoveFromPoint(origin, targetPoint, speed);
     }
 
     makeOrderMoveByDirection(direction: DIRECTION, speed?: number): Lugo.Order {
@@ -134,7 +137,7 @@ export default class GameSnapshotInspector {
 
     makeOrderKick(target: Lugo.Point, speed: number): Lugo.Order {
         const ballExpectedDirection: Lugo.Vector = Geo.NewVector(this.snapshot?.getBall()?.getPosition() ?? Geo.newZeroedPoint(), target);
-        const diffVector: Lugo.Vector =  Geo.subVector(ballExpectedDirection, this.snapshot?.getBall()?.getVelocity()?.getDirection() ?? Geo.newZeroedPoint());
+        const diffVector: Lugo.Vector = Geo.subVector(ballExpectedDirection, this.snapshot?.getBall()?.getVelocity()?.getDirection() ?? Geo.newZeroedPoint());
         const vel: Lugo.Velocity = Geo.NewZeroedVelocity(Geo.normalize(diffVector));
         vel.setSpeed(speed);
 
@@ -155,7 +158,7 @@ export default class GameSnapshotInspector {
 
 
     private getOrientationByDirection(direction: DIRECTION) {
-        let directionTarget : Lugo.Vector;
+        let directionTarget: Lugo.Vector;
         switch (direction) {
             case DIRECTION.FORWARD:
                 directionTarget = ORIENTATION.EAST
