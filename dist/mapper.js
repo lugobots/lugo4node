@@ -138,9 +138,9 @@ var Mapper = /** @class */ (function () {
     };
     Mapper.prototype.getAttackGoal = function () {
         if (this.side === lugo.Team.Side.AWAY) {
-            return goal_js_1.AWAY_GOAL;
+            return goal_js_1.HOME_GOAL;
         }
-        return goal_js_1.HOME_GOAL;
+        return goal_js_1.AWAY_GOAL;
     };
     /**
      * @param col {number}

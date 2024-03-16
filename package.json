@@ -1,6 +1,6 @@
 {
   "name": "@lugobots/lugo4node",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Lugo4Node is a NodeJS implementation of a client player for [Lugo](https://lugobots.ai/) game.",
   "main": "dist/index.js",
   "scripts": {
