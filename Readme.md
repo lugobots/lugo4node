@@ -37,7 +37,7 @@ There are three ways to use **Lugo4Node** client:
 
 ### First option: Implementing a Bot class (simpler and recommended)
 
-See [example](./example/simple/index-bot-handler.js)
+See [example](./example/simple/my_bot.js)
 
 **Lugo4Node** *PlayAsBot* implements a very basic logic to reduce the code boilerplate. This client will wrap most repetitive
 code that handles the raw data got by the bot and will identify the player state.
@@ -87,7 +87,7 @@ As you noticed, the option 1 has some logic injected in it, so you may want to r
 yours.
 
 The most raw way to communicate with the lugo is receiving the game raw snapshots.
-See [example](./example/simple/index-turn-handler.js)
+See [example](./src/client.ts#L113)
 
 In this case, you must use the client's `play` method. The `play` method will call your call back function for any
 message received from the game lugo.
