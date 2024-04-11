@@ -17,6 +17,8 @@ interface IRemoteService extends grpc.ServiceDefinition<grpc.UntypedServiceImple
     setPlayerProperties: IRemoteService_ISetPlayerProperties;
     setGameProperties: IRemoteService_ISetGameProperties;
     resumeListeningPhase: IRemoteService_IResumeListeningPhase;
+    resetPlayerPositions: IRemoteService_IResetPlayerPositions;
+    getGameSnapshot: IRemoteService_IGetGameSnapshot;
 }
 
 interface IRemoteService_IPauseOrResume extends grpc.MethodDefinition<remote_pb.PauseResumeRequest, remote_pb.CommandResponse> {
@@ -82,6 +84,24 @@ interface IRemoteService_IResumeListeningPhase extends grpc.MethodDefinition<rem
     responseSerialize: grpc.serialize<remote_pb.ResumeListeningResponse>;
     responseDeserialize: grpc.deserialize<remote_pb.ResumeListeningResponse>;
 }
+interface IRemoteService_IResetPlayerPositions extends grpc.MethodDefinition<remote_pb.ResetPlayerPositionsRequest, remote_pb.ResetPlayerPositionsResponse> {
+    path: "/lugo.Remote/ResetPlayerPositions";
+    requestStream: false;
+    responseStream: false;
+    requestSerialize: grpc.serialize<remote_pb.ResetPlayerPositionsRequest>;
+    requestDeserialize: grpc.deserialize<remote_pb.ResetPlayerPositionsRequest>;
+    responseSerialize: grpc.serialize<remote_pb.ResetPlayerPositionsResponse>;
+    responseDeserialize: grpc.deserialize<remote_pb.ResetPlayerPositionsResponse>;
+}
+interface IRemoteService_IGetGameSnapshot extends grpc.MethodDefinition<remote_pb.GameSnapshotRequest, remote_pb.GameSnapshotResponse> {
+    path: "/lugo.Remote/GetGameSnapshot";
+    requestStream: false;
+    responseStream: false;
+    requestSerialize: grpc.serialize<remote_pb.GameSnapshotRequest>;
+    requestDeserialize: grpc.deserialize<remote_pb.GameSnapshotRequest>;
+    responseSerialize: grpc.serialize<remote_pb.GameSnapshotResponse>;
+    responseDeserialize: grpc.deserialize<remote_pb.GameSnapshotResponse>;
+}
 
 export const RemoteService: IRemoteService;
 
@@ -93,6 +113,8 @@ export interface IRemoteServer extends grpc.UntypedServiceImplementation {
     setPlayerProperties: grpc.handleUnaryCall<remote_pb.PlayerProperties, remote_pb.CommandResponse>;
     setGameProperties: grpc.handleUnaryCall<remote_pb.GameProperties, remote_pb.CommandResponse>;
     resumeListeningPhase: grpc.handleUnaryCall<remote_pb.ResumeListeningRequest, remote_pb.ResumeListeningResponse>;
+    resetPlayerPositions: grpc.handleUnaryCall<remote_pb.ResetPlayerPositionsRequest, remote_pb.ResetPlayerPositionsResponse>;
+    getGameSnapshot: grpc.handleUnaryCall<remote_pb.GameSnapshotRequest, remote_pb.GameSnapshotResponse>;
 }
 
 export interface IRemoteClient {
@@ -117,6 +139,12 @@ export interface IRemoteClient {
     resumeListeningPhase(request: remote_pb.ResumeListeningRequest, callback: (error: grpc.ServiceError | null, response: remote_pb.ResumeListeningResponse) => void): grpc.ClientUnaryCall;
     resumeListeningPhase(request: remote_pb.ResumeListeningRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: remote_pb.ResumeListeningResponse) => void): grpc.ClientUnaryCall;
     resumeListeningPhase(request: remote_pb.ResumeListeningRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: remote_pb.ResumeListeningResponse) => void): grpc.ClientUnaryCall;
+    resetPlayerPositions(request: remote_pb.ResetPlayerPositionsRequest, callback: (error: grpc.ServiceError | null, response: remote_pb.ResetPlayerPositionsResponse) => void): grpc.ClientUnaryCall;
+    resetPlayerPositions(request: remote_pb.ResetPlayerPositionsRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: remote_pb.ResetPlayerPositionsResponse) => void): grpc.ClientUnaryCall;
+    resetPlayerPositions(request: remote_pb.ResetPlayerPositionsRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: remote_pb.ResetPlayerPositionsResponse) => void): grpc.ClientUnaryCall;
+    getGameSnapshot(request: remote_pb.GameSnapshotRequest, callback: (error: grpc.ServiceError | null, response: remote_pb.GameSnapshotResponse) => void): grpc.ClientUnaryCall;
+    getGameSnapshot(request: remote_pb.GameSnapshotRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: remote_pb.GameSnapshotResponse) => void): grpc.ClientUnaryCall;
+    getGameSnapshot(request: remote_pb.GameSnapshotRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: remote_pb.GameSnapshotResponse) => void): grpc.ClientUnaryCall;
 }
 
 export class RemoteClient extends grpc.Client implements IRemoteClient {
@@ -142,4 +170,10 @@ export class RemoteClient extends grpc.Client implements IRemoteClient {
     public resumeListeningPhase(request: remote_pb.ResumeListeningRequest, callback: (error: grpc.ServiceError | null, response: remote_pb.ResumeListeningResponse) => void): grpc.ClientUnaryCall;
     public resumeListeningPhase(request: remote_pb.ResumeListeningRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: remote_pb.ResumeListeningResponse) => void): grpc.ClientUnaryCall;
     public resumeListeningPhase(request: remote_pb.ResumeListeningRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: remote_pb.ResumeListeningResponse) => void): grpc.ClientUnaryCall;
+    public resetPlayerPositions(request: remote_pb.ResetPlayerPositionsRequest, callback: (error: grpc.ServiceError | null, response: remote_pb.ResetPlayerPositionsResponse) => void): grpc.ClientUnaryCall;
+    public resetPlayerPositions(request: remote_pb.ResetPlayerPositionsRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: remote_pb.ResetPlayerPositionsResponse) => void): grpc.ClientUnaryCall;
+    public resetPlayerPositions(request: remote_pb.ResetPlayerPositionsRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: remote_pb.ResetPlayerPositionsResponse) => void): grpc.ClientUnaryCall;
+    public getGameSnapshot(request: remote_pb.GameSnapshotRequest, callback: (error: grpc.ServiceError | null, response: remote_pb.GameSnapshotResponse) => void): grpc.ClientUnaryCall;
+    public getGameSnapshot(request: remote_pb.GameSnapshotRequest, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: remote_pb.GameSnapshotResponse) => void): grpc.ClientUnaryCall;
+    public getGameSnapshot(request: remote_pb.GameSnapshotRequest, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: remote_pb.GameSnapshotResponse) => void): grpc.ClientUnaryCall;
 }

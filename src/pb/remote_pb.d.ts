@@ -234,3 +234,83 @@ export namespace ResumeListeningResponse {
     export type AsObject = {
     }
 }
+
+export class ResetPlayerPositionsRequest extends jspb.Message { 
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): ResetPlayerPositionsRequest.AsObject;
+    static toObject(includeInstance: boolean, msg: ResetPlayerPositionsRequest): ResetPlayerPositionsRequest.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: ResetPlayerPositionsRequest, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): ResetPlayerPositionsRequest;
+    static deserializeBinaryFromReader(message: ResetPlayerPositionsRequest, reader: jspb.BinaryReader): ResetPlayerPositionsRequest;
+}
+
+export namespace ResetPlayerPositionsRequest {
+    export type AsObject = {
+    }
+}
+
+export class ResetPlayerPositionsResponse extends jspb.Message { 
+
+    hasGameSnapshot(): boolean;
+    clearGameSnapshot(): void;
+    getGameSnapshot(): server_pb.GameSnapshot | undefined;
+    setGameSnapshot(value?: server_pb.GameSnapshot): ResetPlayerPositionsResponse;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): ResetPlayerPositionsResponse.AsObject;
+    static toObject(includeInstance: boolean, msg: ResetPlayerPositionsResponse): ResetPlayerPositionsResponse.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: ResetPlayerPositionsResponse, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): ResetPlayerPositionsResponse;
+    static deserializeBinaryFromReader(message: ResetPlayerPositionsResponse, reader: jspb.BinaryReader): ResetPlayerPositionsResponse;
+}
+
+export namespace ResetPlayerPositionsResponse {
+    export type AsObject = {
+        gameSnapshot?: server_pb.GameSnapshot.AsObject,
+    }
+}
+
+export class GameSnapshotRequest extends jspb.Message { 
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): GameSnapshotRequest.AsObject;
+    static toObject(includeInstance: boolean, msg: GameSnapshotRequest): GameSnapshotRequest.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: GameSnapshotRequest, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): GameSnapshotRequest;
+    static deserializeBinaryFromReader(message: GameSnapshotRequest, reader: jspb.BinaryReader): GameSnapshotRequest;
+}
+
+export namespace GameSnapshotRequest {
+    export type AsObject = {
+    }
+}
+
+export class GameSnapshotResponse extends jspb.Message { 
+
+    hasGameSnapshot(): boolean;
+    clearGameSnapshot(): void;
+    getGameSnapshot(): server_pb.GameSnapshot | undefined;
+    setGameSnapshot(value?: server_pb.GameSnapshot): GameSnapshotResponse;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): GameSnapshotResponse.AsObject;
+    static toObject(includeInstance: boolean, msg: GameSnapshotResponse): GameSnapshotResponse.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: GameSnapshotResponse, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): GameSnapshotResponse;
+    static deserializeBinaryFromReader(message: GameSnapshotResponse, reader: jspb.BinaryReader): GameSnapshotResponse;
+}
+
+export namespace GameSnapshotResponse {
+    export type AsObject = {
+        gameSnapshot?: server_pb.GameSnapshot.AsObject,
+    }
+}

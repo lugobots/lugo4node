@@ -182,6 +182,8 @@ export class Player extends jspb.Message {
     clearInitPosition(): void;
     getInitPosition(): physics_pb.Point | undefined;
     setInitPosition(value?: physics_pb.Point): Player;
+    getIsJumping(): boolean;
+    setIsJumping(value: boolean): Player;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): Player.AsObject;
@@ -200,6 +202,7 @@ export namespace Player {
         velocity?: physics_pb.Velocity.AsObject,
         teamSide: Team.Side,
         initPosition?: physics_pb.Point.AsObject,
+        isJumping: boolean,
     }
 }
 
