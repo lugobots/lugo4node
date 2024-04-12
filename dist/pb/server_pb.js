@@ -1438,7 +1438,8 @@ proto.lugo.Player.toObject = function(includeInstance, msg) {
     position: (f = msg.getPosition()) && physics_pb.Point.toObject(includeInstance, f),
     velocity: (f = msg.getVelocity()) && physics_pb.Velocity.toObject(includeInstance, f),
     teamSide: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    initPosition: (f = msg.getInitPosition()) && physics_pb.Point.toObject(includeInstance, f)
+    initPosition: (f = msg.getInitPosition()) && physics_pb.Point.toObject(includeInstance, f),
+    isJumping: jspb.Message.getBooleanFieldWithDefault(msg, 6, false)
   };
 
   if (includeInstance) {
@@ -1497,6 +1498,10 @@ proto.lugo.Player.deserializeBinaryFromReader = function(msg, reader) {
       var value = new physics_pb.Point;
       reader.readMessage(value,physics_pb.Point.deserializeBinaryFromReader);
       msg.setInitPosition(value);
+      break;
+    case 6:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setIsJumping(value);
       break;
     default:
       reader.skipField();
@@ -1563,6 +1568,13 @@ proto.lugo.Player.serializeBinaryToWriter = function(message, writer) {
       5,
       f,
       physics_pb.Point.serializeBinaryToWriter
+    );
+  }
+  f = message.getIsJumping();
+  if (f) {
+    writer.writeBool(
+      6,
+      f
     );
   }
 };
@@ -1712,6 +1724,24 @@ proto.lugo.Player.prototype.clearInitPosition = function() {
  */
 proto.lugo.Player.prototype.hasInitPosition = function() {
   return jspb.Message.getField(this, 5) != null;
+};
+
+
+/**
+ * optional bool is_jumping = 6;
+ * @return {boolean}
+ */
+proto.lugo.Player.prototype.getIsJumping = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 6, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.lugo.Player} returns this
+ */
+proto.lugo.Player.prototype.setIsJumping = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 6, value);
 };
 
 

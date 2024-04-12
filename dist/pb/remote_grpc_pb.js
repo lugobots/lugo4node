@@ -39,6 +39,28 @@ function deserialize_lugo_GameProperties(buffer_arg) {
   return remote_pb.GameProperties.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_lugo_GameSnapshotRequest(arg) {
+  if (!(arg instanceof remote_pb.GameSnapshotRequest)) {
+    throw new Error('Expected argument of type lugo.GameSnapshotRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_lugo_GameSnapshotRequest(buffer_arg) {
+  return remote_pb.GameSnapshotRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_lugo_GameSnapshotResponse(arg) {
+  if (!(arg instanceof remote_pb.GameSnapshotResponse)) {
+    throw new Error('Expected argument of type lugo.GameSnapshotResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_lugo_GameSnapshotResponse(buffer_arg) {
+  return remote_pb.GameSnapshotResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_lugo_NextOrderRequest(arg) {
   if (!(arg instanceof remote_pb.NextOrderRequest)) {
     throw new Error('Expected argument of type lugo.NextOrderRequest');
@@ -81,6 +103,28 @@ function serialize_lugo_PlayerProperties(arg) {
 
 function deserialize_lugo_PlayerProperties(buffer_arg) {
   return remote_pb.PlayerProperties.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_lugo_ResetPlayerPositionsRequest(arg) {
+  if (!(arg instanceof remote_pb.ResetPlayerPositionsRequest)) {
+    throw new Error('Expected argument of type lugo.ResetPlayerPositionsRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_lugo_ResetPlayerPositionsRequest(buffer_arg) {
+  return remote_pb.ResetPlayerPositionsRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_lugo_ResetPlayerPositionsResponse(arg) {
+  if (!(arg instanceof remote_pb.ResetPlayerPositionsResponse)) {
+    throw new Error('Expected argument of type lugo.ResetPlayerPositionsResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_lugo_ResetPlayerPositionsResponse(buffer_arg) {
+  return remote_pb.ResetPlayerPositionsResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_lugo_ResumeListeningRequest(arg) {
@@ -186,6 +230,28 @@ var RemoteService = exports.RemoteService = {
     requestDeserialize: deserialize_lugo_ResumeListeningRequest,
     responseSerialize: serialize_lugo_ResumeListeningResponse,
     responseDeserialize: deserialize_lugo_ResumeListeningResponse,
+  },
+  resetPlayerPositions: {
+    path: '/lugo.Remote/ResetPlayerPositions',
+    requestStream: false,
+    responseStream: false,
+    requestType: remote_pb.ResetPlayerPositionsRequest,
+    responseType: remote_pb.ResetPlayerPositionsResponse,
+    requestSerialize: serialize_lugo_ResetPlayerPositionsRequest,
+    requestDeserialize: deserialize_lugo_ResetPlayerPositionsRequest,
+    responseSerialize: serialize_lugo_ResetPlayerPositionsResponse,
+    responseDeserialize: deserialize_lugo_ResetPlayerPositionsResponse,
+  },
+  getGameSnapshot: {
+    path: '/lugo.Remote/GetGameSnapshot',
+    requestStream: false,
+    responseStream: false,
+    requestType: remote_pb.GameSnapshotRequest,
+    responseType: remote_pb.GameSnapshotResponse,
+    requestSerialize: serialize_lugo_GameSnapshotRequest,
+    requestDeserialize: deserialize_lugo_GameSnapshotRequest,
+    responseSerialize: serialize_lugo_GameSnapshotResponse,
+    responseDeserialize: deserialize_lugo_GameSnapshotResponse,
   },
 };
 

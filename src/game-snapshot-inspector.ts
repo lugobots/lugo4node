@@ -97,7 +97,10 @@ export default class GameSnapshotInspector {
     }
 
     makeOrderMoveFromPoint(origin: Lugo.Point, target: Lugo.Point, speed: number): Lugo.Order {
-        const vec: Lugo.Vector = Geo.NewVector(origin, target);
+        let vec: Lugo.Vector = ORIENTATION.NORTH
+        if (Math.abs(distanceBetweenPoints(origin, target)) > 0) {
+            vec = Geo.NewVector(origin, target);
+        }
         const vel: Lugo.Velocity = Geo.NewZeroedVelocity(Geo.normalize(vec));
         vel.setSpeed(speed);
         const moveOrder = new Lugo.Move()
@@ -108,9 +111,6 @@ export default class GameSnapshotInspector {
     makeOrderMoveFromVector(direction: Lugo.Vector, speed: number): Lugo.Order {
         const origin = this.me?.getPosition() ?? Geo.newZeroedPoint();
         const targetPoint: Lugo.Point = Geo.TargetFrom(direction, origin);
-        if (Math.abs(distanceBetweenPoints(targetPoint, direction)) == 0) {
-            return this.makeOrderMoveFromPoint(direction, new Lugo.Point(), 0);
-        }
         return this.makeOrderMoveFromPoint(origin, targetPoint, speed);
     }
 
