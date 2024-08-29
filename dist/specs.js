@@ -6,9 +6,10 @@ var max_x_coordinate = 200 * BASE_UNIT;
 var max_y_coordinate = 100 * BASE_UNIT;
 var goal_width = 30 * BASE_UNIT;
 var player_max_speed = 100.0;
+var player_size = 4 * BASE_UNIT;
 exports.SPECS = {
     // PLAYER_SIZE is the size of each player
-    PLAYER_SIZE: 4 * BASE_UNIT,
+    PLAYER_SIZE: player_size,
     // PLAYER_RECONNECTION_WAIT_TIME is a penalty time imposed to the player that needs to reconnect during the match.
     // this interval ensure players won't drop connection in purpose to be reallocated to their initial position.
     PLAYER_RECONNECTION_WAIT_TIME: 20,
@@ -59,11 +60,19 @@ exports.SPECS = {
     // GOAL_ZONE_RANGE is the minimal distance that a player can stay from the opponent goal
     GOAL_ZONE_RANGE: 14 * BASE_UNIT,
     // GOAL_KEEPER_JUMP_DURATION is the number of turns that the jump takes. A jump cannot be interrupted after has been requested
+    // @deprecated use GOALKEEPER_JUMP_DURATION
     GOAL_KEEPER_JUMP_DURATION: 3,
+    // GOALKEEPER_JUMP_DURATION is the number of turns that the jump takes. A jump cannot be interrupted after has been requested
+    GOALKEEPER_JUMP_DURATION: 3,
     // GOAL_KEEPER_JUMP_SPEED is the max speed of the goalkeeper during the jump
+    // @deprecated use GOALKEEPER_JUMP_SPEED
     GOAL_KEEPER_JUMP_SPEED: 2 * player_max_speed,
+    // GOALKEEPER_JUMP_SPEED is the max speed of the goalkeeper during the jump
+    GOALKEEPER_JUMP_SPEED: 2 * player_max_speed,
     // GOALKEEPER_NUMBER defines the goalkeeper number
     GOALKEEPER_NUMBER: 1,
+    // GOALKEEPER_SIZE is the width of the goalkeeper
+    GOALKEEPER_SIZE: player_size * 2.3,
     // Number of turns each teams has on attack before losing the ball possession.
     SHOT_CLOCK_TIME: 300
 };
