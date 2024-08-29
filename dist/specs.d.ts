@@ -19,7 +19,10 @@ export declare const SPECS: {
     GOAL_MAX_Y: number;
     GOAL_ZONE_RANGE: number;
     GOAL_KEEPER_JUMP_DURATION: number;
+    GOALKEEPER_JUMP_DURATION: number;
     GOAL_KEEPER_JUMP_SPEED: number;
+    GOALKEEPER_JUMP_SPEED: number;
     GOALKEEPER_NUMBER: number;
+    GOALKEEPER_SIZE: number;
     SHOT_CLOCK_TIME: number;
 };
