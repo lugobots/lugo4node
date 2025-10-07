@@ -69,6 +69,8 @@ export class GameSnapshot extends jspb.Message {
     clearShotClock(): void;
     getShotClock(): ShotClock | undefined;
     setShotClock(value?: ShotClock): GameSnapshot;
+    getPeriod(): GameSnapshot.Period;
+    setPeriod(value: GameSnapshot.Period): GameSnapshot;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): GameSnapshot.AsObject;
@@ -89,6 +91,7 @@ export namespace GameSnapshot {
         ball?: Ball.AsObject,
         turnsBallInGoalZone: number,
         shotClock?: ShotClock.AsObject,
+        period: GameSnapshot.Period,
     }
 
     export enum State {
@@ -98,6 +101,12 @@ export namespace GameSnapshot {
     PLAYING = 3,
     SHIFTING = 4,
     OVER = 99,
+    }
+
+    export enum Period {
+    REGULAR_TIME = 0,
+    OVERTIME = 1,
+    SHOOTOUT = 2,
     }
 
 }

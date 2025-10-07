@@ -92,7 +92,7 @@ exports.NewZeroedVelocity = NewZeroedVelocity;
 function TargetFrom(v, point) {
     var target = new physics_pb_js_1.Point();
     target.setX(point.getX() + Math.round(v.getX()));
-    target.setX(point.getY() + Math.round(v.getY()));
+    target.setY(point.getY() + Math.round(v.getY()));
     return target;
 }
 exports.TargetFrom = TargetFrom;

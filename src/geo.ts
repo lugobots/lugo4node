@@ -93,7 +93,7 @@ export function NewZeroedVelocity(direction: Vector): Velocity {
 export function TargetFrom(v: Vector, point: Point): Point {
     const target = new Point();
     target.setX(point.getX() + Math.round(v.getX()));
-    target.setX(point.getY() + Math.round(v.getY()));
+    target.setY(point.getY() + Math.round(v.getY()));
 
     return target;
 }

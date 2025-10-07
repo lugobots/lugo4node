@@ -89,6 +89,11 @@ export class GameEvent extends jspb.Message {
     getDebugReleased(): EventDebugReleased | undefined;
     setDebugReleased(value?: EventDebugReleased): GameEvent;
 
+    hasPeriodChanged(): boolean;
+    clearPeriodChanged(): void;
+    getPeriodChanged(): EventPeriodChanged | undefined;
+    setPeriodChanged(value?: EventPeriodChanged): GameEvent;
+
     getEventCase(): GameEvent.EventCase;
 
     serializeBinary(): Uint8Array;
@@ -111,6 +116,7 @@ export namespace GameEvent {
         gameOver?: EventGameOver.AsObject,
         breakpoint?: EventDebugBreakpoint.AsObject,
         debugReleased?: EventDebugReleased.AsObject,
+        periodChanged?: EventPeriodChanged.AsObject,
     }
 
     export enum EventCase {
@@ -122,6 +128,7 @@ export namespace GameEvent {
         GAME_OVER = 6,
         BREAKPOINT = 7,
         DEBUG_RELEASED = 8,
+        PERIOD_CHANGED = 9,
     }
 
 }
@@ -358,7 +365,31 @@ export namespace EventGoal {
     }
 }
 
+export class EventPeriodChanged extends jspb.Message { 
+    getPeriod(): server_pb.GameSnapshot.Period;
+    setPeriod(value: server_pb.GameSnapshot.Period): EventPeriodChanged;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): EventPeriodChanged.AsObject;
+    static toObject(includeInstance: boolean, msg: EventPeriodChanged): EventPeriodChanged.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: EventPeriodChanged, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): EventPeriodChanged;
+    static deserializeBinaryFromReader(message: EventPeriodChanged, reader: jspb.BinaryReader): EventPeriodChanged;
+}
+
+export namespace EventPeriodChanged {
+    export type AsObject = {
+        period: server_pb.GameSnapshot.Period,
+    }
+}
+
 export class EventGameOver extends jspb.Message { 
+    getReason(): EventGameOver.EndingReason;
+    setReason(value: EventGameOver.EndingReason): EventGameOver;
+    getBlame(): EventGameOver.BlameStop;
+    setBlame(value: EventGameOver.BlameStop): EventGameOver;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): EventGameOver.AsObject;
@@ -372,7 +403,27 @@ export class EventGameOver extends jspb.Message {
 
 export namespace EventGameOver {
     export type AsObject = {
+        reason: EventGameOver.EndingReason,
+        blame: EventGameOver.BlameStop,
     }
+
+    export enum EndingReason {
+    TIME_IS_OVER = 0,
+    WAITING_EXPIRED = 1,
+    NO_ENOUGH_PLAYER = 2,
+    EXTERNAL_REQUEST = 3,
+    KNOCKOUT = 4,
+    GOLDEN_GOL = 5,
+    EXTRA_TIME_IS_OVER = 6,
+    }
+
+    export enum BlameStop {
+    NORMAL = 0,
+    BOTH_TEAMS = 1,
+    HOME_TEAM = 2,
+    AWAY_TEAM = 3,
+    }
+
 }
 
 export class EventDebugBreakpoint extends jspb.Message { 

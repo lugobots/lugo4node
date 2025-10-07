@@ -105,6 +105,17 @@ function deserialize_lugo_PlayerProperties(buffer_arg) {
   return remote_pb.PlayerProperties.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_lugo_ResetGameRequest(arg) {
+  if (!(arg instanceof remote_pb.ResetGameRequest)) {
+    throw new Error('Expected argument of type lugo.ResetGameRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_lugo_ResetGameRequest(buffer_arg) {
+  return remote_pb.ResetGameRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_lugo_ResetPlayerPositionsRequest(arg) {
   if (!(arg instanceof remote_pb.ResetPlayerPositionsRequest)) {
     throw new Error('Expected argument of type lugo.ResetPlayerPositionsRequest');
@@ -241,6 +252,17 @@ var RemoteService = exports.RemoteService = {
     requestDeserialize: deserialize_lugo_ResetPlayerPositionsRequest,
     responseSerialize: serialize_lugo_ResetPlayerPositionsResponse,
     responseDeserialize: deserialize_lugo_ResetPlayerPositionsResponse,
+  },
+  resetGame: {
+    path: '/lugo.Remote/ResetGame',
+    requestStream: false,
+    responseStream: false,
+    requestType: remote_pb.ResetGameRequest,
+    responseType: remote_pb.CommandResponse,
+    requestSerialize: serialize_lugo_ResetGameRequest,
+    requestDeserialize: deserialize_lugo_ResetGameRequest,
+    responseSerialize: serialize_lugo_CommandResponse,
+    responseDeserialize: deserialize_lugo_CommandResponse,
   },
   getGameSnapshot: {
     path: '/lugo.Remote/GetGameSnapshot',

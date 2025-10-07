@@ -20,6 +20,7 @@ goog.object.extend(proto, physics_pb);
 goog.exportSymbol('proto.lugo.Ball', null, global);
 goog.exportSymbol('proto.lugo.Catch', null, global);
 goog.exportSymbol('proto.lugo.GameSnapshot', null, global);
+goog.exportSymbol('proto.lugo.GameSnapshot.Period', null, global);
 goog.exportSymbol('proto.lugo.GameSnapshot.State', null, global);
 goog.exportSymbol('proto.lugo.JoinRequest', null, global);
 goog.exportSymbol('proto.lugo.Jump', null, global);
@@ -616,7 +617,8 @@ proto.lugo.GameSnapshot.toObject = function(includeInstance, msg) {
     awayTeam: (f = msg.getAwayTeam()) && proto.lugo.Team.toObject(includeInstance, f),
     ball: (f = msg.getBall()) && proto.lugo.Ball.toObject(includeInstance, f),
     turnsBallInGoalZone: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    shotClock: (f = msg.getShotClock()) && proto.lugo.ShotClock.toObject(includeInstance, f)
+    shotClock: (f = msg.getShotClock()) && proto.lugo.ShotClock.toObject(includeInstance, f),
+    period: jspb.Message.getFieldWithDefault(msg, 8, 0)
   };
 
   if (includeInstance) {
@@ -684,6 +686,10 @@ proto.lugo.GameSnapshot.deserializeBinaryFromReader = function(msg, reader) {
       var value = new proto.lugo.ShotClock;
       reader.readMessage(value,proto.lugo.ShotClock.deserializeBinaryFromReader);
       msg.setShotClock(value);
+      break;
+    case 8:
+      var value = /** @type {!proto.lugo.GameSnapshot.Period} */ (reader.readEnum());
+      msg.setPeriod(value);
       break;
     default:
       reader.skipField();
@@ -767,6 +773,13 @@ proto.lugo.GameSnapshot.serializeBinaryToWriter = function(message, writer) {
       proto.lugo.ShotClock.serializeBinaryToWriter
     );
   }
+  f = message.getPeriod();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      8,
+      f
+    );
+  }
 };
 
 
@@ -780,6 +793,15 @@ proto.lugo.GameSnapshot.State = {
   PLAYING: 3,
   SHIFTING: 4,
   OVER: 99
+};
+
+/**
+ * @enum {number}
+ */
+proto.lugo.GameSnapshot.Period = {
+  REGULAR_TIME: 0,
+  OVERTIME: 1,
+  SHOOTOUT: 2
 };
 
 /**
@@ -981,6 +1003,24 @@ proto.lugo.GameSnapshot.prototype.clearShotClock = function() {
  */
 proto.lugo.GameSnapshot.prototype.hasShotClock = function() {
   return jspb.Message.getField(this, 7) != null;
+};
+
+
+/**
+ * optional Period period = 8;
+ * @return {!proto.lugo.GameSnapshot.Period}
+ */
+proto.lugo.GameSnapshot.prototype.getPeriod = function() {
+  return /** @type {!proto.lugo.GameSnapshot.Period} */ (jspb.Message.getFieldWithDefault(this, 8, 0));
+};
+
+
+/**
+ * @param {!proto.lugo.GameSnapshot.Period} value
+ * @return {!proto.lugo.GameSnapshot} returns this
+ */
+proto.lugo.GameSnapshot.prototype.setPeriod = function(value) {
+  return jspb.Message.setProto3EnumField(this, 8, value);
 };
 
 
