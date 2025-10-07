@@ -1,6 +1,6 @@
 {
   "name": "@lugobots/lugo4node",
-  "version": "2.0.9",
+  "version": "2.0.11",
   "description": "Lugo4Node is a NodeJS implementation of a client player for [Lugo](https://lugobots.ai/) game.",
   "main": "dist/index.js",
   "scripts": {
@@ -18,15 +18,10 @@
     "process": "^0.11.10",
     "typescript": "^4.9.4"
   },
-  "exports": {
-    ".": {
-      "import": "./dist/index.js"
-    }
-  },
   "devDependencies": {
-    "tsc-watch": "^6.0.0",
     "@grpc/proto-loader": "^0.6.12",
-    "mocha": "^10.0.0"
+    "mocha": "^10.0.0",
+    "tsc-watch": "^6.0.0"
   },
   "files": [
     "/dist"
