@@ -1,4 +1,18 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
 exports.__esModule = true;
 exports.defineState = exports.DIRECTION = exports.DefaultInitBundle = exports.NewDefaultStarter = exports.subVector = exports.rl = exports.normalize = exports.getScaledVector = exports.getLength = exports.geo = exports.distanceBetweenPoints = exports.SPECS = exports.Region = exports.PLAYER_STATE = exports.ORIENTATION = exports.NewVector = exports.NewClientFromConfig = exports.Mapper = exports.Lugo = exports.Goal = exports.GameSnapshotInspector = exports.EnvVarLoader = exports.Client = void 0;
 var client_1 = require("./client");
@@ -24,8 +38,9 @@ exports.Mapper = mapper_1.Mapper;
 exports.Region = mapper_1.Region;
 var ORIENTATION = require("./orentation");
 exports.ORIENTATION = ORIENTATION;
-var Lugo = require("./proto_exported");
+var Lugo = require("./proto_exported"); // keep for backward compatibility
 exports.Lugo = Lugo;
+__exportStar(require("./proto_exported"), exports);
 var rl = require("./rl/index");
 exports.rl = rl;
 var specs_js_1 = require("./specs.js");

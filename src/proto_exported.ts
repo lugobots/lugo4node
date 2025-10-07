@@ -1,86 +1,20 @@
 
 // exposing all from server
-import {
-    Ball,
-    Catch,
-    GameSnapshot,
-    Jump,
-    Kick,
-    Move,
-    Order,
-    Player,
-    Team,
-    JoinRequest,
-    OrderSet,
-    ShotClock,
-    OrderResponse,
-} from './pb/server_pb.js'
-export {Ball, Catch, GameSnapshot, Jump, Kick, Move, Order, Player, Team, JoinRequest, OrderSet, ShotClock,OrderResponse}
+import {GameSnapshot, Team} from "./pb/server_pb";
+
+export * from './pb/server_pb.js'
 
 export const {Side} = Team
 export const {State} = GameSnapshot
 
 // exposing all from broadcast
-import {WatcherRequest,
-    StartRequest,
-    GameEvent,
-    GameSetup,
-    TeamSettings,
-    TeamColors,
-    TeamColor,
-    EventNewPlayer,
-    EventLostPlayer,
-    EventStateChange,
-    EventGoal,
-    EventGameOver,
-    EventDebugBreakpoint,
-    EventDebugReleased,
-} from './pb/broadcast_pb.js'
-export {WatcherRequest,
-    StartRequest,
-    GameEvent,
-    GameSetup,
-    TeamSettings,
-    TeamColors,
-    TeamColor,
-    EventNewPlayer,
-    EventLostPlayer,
-    EventStateChange,
-    EventGoal,
-    EventGameOver,
-    EventDebugBreakpoint,
-    EventDebugReleased,
-}
-
-// exposing all from remote
-import {
-    CommandResponse,
-    GameProperties,
-    PlayerProperties,
-    BallProperties,
-    NextOrderRequest,
-    PauseResumeRequest,
-    NextTurnRequest,
-} from './pb/remote_pb.js'
-export {
-    CommandResponse,
-    GameProperties,
-    PlayerProperties,
-    BallProperties,
-    NextOrderRequest,
-    PauseResumeRequest,
-    NextTurnRequest,
-}
-
+export * from './pb/broadcast_pb.js'
+export * from './pb/remote_pb.js'
 // exposing all from physics
-import {Point, Vector, Velocity} from './pb/physics_pb.js'
-export {Point, Vector, Velocity}
+export * from './pb/physics_pb.js'
 
-import {BroadcastClient} from './pb/broadcast_grpc_pb.js'
-export {BroadcastClient}
+export * from './pb/broadcast_grpc_pb.js'
 
-import {RemoteClient} from './pb/remote_grpc_pb.js'
-export {RemoteClient}
+export * from './pb/remote_grpc_pb.js'
 
-import {GameClient} from './pb/server_grpc_pb'
-export {GameClient}
+export * from './pb/server_grpc_pb'

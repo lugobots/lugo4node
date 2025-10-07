@@ -252,6 +252,23 @@ export namespace ResetPlayerPositionsRequest {
     }
 }
 
+export class ResetGameRequest extends jspb.Message { 
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): ResetGameRequest.AsObject;
+    static toObject(includeInstance: boolean, msg: ResetGameRequest): ResetGameRequest.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: ResetGameRequest, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): ResetGameRequest;
+    static deserializeBinaryFromReader(message: ResetGameRequest, reader: jspb.BinaryReader): ResetGameRequest;
+}
+
+export namespace ResetGameRequest {
+    export type AsObject = {
+    }
+}
+
 export class ResetPlayerPositionsResponse extends jspb.Message { 
 
     hasGameSnapshot(): boolean;

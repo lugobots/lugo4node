@@ -1,56 +1,30 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
 exports.__esModule = true;
-exports.GameClient = exports.RemoteClient = exports.BroadcastClient = exports.Velocity = exports.Vector = exports.Point = exports.NextTurnRequest = exports.PauseResumeRequest = exports.NextOrderRequest = exports.BallProperties = exports.PlayerProperties = exports.GameProperties = exports.CommandResponse = exports.EventDebugReleased = exports.EventDebugBreakpoint = exports.EventGameOver = exports.EventGoal = exports.EventStateChange = exports.EventLostPlayer = exports.EventNewPlayer = exports.TeamColor = exports.TeamColors = exports.TeamSettings = exports.GameSetup = exports.GameEvent = exports.StartRequest = exports.WatcherRequest = exports.State = exports.Side = exports.OrderResponse = exports.ShotClock = exports.OrderSet = exports.JoinRequest = exports.Team = exports.Player = exports.Order = exports.Move = exports.Kick = exports.Jump = exports.GameSnapshot = exports.Catch = exports.Ball = void 0;
+exports.State = exports.Side = void 0;
 // exposing all from server
-var server_pb_js_1 = require("./pb/server_pb.js");
-exports.Ball = server_pb_js_1.Ball;
-exports.Catch = server_pb_js_1.Catch;
-exports.GameSnapshot = server_pb_js_1.GameSnapshot;
-exports.Jump = server_pb_js_1.Jump;
-exports.Kick = server_pb_js_1.Kick;
-exports.Move = server_pb_js_1.Move;
-exports.Order = server_pb_js_1.Order;
-exports.Player = server_pb_js_1.Player;
-exports.Team = server_pb_js_1.Team;
-exports.JoinRequest = server_pb_js_1.JoinRequest;
-exports.OrderSet = server_pb_js_1.OrderSet;
-exports.ShotClock = server_pb_js_1.ShotClock;
-exports.OrderResponse = server_pb_js_1.OrderResponse;
-exports.Side = server_pb_js_1.Team.Side;
-exports.State = server_pb_js_1.GameSnapshot.State;
+var server_pb_1 = require("./pb/server_pb");
+__exportStar(require("./pb/server_pb.js"), exports);
+exports.Side = server_pb_1.Team.Side;
+exports.State = server_pb_1.GameSnapshot.State;
 // exposing all from broadcast
-var broadcast_pb_js_1 = require("./pb/broadcast_pb.js");
-exports.WatcherRequest = broadcast_pb_js_1.WatcherRequest;
-exports.StartRequest = broadcast_pb_js_1.StartRequest;
-exports.GameEvent = broadcast_pb_js_1.GameEvent;
-exports.GameSetup = broadcast_pb_js_1.GameSetup;
-exports.TeamSettings = broadcast_pb_js_1.TeamSettings;
-exports.TeamColors = broadcast_pb_js_1.TeamColors;
-exports.TeamColor = broadcast_pb_js_1.TeamColor;
-exports.EventNewPlayer = broadcast_pb_js_1.EventNewPlayer;
-exports.EventLostPlayer = broadcast_pb_js_1.EventLostPlayer;
-exports.EventStateChange = broadcast_pb_js_1.EventStateChange;
-exports.EventGoal = broadcast_pb_js_1.EventGoal;
-exports.EventGameOver = broadcast_pb_js_1.EventGameOver;
-exports.EventDebugBreakpoint = broadcast_pb_js_1.EventDebugBreakpoint;
-exports.EventDebugReleased = broadcast_pb_js_1.EventDebugReleased;
-// exposing all from remote
-var remote_pb_js_1 = require("./pb/remote_pb.js");
-exports.CommandResponse = remote_pb_js_1.CommandResponse;
-exports.GameProperties = remote_pb_js_1.GameProperties;
-exports.PlayerProperties = remote_pb_js_1.PlayerProperties;
-exports.BallProperties = remote_pb_js_1.BallProperties;
-exports.NextOrderRequest = remote_pb_js_1.NextOrderRequest;
-exports.PauseResumeRequest = remote_pb_js_1.PauseResumeRequest;
-exports.NextTurnRequest = remote_pb_js_1.NextTurnRequest;
+__exportStar(require("./pb/broadcast_pb.js"), exports);
+__exportStar(require("./pb/remote_pb.js"), exports);
 // exposing all from physics
-var physics_pb_js_1 = require("./pb/physics_pb.js");
-exports.Point = physics_pb_js_1.Point;
-exports.Vector = physics_pb_js_1.Vector;
-exports.Velocity = physics_pb_js_1.Velocity;
-var broadcast_grpc_pb_js_1 = require("./pb/broadcast_grpc_pb.js");
-exports.BroadcastClient = broadcast_grpc_pb_js_1.BroadcastClient;
-var remote_grpc_pb_js_1 = require("./pb/remote_grpc_pb.js");
-exports.RemoteClient = remote_grpc_pb_js_1.RemoteClient;
-var server_grpc_pb_1 = require("./pb/server_grpc_pb");
-exports.GameClient = server_grpc_pb_1.GameClient;
+__exportStar(require("./pb/physics_pb.js"), exports);
+__exportStar(require("./pb/broadcast_grpc_pb.js"), exports);
+__exportStar(require("./pb/remote_grpc_pb.js"), exports);
+__exportStar(require("./pb/server_grpc_pb"), exports);

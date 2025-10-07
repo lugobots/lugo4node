@@ -7,6 +7,7 @@ import { Goal } from './goal';
 import { Mapper, Region } from './mapper';
 import * as ORIENTATION from './orentation';
 import * as Lugo from './proto_exported';
+export * from './proto_exported';
 import * as rl from "./rl/index";
 import { SPECS } from "./specs.js";
 import { Bot, PLAYER_STATE } from './stub';
