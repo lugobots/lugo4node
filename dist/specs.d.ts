@@ -1,4 +1,6 @@
 export declare const SPECS: {
+    GAME_DURATION: number;
+    EXTRA_OVERTIME_DURATION: number;
     PLAYER_SIZE: number;
     PLAYER_RECONNECTION_WAIT_TIME: number;
     MAX_PLAYERS: number;
