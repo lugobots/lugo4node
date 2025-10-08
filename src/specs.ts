@@ -7,6 +7,16 @@ const player_max_speed = 100.0;
 const player_size =  4 * BASE_UNIT;
 
 export const SPECS = {
+    // GAME_DURATION Number of turns in the regular phase of the game.
+    // After this many turns, if one team is ahead, the game ends.
+    // If the score is tied, overtime may be applied if the game it configured to accept golden goal
+    GAME_DURATION: 6000,
+
+    // EXTRA_OVERTIME_DURATION Number of additional turns granted if the game is tied
+    // at the end of the regular duration.
+    // If still tied after this period, the match ends in a draw.
+    EXTRA_OVERTIME_DURATION: 2400,
+
     // PLAYER_SIZE is the size of each player
     PLAYER_SIZE: player_size,
 
